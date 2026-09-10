@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account transfers - Claymorphism</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+/* ==========================================
+   RESET & BASE
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    direction: rtl;
+    padding: 25px;
+    min-height: 100vh;
+    background: #e8e0d5;
+    transition: all 0.4s ease;
+}
+
+/* ==========================================
+   ROOT VARIABLES (Light - Clay)
+   ========================================== */
+:root {
+    --clay-bg: #e8e0d5;
+    --clay-card: #eae3d8;
+    --clay-shadow: 8px 8px 16px #cbc3b8,
+        -8px -8px 16px #fffff2;
+    --clay-inset: inset 3px 3px 8px #cbc3b8,
+        inset -3px -3px 8px #fffff2;
+    --clay-inset-deep: inset 6px 6px 14px #cbc3b8,
+        inset -6px -6px 14px #fffff2;
+    --clay-border: #d5cec3;
+    --clay-text: #3d3a36;
+    --clay-text-soft: #6b6560;
+    --clay-accent: #a67c6b;
+    --clay-accent-hover: #8f6b5a;
+    --clay-success: #7d9b7a;
+    --clay-danger: #b57a7a;
+    --clay-gold: #b8956e;
+    --clay-blue: #7a8fa6;
+    --clay-purple: #9b7ab5;
+    --clay-teal: #7a9f9f;
+    --clay-radius: 24px;
+    --clay-radius-sm: 14px;
+    --table-header: var(--clay-accent);
+    --table-even: #e8e0d5;
+    --table-hover: #ddd5c8;
+    --totals-bg: #ddd5c8;
+    --collected-bg: #d4e0c8;
+    --collected-color: #3d5a3a;
+}
+
+/* ==========================================
+   DARK THEME (Clay Dark)
+   ========================================== */
+[data-theme="dark"] {
+    --clay-bg: #2a2724;
+    --clay-card: #36322e;
+    --clay-shadow: 8px 8px 16px #1e1b19,
+        -8px -8px 16px #4e4943;
+    --clay-inset: inset 3px 3px 8px #1e1b19,
+        inset -3px -3px 8px #4e4943;
+    --clay-inset-deep: inset 6px 6px 14px #1e1b19,
+        inset -6px -6px 14px #4e4943;
+    --clay-border: #4a4540;
+    --clay-text: #ede8e2;
+    --clay-text-soft: #b5aea6;
+    --clay-accent: #b8956e;
+    --clay-accent-hover: #d4ae84;
+    --clay-success: #8aaa87;
+    --clay-danger: #c48a8a;
+    --clay-gold: #d4ae84;
+    --clay-blue: #8aa3ba;
+    --clay-purple: #b59ac9;
+    --clay-teal: #8ab5b5;
+    --table-even: #2a2724;
+    --table-hover: #3d3833;
+    --totals-bg: #3d3833;
+    --collected-bg: #1a3a2a;
+    --collected-color: #7ddfb8;
+}
+
+body {
+    background: var(--clay-bg);
+    transition: all 0.4s ease;
+}
+
+/* ==========================================
+   CLAY UTILITY
+   ========================================== */
+.clay {
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+    transition: all 0.3s ease;
+}
+
+.clay-inset {
+    background: var(--clay-card);
+    border-radius: var(--clay-radius-sm);
+    box-shadow: var(--clay-inset);
+    border: 1px solid var(--clay-border);
+}
+
+/* ==========================================
+   CONTAINER
+   ========================================== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 18px 24px;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--clay-accent);
+    box-shadow: 6px 6px 14px #cbc3b8,
+        -6px -6px 14px #fffff2;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .header-logo {
+    box-shadow: 6px 6px 14px #1e1b19,
+        -6px -6px 14px #4e4943;
+}
+
+.header-logo:hover {
+    transform: scale(1.08) rotate(-5deg);
+}
+
+.header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--clay-text);
+    transition: color 0.3s ease;
+}
+
+.header-title span {
+    color: var(--clay-accent);
+}
+
+.header-subtitle {
+    color: var(--clay-text-soft);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ==========================================
+   BUTTONS - Clay Style
+   ========================================== */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--clay-radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--clay-text);
+    background: var(--clay-card);
+    box-shadow: 4px 4px 10px #cbc3b8,
+        -4px -4px 10px #fffff2;
+    border: 1px solid var(--clay-border);
+}
+
+[data-theme="dark"] .btn {
+    box-shadow: 4px 4px 10px #1e1b19,
+        -4px -4px 10px #4e4943;
+}
+
+.btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 6px 6px 16px #cbc3b8,
+        -6px -6px 16px #fffff2;
+}
+
+[data-theme="dark"] .btn:hover {
+    box-shadow: 6px 6px 16px #1e1b19,
+        -6px -6px 16px #4e4943;
+}
+
+.btn:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: var(--clay-inset);
+}
+
+.btn-copy {
+    color: var(--clay-success);
+}
+.btn-copy:hover {
+    color: #6a8a67;
+}
+
+.btn-export {
+    color: var(--clay-blue);
+}
+.btn-export:hover {
+    color: #6a7f96;
+}
+
+.btn-reset {
+    color: var(--clay-danger);
+}
+.btn-reset:hover {
+    color: #a06565;
+}
+
+.btn-theme {
+    background: var(--clay-card);
+    border: 1px solid var(--clay-border);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clay-text);
+    box-shadow: 6px 6px 14px #cbc3b8,
+        -6px -6px 14px #fffff2;
+}
+
+[data-theme="dark"] .btn-theme {
+    box-shadow: 6px 6px 14px #1e1b19,
+        -6px -6px 14px #4e4943;
+}
+
+.btn-theme:hover {
+    transform: rotate(30deg) scale(1.1);
+}
+
+/* ==========================================
+   INPUT SECTION
+   ========================================== */
+.input-section {
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+    transition: all 0.3s ease;
+}
+
+.input-section:focus-within {
+    box-shadow: var(--clay-shadow);
+    border-color: var(--clay-accent);
+}
+
+textarea {
+    width: 100%;
+    height: 120px;
+    padding: 16px 18px;
+    border: none;
+    border-radius: var(--clay-radius-sm);
+    background: var(--clay-card);
+    color: var(--clay-text);
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s ease;
+    box-shadow: var(--clay-inset-deep);
+    border: 1px solid var(--clay-border);
+}
+
+textarea:focus {
+    outline: none;
+    box-shadow: var(--clay-inset-deep), 0 0 0 3px var(--clay-accent);
+}
+
+textarea::placeholder {
+    color: var(--clay-text-soft);
+    opacity: 0.7;
+}
+
+/* ==========================================
+   ACTIONS BAR
+   ========================================== */
+.actions-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.actions-bar .spacer {
+    flex: 1;
+}
+
+.stats-badge {
+    background: var(--clay-card);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--clay-text);
+    border: 1px solid var(--clay-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--clay-inset);
+}
+
+.stats-badge .num {
+    color: var(--clay-accent);
+    font-weight: 800;
+}
+
+[data-theme="dark"] .stats-badge .num {
+    color: var(--clay-success);
+}
+
+/* ==========================================
+   TABLE - Clay Style
+   ========================================== */
+#capture {
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    padding: 5px;
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius-sm);
+    overflow: hidden;
+}
+
+th {
+    background: var(--clay-card);
+    color: var(--clay-text);
+    padding: 14px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-align: center;
+    border-bottom: 2px solid var(--clay-border);
+}
+
+th:first-child {
+    border-radius: 0 0 0 0;
+}
+th:last-child {
+    border-radius: 0 0 0 0;
+}
+
+td {
+    border-bottom: 1px solid var(--clay-border);
+    padding: 11px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--clay-text);
+    transition: background 0.2s ease;
+}
+
+tbody tr:nth-child(even) {
+    background: var(--table-even);
+}
+
+tbody tr:hover {
+    background: var(--table-hover);
+}
+
+/* editable cells */
+.editable {
+    background: var(--clay-card);
+    cursor: text;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    box-shadow: var(--clay-inset);
+}
+
+.editable:hover {
+    background: var(--table-hover);
+}
+
+.editable:focus {
+    outline: 2px solid var(--clay-accent);
+    background: var(--clay-card);
+    outline-offset: -2px;
+}
+
+/* ==========================================
+   TOTALS ROWS
+   ========================================== */
+.totals td {
+    background: var(--totals-bg);
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--clay-text);
+    border-bottom: none;
+    padding: 12px 10px;
+}
+
+.totals td:first-child {
+    border-radius: 0 0 0 0;
+}
+.totals td:last-child {
+    border-radius: 0 0 0 0;
+}
+
+.totals.collected td {
+    background: var(--collected-bg);
+    color: var(--collected-color);
+}
+
+/* ==========================================
+   DELETE BUTTON
+   ========================================== */
+.del-btn {
+    background: var(--clay-card);
+    border: 1px solid var(--clay-border);
+    color: var(--clay-danger);
+    padding: 5px 10px;
+    border-radius: var(--clay-radius-sm);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 3px 3px 8px #cbc3b8,
+        -3px -3px 8px #fffff2;
+}
+
+[data-theme="dark"] .del-btn {
+    box-shadow: 3px 3px 8px #1e1b19,
+        -3px -3px 8px #4e4943;
+}
+
+.del-btn:hover {
+    transform: scale(1.1);
+    color: #a06565;
+}
+
+.del-btn:active {
+    transform: scale(0.95);
+    box-shadow: var(--clay-inset);
+}
+
+/* hide delete column in image */
+.no-img {
+    display: table-cell;
+}
+
+/* ==========================================
+   TOAST
+   ========================================== */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--clay-card);
+    color: var(--clay-text);
+    padding: 16px 28px;
+    border-radius: var(--clay-radius);
+    box-shadow: 12px 12px 24px #cbc3b8,
+        -12px -12px 24px #fffff2;
+    border: 1px solid var(--clay-border);
+    font-size: 14px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 90%;
+}
+
+[data-theme="dark"] .toast {
+    box-shadow: 12px 12px 24px #1e1b19,
+        -12px -12px 24px #4e4943;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast .toast-icon {
+    font-size: 20px;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+@media(max-width:768px) {
+    body {
+        padding: 15px;
+    }
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .header-right {
+        align-self: flex-end;
+        margin-top: -40px;
+    }
+    .header-title {
+        font-size: 18px;
+    }
+    .header-logo {
+        width: 42px;
+        height: 42px;
+    }
+    .actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn {
+        justify-content: center;
+    }
+    .stats-badge {
+        justify-content: center;
+    }
+    table {
+        font-size: 12px;
+    }
+    th, td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+    .totals td {
+        font-size: 12px;
+    }
+    .toast {
+        right: 15px;
+        left: 15px;
+        bottom: 15px;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+@media(max-width:480px) {
+    th, td {
+        padding: 5px 4px;
+        font-size: 10px;
+    }
+    .del-btn {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+    .header-title {
+        font-size: 16px;
+    }
+    .header-subtitle {
+        font-size: 11px;
+    }
+    .btn {
+        font-size: 12px;
+        padding: 8px 14px;
+    }
+    .stats-badge {
+        font-size: 11px;
+        padding: 4px 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ===== HEADER ===== -->
+    <div class="header-top">
+        <div class="header-left">
+            <img class="header-logo" src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png" alt="Logo" onerror="this.style.display='none'">
+            <div class="header-info">
+                <span class="header-title">📊 <span>Account transfers</span></span>
+                <span class="header-subtitle">Created By Hussein Gamal Sr.Operation &amp; 3PL Logistics</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn-theme" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
+        </div>
+    </div>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <div class="input-section">
+        <textarea id="pasteData" placeholder="📋 الصق من Excel أو Google Sheets هنا..." oninput="autoLoad()"></textarea>
+    </div>
+
+    <!-- ===== ACTIONS BAR ===== -->
+    <div class="actions-bar">
+        <button class="btn btn-copy" onclick="copyImage()">📋 نسخ الصورة</button>
+        <button class="btn btn-export" onclick="exportExcel()">📤 تصدير Excel</button>
+        <button class="btn btn-reset" onclick="resetAll()">🔄 مسح الكل</button>
+        <span class="spacer"></span>
+        <span class="stats-badge">📊 عدد الأوردرات: <span class="num" id="rowCount">0</span></span>
+        <span class="stats-badge">💰 الإجمالي: <span class="num" id="totalDisplay">0</span></span>
+    </div>
+
+    <!-- ===== TABLE ===== -->
+    <div id="capture">
+        <table id="table">
+            <thead>
+                <tr>
+                    <th>📅 تاريخ</th>
+                    <th>📦 أوردر</th>
+                    <th>💰 إجمالي</th>
+                    <th>💳 تحصيل</th>
+                    <th>💵 دفع</th>
+                    <th>🏦 ديبوزت</th>
+                    <th>🔄 تحويل</th>
+                    <th>📅 تاريخ ديبوزت</th>
+                    <th>🔄 تحويل</th>
+                    <th>📅 تاريخ تحويل</th>
+                    <th class="no-img">🗑️ حذف</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr class="totals">
+                    <td colspan="2">📊 إجمالي المبلغ</td>
+                    <td id="t1">0</td>
+                    <td colspan="8"></td>
+                </tr>
+                <tr class="totals collected">
+                    <td colspan="2">✅ التحصيل</td>
+                    <td id="t2">0</td>
+                    <td colspan="8"></td>
+                </tr>
+                <tr class="totals">
+                    <td colspan="2">🏦 الديبوزت</td>
+                    <td id="t3">0</td>
+                    <td colspan="8"></td>
+                </tr>
+                <tr class="totals">
+                    <td colspan="2">🔄 التحويل</td>
+                    <td id="t4">0</td>
+                    <td colspan="8"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast">
+    <span class="toast-icon">✅</span>
+    <span id="toastMessage">تم النسخ</span>
+</div>
+
+<script>
+let timer;
+
+// ===== Helper functions =====
+function cleanNumber(v) {
+    return parseFloat((v || "0").toString().replace(/,/g, "")) || 0;
+}
+
+function formatNumber(num) {
+    return num.toLocaleString();
+}
+
+// ===== Toast =====
+let toastTimeout;
+
+function showToast(message, icon = '✅') {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    toastMessage.textContent = message;
+    toast.querySelector('.toast-icon').textContent = icon;
+    toast.classList.add('show');
+
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// ===== Theme toggle =====
+function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.querySelector('.btn-theme');
+    if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        btn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+        showToast('☀️ تم التبديل إلى الوضع النهاري', '☀️');
+    } else {
+        html.setAttribute('data-theme', 'dark');
+        btn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+        showToast('🌙 تم التبديل إلى الوضع الليلي', '🌙');
+    }
+}
+
+window.addEventListener("load", function() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.querySelector('.btn-theme').textContent = '☀️';
+    }
+    loadData();
+});
+
+// ===== Create row =====
+function createRow(cols) {
+    const tr = document.createElement("tr");
+
+    cols.forEach((c, i) => {
+        const td = document.createElement("td");
+        td.innerText = c || "";
+
+        if ([2, 3, 5, 8].includes(i)) {
+            td.classList.add("editable");
+            td.contentEditable = true;
+            td.oninput = function() {
+                updateTotals();
+                saveData();
+            };
+        }
+
+        tr.appendChild(td);
+    });
+
+    const del = document.createElement("td");
+    del.classList.add("no-img");
+    del.innerHTML = `<button class="del-btn" onclick="deleteRow(this)">❌</button>`;
+    tr.appendChild(del);
+
+    return tr;
+}
+
+// ===== Delete row =====
+function deleteRow(btn) {
+    if (confirm('هل أنت متأكد من حذف هذا الصف؟')) {
+        btn.closest("tr").remove();
+        updateTotals();
+        saveData();
+        showToast('🗑️ تم حذف الصف', '🗑️');
+    }
+}
+
+// ===== Save data =====
+function saveData() {
+    const rows = [];
+    document.querySelectorAll("#table tbody tr").forEach(tr => {
+        const cols = [];
+        tr.querySelectorAll("td:not(.no-img)").forEach(td => {
+            cols.push(td.innerText);
+        });
+        rows.push(cols.join("\t"));
+    });
+    const text = rows.join("\n");
+    localStorage.setItem('reportData', text);
+    document.getElementById('pasteData').value = text;
+}
+
+// ===== Load data from textarea =====
+function loadData() {
+    const text = document.getElementById('pasteData').value.trim();
+    
+    if (!text) {
+        document.querySelector("#table tbody").innerHTML = "";
+        localStorage.removeItem('reportData');
+        updateTotals();
+        updateStats();
+        return;
+    }
+
+    const rows = text.split("\n");
+    const tbody = document.querySelector("#table tbody");
+    tbody.innerHTML = "";
+
+    rows.forEach((row) => {
+        const cols = row.split("\t");
+        if (cols.length >= 3 && !isNaN(cleanNumber(cols[2]))) {
+            tbody.appendChild(createRow(cols));
+        }
+    });
+
+    updateTotals();
+    updateStats();
+    saveData();
+}
+
+// ===== Auto load =====
+function autoLoad() {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+        loadData();
+        saveData();
+    }, 300);
+}
+
+// ===== Update totals =====
+function updateTotals() {
+    let total = 0, collected = 0, deposit = 0, transfer = 0;
+
+    document.querySelectorAll("#table tbody tr").forEach(r => {
+        const td = r.children;
+        total += cleanNumber(td[2]?.innerText);
+        collected += cleanNumber(td[3]?.innerText);
+        deposit += cleanNumber(td[5]?.innerText);
+        transfer += cleanNumber(td[8]?.innerText);
+    });
+
+    document.getElementById('t1').innerText = formatNumber(total);
+    document.getElementById('t2').innerText = formatNumber(collected);
+    document.getElementById('t3').innerText = formatNumber(deposit);
+    document.getElementById('t4').innerText = formatNumber(transfer);
+    document.getElementById('totalDisplay').innerText = formatNumber(total);
+    updateStats();
+}
+
+// ===== Update stats =====
+function updateStats() {
+    const count = document.querySelectorAll("#table tbody tr").length;
+    document.getElementById('rowCount').innerText = count;
+}
+
+// ===== Copy image =====
+async function copyImage() {
+    const capture = document.querySelector("#capture");
+
+    document.querySelectorAll(".no-img").forEach(el => {
+        el.style.display = "none";
+    });
+
+    try {
+        const canvas = await html2canvas(capture, {
+            scale: 2.5,
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--clay-card').trim() || '#eae3d8',
+            useCORS: true,
+            logging: false,
+            borderRadius: '24px'
+        });
+
+        try {
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            await navigator.clipboard.write([
+                new ClipboardItem({ "image/png": blob })
+            ]);
+            showToast('✅ تم نسخ الصورة للحافظة', '📸');
+        } catch (clipError) {
+            const a = document.createElement("a");
+            a.download = `report-${new Date().toISOString().slice(0,10)}.png`;
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+            showToast('📥 تم تحميل الصورة', '📥');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('❌ فشل نسخ الصورة', '❌');
+    }
+
+    document.querySelectorAll(".no-img").forEach(el => {
+        el.style.display = "";
+    });
+}
+
+// ===== Export Excel =====
+function exportExcel() {
+    const rows = [];
+    const headers = [];
+    document.querySelectorAll("#table thead th:not(.no-img)").forEach(th => {
+        headers.push(th.innerText.replace(/[📅📦💰💳💵🏦🔄🗑️]/g, '').trim());
+    });
+    rows.push(headers.join('\t'));
+
+    document.querySelectorAll("#table tbody tr").forEach(tr => {
+        const cols = [];
+        tr.querySelectorAll("td:not(.no-img)").forEach(td => {
+            cols.push(td.innerText);
+        });
+        rows.push(cols.join('\t'));
+    });
+
+    const totals = [];
+    document.querySelectorAll("#table tfoot tr").forEach(tr => {
+        const cols = [];
+        tr.querySelectorAll("td:not(.no-img)").forEach(td => {
+            cols.push(td.innerText);
+        });
+        if (cols.length > 0) rows.push(cols.join('\t'));
+    });
+
+    const text = rows.join('\n');
+    const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `report-${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    showToast('📤 تم تصدير التقرير', '📤');
+}
+
+// ===== Reset all =====
+function resetAll() {
+    if (document.querySelectorAll("#table tbody tr").length === 0) {
+        showToast('⚠️ لا توجد بيانات للمسح', '⚠️');
+        return;
+    }
+    if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+        document.querySelector("#table tbody").innerHTML = '';
+        document.getElementById('pasteData').value = '';
+        localStorage.removeItem('reportData');
+        updateTotals();
+        showToast('🗑️ تم مسح جميع البيانات', '🗑️');
+    }
+}
+
+// ===== Keyboard shortcuts =====
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        copyImage();
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+        e.preventDefault();
+        exportExcel();
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        resetAll();
+    }
+});
+
+console.log('⌨️ Account transfers - Keyboard Shortcuts:');
+console.log('  Ctrl+Enter     : نسخ الصورة');
+console.log('  Ctrl+Shift+E   : تصدير Excel');
+console.log('  Ctrl+Shift+C   : مسح الكل');
+</script>
+
+</body>
+</html>

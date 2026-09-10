@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hussein Gamal - Suite</title>
+
+    <style>
+        /* ==========================================
+           RESET & BASE
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            min-height: 100vh;
+            background: #e8e0d5;
+            transition: all 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================
+           ROOT VARIABLES
+           ========================================== */
+        :root {
+            --clay-bg: #e8e0d5;
+            --clay-card: #eae3d8;
+            --clay-shadow: 8px 8px 16px #cbc3b8,
+                -8px -8px 16px #fffff2;
+            --clay-inset: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            --clay-inset-deep: inset 6px 6px 14px #cbc3b8,
+                inset -6px -6px 14px #fffff2;
+            --clay-border: #d5cec3;
+            --clay-text: #3d3a36;
+            --clay-text-soft: #6b6560;
+            --clay-accent: #a67c6b;
+            --clay-accent-hover: #8f6b5a;
+            --clay-success: #7d9b7a;
+            --clay-danger: #b57a7a;
+            --clay-gold: #b8956e;
+            --clay-blue: #7a8fa6;
+            --clay-purple: #9b7ab5;
+            --clay-teal: #7a9f9f;
+            --clay-radius: 24px;
+            --clay-radius-sm: 14px;
+            --clay-radius-xs: 10px;
+            --menu-width: 200px;
+        }
+
+        [data-theme="dark"] {
+            --clay-bg: #2a2724;
+            --clay-card: #36322e;
+            --clay-shadow: 8px 8px 16px #1e1b19,
+                -8px -8px 16px #4e4943;
+            --clay-inset: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+            --clay-inset-deep: inset 6px 6px 14px #1e1b19,
+                inset -6px -6px 14px #4e4943;
+            --clay-border: #4a4540;
+            --clay-text: #ede8e2;
+            --clay-text-soft: #b5aea6;
+            --clay-accent: #b8956e;
+            --clay-accent-hover: #d4ae84;
+            --clay-success: #8aaa87;
+            --clay-danger: #c48a8a;
+            --clay-gold: #d4ae84;
+            --clay-blue: #8aa3ba;
+            --clay-purple: #b59ac9;
+            --clay-teal: #8ab5b5;
+        }
+
+        body {
+            background: var(--clay-bg);
+            transition: all 0.4s ease;
+        }
+
+        /* ==========================================
+           CONTAINER - FULL SCREEN
+           ========================================== */
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        /* ==========================================
+           FLOATING MENU BUTTON - Small with label
+           ========================================== */
+        .menu-toggle-wrapper {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            background: var(--clay-card);
+            border: 1px solid var(--clay-border);
+            border-radius: var(--clay-radius-sm);
+            padding: 6px 12px;
+            box-shadow: var(--clay-shadow);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .menu-toggle-wrapper:hover {
+            transform: scale(1.05);
+            box-shadow: 8px 8px 18px #cbc3b8,
+                -8px -8px 18px #fffff2;
+        }
+
+        [data-theme="dark"] .menu-toggle-wrapper:hover {
+            box-shadow: 8px 8px 18px #1e1b19,
+                -8px -8px 18px #4e4943;
+        }
+
+        .menu-toggle-wrapper:active {
+            transform: scale(0.95);
+            box-shadow: var(--clay-inset);
+        }
+
+        .menu-toggle-wrapper .menu-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .menu-toggle-wrapper .menu-label {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--clay-text-soft);
+            letter-spacing: 0.5px;
+        }
+
+        .menu-toggle-wrapper.active {
+            box-shadow: var(--clay-inset);
+            border-color: var(--clay-accent);
+        }
+
+        [data-theme="dark"] .menu-toggle-wrapper.active {
+            border-color: var(--clay-success);
+        }
+
+        /* ==========================================
+           COMPACT TOP HEADER
+           يظهر فقط بعد اختيار أحد التطبيقات
+           ========================================== */
+        .top-header {
+            position: fixed;
+            top: 8px;
+            right: 10px;
+            display: none;
+            align-items: center;
+            gap: 7px;
+            z-index: 120;
+            direction: rtl;
+        }
+
+        .top-header.show {
+            display: flex;
+        }
+
+        /* تم حذف صورة top-header-logo */
+
+        .top-header .menu-toggle-wrapper {
+            position: static;
+            padding: 4px 8px;
+            min-width: 38px;
+            border-radius: 10px;
+            gap: 1px;
+        }
+
+        .top-header .menu-toggle-wrapper .menu-icon {
+            font-size: 14px;
+        }
+
+        .top-header .menu-toggle-wrapper .menu-label {
+            font-size: 6px;
+        }
+
+                
+        /* ==========================================
+           COMPACT HEADER - shown inside tools
+           ========================================== */
+        .compact-header {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            z-index: 80;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            direction: rtl;
+        }
+
+        .compact-header.visible {
+            display: flex;
+        }
+
+        /* تم حذف صورة compact-logo */
+
+        .compact-menu-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--clay-border);
+            border-radius: 10px;
+            background: var(--clay-card);
+            color: var(--clay-text);
+            box-shadow: 4px 4px 10px #cbc3b8,
+                -4px -4px 10px #fffff2;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        [data-theme="dark"] .compact-menu-btn {
+            box-shadow: 4px 4px 10px #1e1b19,
+                -4px -4px 10px #4e4943;
+        }
+
+        .compact-menu-btn:active {
+            transform: scale(0.92);
+            box-shadow: var(--clay-inset);
+        }
+
+        @media(max-width:480px) {
+            .compact-header {
+                top: 6px;
+                right: 6px;
+                gap: 4px;
+            }
+
+            .compact-menu-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+
+
+        /* Hide the original floating menu button while working inside a tool */
+        .container.tool-active .menu-toggle-wrapper {
+            display: none;
+        }
+
+        /* ==========================================
+           SIDE MENU - SMALL
+           ========================================== */
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(3px);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: calc(-1 * var(--menu-width));
+            width: var(--menu-width);
+            height: 100vh;
+            background: var(--clay-card);
+            box-shadow: var(--clay-shadow);
+            border-left: 1px solid var(--clay-border);
+            z-index: 60;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            padding: 14px 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .side-menu.open {
+            right: 0;
+        }
+
+        /* Menu Header */
+        .menu-header {
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--clay-border);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .menu-header .menu-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--clay-accent);
+            box-shadow: 4px 4px 10px #cbc3b8,
+                -4px -4px 10px #fffff2;
+            margin-bottom: 4px;
+        }
+
+        [data-theme="dark"] .menu-header .menu-logo {
+            box-shadow: 4px 4px 10px #1e1b19,
+                -4px -4px 10px #4e4943;
+        }
+
+        .menu-header h4 {
+            color: var(--clay-text);
+            font-size: 13px;
+        }
+
+        .menu-header p {
+            color: var(--clay-text-soft);
+            font-size: 9px;
+        }
+
+        /* Menu Items */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--clay-radius-sm);
+            background: var(--clay-card);
+            border: 1px solid var(--clay-border);
+            box-shadow: 2px 2px 6px #cbc3b8,
+                -2px -2px 6px #fffff2;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--clay-text-soft);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        [data-theme="dark"] .menu-item {
+            box-shadow: 2px 2px 6px #1e1b19,
+                -2px -2px 6px #4e4943;
+        }
+
+        .menu-item:hover {
+            transform: translateX(-3px) scale(1.02);
+            box-shadow: 4px 4px 10px #cbc3b8,
+                -4px -4px 10px #fffff2;
+            color: var(--clay-text);
+        }
+
+        [data-theme="dark"] .menu-item:hover {
+            box-shadow: 4px 4px 10px #1e1b19,
+                -4px -4px 10px #4e4943;
+        }
+
+        .menu-item:active {
+            transform: translateX(-2px) scale(0.97);
+            box-shadow: var(--clay-inset);
+        }
+
+        .menu-item.active {
+            color: var(--clay-accent);
+            box-shadow: var(--clay-inset);
+            border-color: var(--clay-accent);
+        }
+
+        [data-theme="dark"] .menu-item.active {
+            color: var(--clay-success);
+            border-color: var(--clay-success);
+        }
+
+        .menu-item .item-icon {
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--clay-radius-xs);
+            background: var(--clay-bg);
+            box-shadow: var(--clay-inset);
+            flex-shrink: 0;
+        }
+
+        .menu-item .item-badge {
+            margin-right: auto;
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-size: 8px;
+            font-weight: 700;
+            background: var(--clay-card);
+            color: var(--clay-text-soft);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        .menu-item.active .item-badge {
+            color: var(--clay-accent);
+        }
+
+        [data-theme="dark"] .menu-item.active .item-badge {
+            color: var(--clay-success);
+        }
+
+        /* Menu Divider */
+        .menu-divider {
+            height: 1px;
+            background: var(--clay-border);
+            border-radius: 2px;
+            margin: 4px 6px;
+            opacity: 0.4;
+        }
+
+        /* Theme Toggle in Menu */
+        .menu-theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: var(--clay-radius-sm);
+            background: var(--clay-card);
+            border: 1px solid var(--clay-border);
+            box-shadow: 2px 2px 6px #cbc3b8,
+                -2px -2px 6px #fffff2;
+            margin-top: auto;
+        }
+
+        [data-theme="dark"] .menu-theme-toggle {
+            box-shadow: 2px 2px 6px #1e1b19,
+                -2px -2px 6px #4e4943;
+        }
+
+        .menu-theme-toggle span {
+            color: var(--clay-text-soft);
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .menu-theme-toggle .theme-switch-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--clay-border);
+            background: var(--clay-card);
+            box-shadow: var(--clay-inset);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--clay-text);
+        }
+
+        .menu-theme-toggle .theme-switch-btn:hover {
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        .menu-theme-toggle .theme-switch-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Menu Footer */
+        .menu-footer {
+            text-align: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--clay-border);
+            margin-top: 4px;
+            color: var(--clay-text-soft);
+            font-size: 9px;
+        }
+
+        /* ==========================================
+           MAIN CONTENT - FULL SCREEN
+           ========================================== */
+        .main-content {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .tab-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .tab-pane {
+            display: none;
+            width: 100%;
+            height: 100%;
+            animation: fadeSlideIn 0.35s ease forwards;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================
+           HOME - Compact Cards
+           ========================================== */
+        .home-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 70px 20px 20px 20px;
+            overflow-y: auto;
+        }
+
+        .home-header {
+            margin-bottom: 14px;
+            flex-shrink: 0;
+        }
+
+        .home-header h2 {
+            color: var(--clay-text);
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .home-header p {
+            color: var(--clay-text-soft);
+            font-size: 14px;
+        }
+
+        .tab-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            flex: 1;
+            align-content: start;
+        }
+
+        .preview-card {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+            padding: 18px 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .preview-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 10px 10px 20px #cbc3b8,
+                -10px -10px 20px #fffff2;
+            border-color: var(--clay-accent);
+        }
+
+        [data-theme="dark"] .preview-card:hover {
+            box-shadow: 10px 10px 20px #1e1b19,
+                -10px -10px 20px #4e4943;
+            border-color: var(--clay-success);
+        }
+
+        .preview-card .preview-icon {
+            font-size: 34px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .preview-card .preview-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--clay-text);
+            margin-bottom: 4px;
+        }
+
+        .preview-card .preview-desc {
+            font-size: 11px;
+            color: var(--clay-text-soft);
+            line-height: 1.4;
+        }
+
+        .preview-card .preview-tag {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--clay-accent);
+            background: var(--clay-card);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        [data-theme="dark"] .preview-card .preview-tag {
+            color: var(--clay-success);
+        }
+
+        .home-footer {
+            margin-top: 14px;
+            padding: 10px 16px;
+            background: var(--clay-card);
+            border-radius: var(--clay-radius-sm);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .home-footer p {
+            color: var(--clay-text-soft);
+            font-size: 11px;
+        }
+
+        .home-footer strong {
+            color: var(--clay-accent);
+        }
+
+        /* ==========================================
+           IFRAME WRAPPER - FULL SCREEN
+           ========================================== */
+        .iframe-wrapper {
+            background: var(--clay-card);
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--clay-bg);
+        }
+
+        /* ==========================================
+           TOAST
+           ========================================== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--clay-card);
+            color: var(--clay-text);
+            padding: 10px 18px;
+            border-radius: var(--clay-radius);
+            box-shadow: 10px 10px 20px #cbc3b8,
+                -10px -10px 20px #fffff2;
+            border: 1px solid var(--clay-border);
+            font-size: 12px;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 90%;
+        }
+
+        [data-theme="dark"] .toast {
+            box-shadow: 10px 10px 20px #1e1b19,
+                -10px -10px 20px #4e4943;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast .toast-icon {
+            font-size: 16px;
+        }
+
+        /* ==========================================
+           RESPONSIVE
+           ========================================== */
+        @media(max-width:768px) {
+            .top-header {
+                top: 7px;
+                right: 9px;
+                gap: 6px;
+            }
+
+            .menu-toggle-wrapper {
+                top: 12px;
+                right: 12px;
+                padding: 5px 10px;
+            }
+            .menu-toggle-wrapper .menu-icon {
+                font-size: 16px;
+            }
+            .menu-toggle-wrapper .menu-label {
+                font-size: 7px;
+            }
+            :root {
+                --menu-width: 180px;
+            }
+            .side-menu {
+                width: var(--menu-width);
+                padding: 10px 8px;
+            }
+            .home-container {
+                padding: 65px 14px 14px 14px;
+            }
+            .tab-preview-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .preview-card {
+                padding: 14px 12px;
+            }
+            .preview-card .preview-icon {
+                font-size: 28px;
+            }
+            .preview-card .preview-title {
+                font-size: 12px;
+            }
+            .preview-card .preview-desc {
+                font-size: 10px;
+            }
+            .home-header h2 {
+                font-size: 17px;
+            }
+            .home-header p {
+                font-size: 12px;
+            }
+            .toast {
+                right: 12px;
+                left: 12px;
+                bottom: 12px;
+                text-align: center;
+                justify-content: center;
+                font-size: 11px;
+                padding: 8px 14px;
+            }
+        }
+
+        @media(max-width:480px) {
+            .top-header {
+                top: 6px;
+                right: 7px;
+                gap: 5px;
+            }
+
+            .top-header .menu-toggle-wrapper {
+                padding: 3px 6px;
+                min-width: 34px;
+            }
+
+            .top-header .menu-toggle-wrapper .menu-icon {
+                font-size: 12px;
+            }
+
+            .top-header .menu-toggle-wrapper .menu-label {
+                font-size: 5px;
+            }
+
+            .menu-toggle-wrapper {
+                top: 10px;
+                right: 10px;
+                padding: 4px 8px;
+            }
+            .menu-toggle-wrapper .menu-icon {
+                font-size: 14px;
+            }
+            .menu-toggle-wrapper .menu-label {
+                font-size: 6px;
+            }
+            :root {
+                --menu-width: 160px;
+            }
+            .side-menu {
+                width: var(--menu-width);
+                padding: 8px 6px;
+            }
+            .home-container {
+                padding: 55px 10px 10px 10px;
+            }
+            .tab-preview-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .preview-card {
+                padding: 10px 10px;
+            }
+            .preview-card .preview-icon {
+                font-size: 24px;
+            }
+            .preview-card .preview-title {
+                font-size: 11px;
+            }
+            .preview-card .preview-desc {
+                font-size: 9px;
+            }
+            .home-header h2 {
+                font-size: 15px;
+            }
+            .home-header p {
+                font-size: 11px;
+            }
+            .home-footer p {
+                font-size: 9px;
+            }
+            .menu-item {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            .menu-item .item-icon {
+                width: 22px;
+                height: 22px;
+                font-size: 13px;
+            }
+            .menu-header h4 {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== COMPACT HEADER (بدون صورة) ===== -->
+    <div class="compact-header" id="compactHeader">
+        <button class="compact-menu-btn" onclick="toggleMenu()" aria-label="فتح القائمة">✦</button>
+    </div>
+
+    <!-- ===== OVERLAY ===== -->
+    <div class="side-menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+    <!-- ===== SIDE MENU ===== -->
+    <div class="side-menu" id="sideMenu">
+
+        <div class="menu-header">
+            <img class="menu-logo"
+                src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png"
+                alt="Logo"
+                onerror="this.style.display='none'">
+            <h4>Hussein Gamal</h4>
+            <p>3PL Logistics</p>
+        </div>
+
+        <div class="menu-item active" data-tab="home" onclick="switchTab('home')">
+            <span class="item-icon">🏠</span>
+            الرئيسية
+        </div>
+
+        <div class="menu-item" data-tab="refund" onclick="switchTab('refund')">
+            <span class="item-icon">📋</span>
+            Refund
+            <span class="item-badge">نسخ</span>
+        </div>
+
+        <div class="menu-item" data-tab="orders" onclick="switchTab('orders')">
+            <span class="item-icon">📦</span>
+            أوردرات
+            <span class="item-badge">WA</span>
+        </div>
+
+        <div class="menu-item" data-tab="transfers" onclick="switchTab('transfers')">
+            <span class="item-icon">📊</span>
+            Transfers
+            <span class="item-badge">Excel</span>
+        </div>
+
+        <div class="menu-item" data-tab="discount" onclick="switchTab('discount')">
+            <span class="item-icon">✂️</span>
+            خصم
+            <span class="item-badge">Pending</span>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-theme-toggle">
+            <span>🌓 الوضع</span>
+            <button class="theme-switch-btn" id="themeSwitchBtn" onclick="toggleTheme()">🌙</button>
+        </div>
+
+        <div class="menu-footer">© 2026</div>
+
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container">
+
+        <!-- ===== TOP HEADER (بدون صورة) ===== -->
+        <div class="top-header" id="topHeader">
+            <div class="menu-toggle-wrapper" id="menuToggle" onclick="toggleMenu()">
+                <span class="menu-icon">☰</span>
+                <span class="menu-label">منيو</span>
+            </div>
+        </div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="main-content">
+
+            <div class="tab-content">
+
+                <!-- ===== HOME TAB ===== -->
+                <div class="tab-pane active" id="tab-home">
+                    <div class="home-container">
+
+                        <div class="home-header">
+                            <h2>📌 التطبيقات المتاحة</h2>
+                            <p>اختر التطبيق من القائمة الجانبية أو من البطاقات أدناه</p>
+                        </div>
+
+                        <div class="tab-preview-grid">
+
+                            <div class="preview-card" onclick="switchTab('refund')">
+                                <span class="preview-icon">📋</span>
+                                <div class="preview-title">Refund Formatter</div>
+                                <div class="preview-desc">تنسيق بيانات المرتجعات مع إحصائيات ونسخ</div>
+                                <span class="preview-tag">📋 نسخ</span>
+                            </div>
+
+                            <div class="preview-card" onclick="switchTab('orders')">
+                                <span class="preview-icon">📦</span>
+                                <div class="preview-title">تقسيم الأوردرات</div>
+                                <div class="preview-desc">تقسيم الأوردرات إلى رسائل للواتساب</div>
+                                <span class="preview-tag">📱 WhatsApp</span>
+                            </div>
+
+                            <div class="preview-card" onclick="switchTab('transfers')">
+                                <span class="preview-icon">📊</span>
+                                <div class="preview-title">Account Transfers</div>
+                                <div class="preview-desc">إدارة التحويلات مع جدول وتصدير Excel</div>
+                                <span class="preview-tag">📊 Excel</span>
+                            </div>
+
+                            <div class="preview-card" onclick="switchTab('discount')">
+                                <span class="preview-icon">✂️</span>
+                                <div class="preview-title">معالج الخصم</div>
+                                <div class="preview-desc">خصم تلقائي من سعر المنتج عند pending</div>
+                                <span class="preview-tag">⏳ Pending</span>
+                            </div>
+
+                        </div>
+
+                        <div class="home-footer">
+                            <p>🚀 جميع التطبيقات تعمل دون اتصال بالإنترنت &bull; تم التطوير بواسطة <strong>Hussein Gamal</strong></p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ===== REFUND TAB ===== -->
+                <div class="tab-pane" id="tab-refund">
+                    <div class="iframe-wrapper">
+                        <iframe id="iframe-refund" src="refund-formatter.html"></iframe>
+                    </div>
+                </div>
+
+                <!-- ===== ORDERS TAB ===== -->
+                <div class="tab-pane" id="tab-orders">
+                    <div class="iframe-wrapper">
+                        <iframe id="iframe-orders" src="orders-splitter.html"></iframe>
+                    </div>
+                </div>
+
+                <!-- ===== TRANSFERS TAB ===== -->
+                <div class="tab-pane" id="tab-transfers">
+                    <div class="iframe-wrapper">
+                        <iframe id="iframe-transfers" src="account-transfers.html"></iframe>
+                    </div>
+                </div>
+
+                <!-- ===== DISCOUNT TAB ===== -->
+                <div class="tab-pane" id="tab-discount">
+                    <div class="iframe-wrapper">
+                        <iframe id="iframe-discount" src="discount-processor.html"></iframe>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast">
+        <span class="toast-icon">✅</span>
+        <span id="toastMessage">تم التبديل</span>
+    </div>
+
+    <script>
+        /* ==========================================
+           THEME SWITCH
+           ========================================== */
+        const themeBtn = document.getElementById('themeSwitchBtn');
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeBtn.textContent = '☀️';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                themeBtn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+                showToast('☀️ الوضع النهاري', '☀️');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+                showToast('🌙 الوضع الليلي', '🌙');
+            }
+        }
+
+        /* ==========================================
+           MENU TOGGLE
+           ========================================== */
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const topHeader = document.getElementById('topHeader');
+
+        function toggleMenu() {
+            sideMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+            document.body.style.overflow = sideMenu.classList.contains('open') ? 'hidden' : '';
+        }
+
+        function closeMenu() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('active');
+            menuToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        /* ==========================================
+           TAB SWITCHING - Auto close menu
+           ========================================== */
+        let currentTab = 'home';
+
+        function switchTab(tabId) {
+            // Close menu immediately
+            closeMenu();
+
+            // Compact header appears only while working inside a tool
+            const compactHeader = document.getElementById('compactHeader');
+            const container = document.querySelector('.container');
+            const isTool = ['refund', 'orders', 'transfers', 'discount'].includes(tabId);
+
+            if (compactHeader) {
+                compactHeader.classList.toggle('visible', isTool);
+            }
+
+            if (container) {
+                container.classList.toggle('tool-active', isTool);
+            }
+
+            // Hide all panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Show target pane
+            const targetPane = document.getElementById('tab-' + tabId);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
+
+            // Update menu items
+            document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.tab === tabId) {
+                    item.classList.add('active');
+                }
+            });
+
+            currentTab = tabId;
+
+            // إظهار الهيدر الصغير مع زر المنيو عند دخول أي تطبيق
+            // وإخفاؤه في الصفحة الرئيسية
+            if (topHeader) {
+                topHeader.classList.toggle('show', tabId !== 'home');
+            }
+
+            // Load iframe if needed
+            const toolTabs = ['refund', 'orders', 'transfers', 'discount'];
+            if (toolTabs.includes(tabId)) {
+                const iframe = document.getElementById('iframe-' + tabId);
+                if (iframe && !iframe.dataset.loaded) {
+                    const srcMap = {
+                        'refund': 'refund-formatter.html',
+                        'orders': 'orders-splitter.html',
+                        'transfers': 'account-transfers.html',
+                        'discount': 'discount-processor.html'
+                    };
+                    iframe.src = srcMap[tabId];
+                    iframe.dataset.loaded = 'true';
+                }
+            }
+
+            showToast('📂 ' + getTabName(tabId));
+        }
+
+        function getTabName(tabId) {
+            const names = {
+                'home': 'الرئيسية',
+                'refund': 'Refund Formatter',
+                'orders': 'تقسيم الأوردرات',
+                'transfers': 'Account Transfers',
+                'discount': 'معالج الخصم'
+            };
+            return names[tabId] || tabId;
+        }
+
+        /* ==========================================
+           TOAST
+           ========================================== */
+        let toastTimeout;
+
+        function showToast(message, icon = '✅') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.querySelector('.toast-icon').textContent = icon;
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        /* ==========================================
+           KEYBOARD SHORTCUTS
+           ========================================== */
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && !e.shiftKey) {
+                const tabMap = {
+                    '1': 'home',
+                    '2': 'refund',
+                    '3': 'orders',
+                    '4': 'transfers',
+                    '5': 'discount'
+                };
+                const tabId = tabMap[e.key];
+                if (tabId) {
+                    e.preventDefault();
+                    switchTab(tabId);
+                }
+            }
+
+            if (e.key === 'Escape') {
+                if (sideMenu.classList.contains('open')) {
+                    closeMenu();
+                }
+            }
+
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'm') {
+                e.preventDefault();
+                toggleMenu();
+            }
+        });
+
+        /* ==========================================
+           IFRAME PRELOADING
+           ========================================== */
+        window.addEventListener('load', function() {
+            const srcMap = {
+                'refund': 'refund-formatter.html',
+                'orders': 'orders-splitter.html',
+                'transfers': 'account-transfers.html',
+                'discount': 'discount-processor.html'
+            };
+
+            Object.keys(srcMap).forEach(tabId => {
+                const iframe = document.getElementById('iframe-' + tabId);
+                if (iframe) {
+                    iframe.src = srcMap[tabId];
+                    iframe.dataset.loaded = 'true';
+                }
+            });
+
+            setTimeout(() => {
+                showToast('🏠Welcome To Hussein Gamal Tools🏠');
+            }, 400);
+        });
+
+        console.log('🏠 Hussein Gamal Suite');
+        console.log('  Ctrl+1-5    : تبديل التبويبات');
+        console.log('  Ctrl+Shift+M: فتح/إغلاق القائمة');
+        console.log('  Escape      : إغلاق القائمة');
+    </script>
+
+</body>
+
+</html>

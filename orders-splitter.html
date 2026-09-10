@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقسيم أوردرات واتساب - Claymorphism</title>
+
+    <style>
+        /* ==========================================
+           RESET & BASE
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            min-height: 100vh;
+            background: #e8e0d5;
+            /* خلفية دافئة ناعمة */
+            transition: all 0.4s ease;
+        }
+
+        /* ==========================================
+           ROOT VARIABLES (Light - Clay)
+           ========================================== */
+        :root {
+            --clay-bg: #e8e0d5;
+            --clay-card: #eae3d8;
+            --clay-shadow: 8px 8px 16px #cbc3b8,
+                -8px -8px 16px #fffff2;
+            --clay-inset: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            --clay-border: #d5cec3;
+            --clay-text: #3d3a36;
+            --clay-text-soft: #6b6560;
+            --clay-accent: #a67c6b;
+            --clay-accent-hover: #8f6b5a;
+            --clay-success: #7d9b7a;
+            --clay-danger: #b57a7a;
+            --clay-gold: #b8956e;
+            --clay-blue: #7a8fa6;
+            --clay-radius: 24px;
+            --clay-radius-sm: 14px;
+        }
+
+        /* ==========================================
+           DARK THEME (Clay Dark)
+           ========================================== */
+        [data-theme="dark"] {
+            --clay-bg: #2a2724;
+            --clay-card: #36322e;
+            --clay-shadow: 8px 8px 16px #1e1b19,
+                -8px -8px 16px #4e4943;
+            --clay-inset: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+            --clay-border: #4a4540;
+            --clay-text: #ede8e2;
+            --clay-text-soft: #b5aea6;
+            --clay-accent: #b8956e;
+            --clay-accent-hover: #d4ae84;
+            --clay-success: #8aaa87;
+            --clay-danger: #c48a8a;
+            --clay-gold: #d4ae84;
+            --clay-blue: #8aa3ba;
+        }
+
+        body {
+            background: var(--clay-bg);
+            transition: all 0.4s ease;
+        }
+
+        /* ==========================================
+           CLAY UTILITY
+           ========================================== */
+        .clay {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+        }
+
+        .clay-inset {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius-sm);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        .clay-press {
+            box-shadow: inset 4px 4px 10px #cbc3b8,
+                inset -4px -4px 10px #fffff2;
+        }
+
+        [data-theme="dark"] .clay-press {
+            box-shadow: inset 4px 4px 10px #1e1b19,
+                inset -4px -4px 10px #4e4943;
+        }
+
+        /* ==========================================
+           CONTAINER
+           ========================================== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* ==========================================
+           HEADER
+           ========================================== */
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 18px 24px;
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--clay-accent);
+            box-shadow: 6px 6px 14px #cbc3b8,
+                -6px -6px 14px #fffff2;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .header-logo {
+            box-shadow: 6px 6px 14px #1e1b19,
+                -6px -6px 14px #4e4943;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05) rotate(-5deg);
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title {
+            color: var(--clay-text);
+            font-size: 22px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .header-subtitle {
+            color: var(--clay-accent);
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--clay-card);
+            border: 1px solid var(--clay-border);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--clay-text);
+            box-shadow: 6px 6px 14px #cbc3b8,
+                -6px -6px 14px #fffff2;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            box-shadow: 6px 6px 14px #1e1b19,
+                -6px -6px 14px #4e4943;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        /* ==========================================
+           HEADINGS
+           ========================================== */
+        h3 {
+            color: var(--clay-text);
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            padding-right: 6px;
+        }
+
+        /* ==========================================
+           TEXTAREA
+           ========================================== */
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            margin-bottom: 15px;
+            padding: 18px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: var(--clay-radius);
+            background: var(--clay-card);
+            color: var(--clay-text);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            resize: vertical;
+            box-shadow: inset 6px 6px 14px #cbc3b8,
+                inset -6px -6px 14px #fffff2;
+            border: 1px solid var(--clay-border);
+        }
+
+        [data-theme="dark"] textarea {
+            box-shadow: inset 6px 6px 14px #1e1b19,
+                inset -6px -6px 14px #4e4943;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: inset 6px 6px 14px #cbc3b8,
+                inset -6px -6px 14px #fffff2,
+                0 0 0 3px var(--clay-accent);
+        }
+
+        [data-theme="dark"] textarea:focus {
+            box-shadow: inset 6px 6px 14px #1e1b19,
+                inset -6px -6px 14px #4e4943,
+                0 0 0 3px var(--clay-accent);
+        }
+
+        textarea::placeholder {
+            color: var(--clay-text-soft);
+            opacity: 0.7;
+        }
+
+        /* ==========================================
+           UNIFIED BOX (Clay Toolbar)
+           ========================================== */
+        .unified-box {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px 12px;
+            transition: all 0.3s ease;
+        }
+
+        /* ==========================================
+           BUTTONS - Clay Style
+           ========================================== */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--clay-radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            color: var(--clay-text);
+            background: var(--clay-card);
+            box-shadow: 4px 4px 10px #cbc3b8,
+                -4px -4px 10px #fffff2;
+            border: 1px solid var(--clay-border);
+            white-space: nowrap;
+        }
+
+        [data-theme="dark"] .btn {
+            box-shadow: 4px 4px 10px #1e1b19,
+                -4px -4px 10px #4e4943;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 6px 6px 16px #cbc3b8,
+                -6px -6px 16px #fffff2;
+        }
+
+        [data-theme="dark"] .btn:hover {
+            box-shadow: 6px 6px 16px #1e1b19,
+                -6px -6px 16px #4e4943;
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+        }
+
+        [data-theme="dark"] .btn:active {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .btn-danger {
+            color: #b57a7a;
+        }
+
+        .btn-danger:hover {
+            color: #a06565;
+        }
+
+        .btn-outline {
+            color: var(--clay-accent);
+        }
+
+        .btn-outline:hover {
+            color: var(--clay-accent-hover);
+        }
+
+        .btn-primary {
+            color: var(--clay-success);
+        }
+
+        .btn-primary:hover {
+            color: #6a8a67;
+        }
+
+        /* ==========================================
+           SEPARATOR
+           ========================================== */
+        .separator {
+            width: 2px;
+            height: 30px;
+            background: var(--clay-border);
+            border-radius: 4px;
+            flex-shrink: 0;
+            opacity: 0.6;
+        }
+
+        /* ==========================================
+           COUNTER BOX
+           ========================================== */
+        .counter-box {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius-sm);
+            padding: 5px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--clay-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            border: 1px solid var(--clay-border);
+        }
+
+        [data-theme="dark"] .counter-box {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .counter-box .total-orders {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .counter-box .divider {
+            color: var(--clay-border);
+            font-weight: 300;
+        }
+
+        .counter-box .copied-orders {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--clay-card);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--clay-success);
+            box-shadow: inset 2px 2px 6px #cbc3b8,
+                inset -2px -2px 6px #fffff2;
+            border: 1px solid var(--clay-border);
+        }
+
+        [data-theme="dark"] .counter-box .copied-orders {
+            box-shadow: inset 2px 2px 6px #1e1b19,
+                inset -2px -2px 6px #4e4943;
+        }
+
+        /* ==========================================
+           SUMMARY SECTION
+           ========================================== */
+        .summary-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 10px;
+        }
+
+        .summary-section .summary-label {
+            color: var(--clay-text);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .summary-total {
+            font-size: 20px;
+            font-weight: 700;
+            padding: 4px 18px;
+            border-radius: var(--clay-radius-sm);
+            direction: ltr;
+            text-align: center;
+            min-width: 70px;
+            background: var(--clay-card);
+            color: var(--clay-gold);
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .summary-total {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .summary-total:hover {
+            transform: scale(1.04);
+        }
+
+        .summary-customers {
+            background: var(--clay-card);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--clay-text);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: inset 2px 2px 6px #cbc3b8,
+                inset -2px -2px 6px #fffff2;
+            border: 1px solid var(--clay-border);
+        }
+
+        [data-theme="dark"] .summary-customers {
+            box-shadow: inset 2px 2px 6px #1e1b19,
+                inset -2px -2px 6px #4e4943;
+        }
+
+        /* ==========================================
+           ORDER CARDS - Claymorphism
+           ========================================== */
+        .order {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+            padding: 20px 24px;
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+            animation: slideUp 0.4s ease forwards;
+            opacity: 0;
+            position: relative;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .order:hover {
+            transform: translateY(-4px);
+            box-shadow: 12px 12px 24px #cbc3b8,
+                -12px -12px 24px #fffff2;
+        }
+
+        [data-theme="dark"] .order:hover {
+            box-shadow: 12px 12px 24px #1e1b19,
+                -12px -12px 24px #4e4943;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .order:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .order:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+        .order:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+        .order:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+        .order:nth-child(6) {
+            animation-delay: 0.3s;
+        }
+
+        /* ==========================================
+           ORDER HEADER
+           ========================================== */
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--clay-border);
+        }
+
+        .order-header .order-number {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--clay-accent);
+        }
+
+        .order-header .order-amount-header {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--clay-gold);
+            direction: ltr;
+        }
+
+        .order-divider {
+            border: none;
+            border-top: 1px solid var(--clay-border);
+            margin: 6px 0;
+            opacity: 0.4;
+        }
+
+        /* ==========================================
+           ORDER ROWS
+           ========================================== */
+        .order-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            padding: 4px 0;
+            color: var(--clay-text-soft);
+        }
+
+        .order-row .row-icon {
+            font-size: 14px;
+            min-width: 22px;
+        }
+
+        .order-row .row-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--clay-accent);
+            min-width: 85px;
+        }
+
+        .order-row .row-value {
+            font-size: 13px;
+            color: var(--clay-text);
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .order-products {
+            padding: 4px 0;
+        }
+
+        .order-products .products-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--clay-accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .order-products .product-item {
+            font-size: 13px;
+            color: var(--clay-text);
+            padding: 2px 20px;
+            line-height: 1.6;
+        }
+
+        .order-row .row-value.amount-value {
+            font-weight: 700;
+            color: var(--clay-gold);
+            direction: ltr;
+        }
+
+        .order-row .row-value.location-value {
+            color: var(--clay-blue);
+            direction: ltr;
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        /* ==========================================
+           ORDER ACTIONS (Buttons inside card)
+           ========================================== */
+        .order-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-top: 2px solid var(--clay-border);
+            padding-top: 12px;
+            margin-top: 8px;
+            justify-content: flex-start;
+        }
+
+        .order-actions button {
+            padding: 8px 18px;
+            border: none;
+            border-radius: var(--clay-radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            background: var(--clay-card);
+            box-shadow: 4px 4px 10px #cbc3b8,
+                -4px -4px 10px #fffff2;
+            border: 1px solid var(--clay-border);
+            color: var(--clay-text);
+        }
+
+        [data-theme="dark"] .order-actions button {
+            box-shadow: 4px 4px 10px #1e1b19,
+                -4px -4px 10px #4e4943;
+        }
+
+        .order-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 16px #cbc3b8,
+                -6px -6px 16px #fffff2;
+        }
+
+        [data-theme="dark"] .order-actions button:hover {
+            box-shadow: 6px 6px 16px #1e1b19,
+                -6px -6px 16px #4e4943;
+        }
+
+        .order-actions button:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+        }
+
+        [data-theme="dark"] .order-actions button:active {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .btn-copy {
+            color: var(--clay-success);
+        }
+
+        .btn-copy:hover {
+            color: #6a8a67;
+        }
+
+        .btn-copy.copied {
+            color: var(--clay-text-soft);
+            opacity: 0.7;
+            cursor: default;
+            transform: none !important;
+        }
+
+        .btn-delete {
+            color: var(--clay-danger);
+        }
+
+        .btn-delete:hover {
+            color: #a06565;
+        }
+
+        /* ==========================================
+           COPIED ORDER - RGB Glow with Clay
+           ========================================== */
+        @keyframes clay-glow {
+            0% {
+                border-color: #b57a7a;
+                box-shadow: 0 0 20px rgba(181, 122, 122, 0.2), var(--clay-shadow);
+            }
+            33% {
+                border-color: #b8956e;
+                box-shadow: 0 0 20px rgba(184, 149, 110, 0.2), var(--clay-shadow);
+            }
+            66% {
+                border-color: #7d9b7a;
+                box-shadow: 0 0 20px rgba(125, 155, 122, 0.2), var(--clay-shadow);
+            }
+            100% {
+                border-color: #b57a7a;
+                box-shadow: 0 0 20px rgba(181, 122, 122, 0.2), var(--clay-shadow);
+            }
+        }
+
+        .order.copied-order {
+            animation: clay-glow 2.5s ease-in-out infinite, slideUp 0.4s ease forwards;
+            border-width: 2px;
+        }
+
+        .order.copied-order::after {
+            content: "✅";
+            position: absolute;
+            top: 14px;
+            left: 18px;
+            font-size: 22px;
+            animation: float-check 1.5s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float-check {
+            0%,
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+            50% {
+                transform: translateY(-5px) scale(1.1);
+            }
+        }
+
+        /* ==========================================
+           EMPTY STATE
+           ========================================== */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--clay-text-soft);
+            font-size: 18px;
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            border: 2px dashed var(--clay-border);
+            box-shadow: var(--clay-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .empty::before {
+            content: "📦";
+            display: block;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* ==========================================
+           TOAST
+           ========================================== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--clay-card);
+            color: var(--clay-text);
+            padding: 16px 28px;
+            border-radius: var(--clay-radius);
+            box-shadow: 12px 12px 24px #cbc3b8,
+                -12px -12px 24px #fffff2;
+            border: 1px solid var(--clay-border);
+            font-size: 14px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
+
+        [data-theme="dark"] .toast {
+            box-shadow: 12px 12px 24px #1e1b19,
+                -12px -12px 24px #4e4943;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast .toast-icon {
+            font-size: 20px;
+        }
+
+        /* ==========================================
+           RESPONSIVE
+           ========================================== */
+        @media (max-width: 820px) {
+            body {
+                padding: 15px;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                align-self: flex-end;
+                margin-top: -40px;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+
+            .header-subtitle {
+                font-size: 11px;
+            }
+
+            .header-logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .unified-box {
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 10px 14px;
+                gap: 4px 10px;
+                justify-content: center;
+            }
+
+            .unified-box .separator {
+                display: none;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .counter-box {
+                font-size: 12px;
+                padding: 4px 12px;
+            }
+
+            .summary-section {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .summary-total {
+                font-size: 16px;
+                padding: 3px 14px;
+                min-width: 60px;
+            }
+
+            .summary-customers {
+                font-size: 12px;
+                padding: 3px 12px;
+            }
+
+            .order-row {
+                flex-wrap: wrap;
+                gap: 3px;
+            }
+
+            .order-row .row-label {
+                min-width: 70px;
+                font-size: 11px;
+            }
+
+            .order-row .row-value {
+                font-size: 12px;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .order-actions button {
+                justify-content: center;
+            }
+
+            .order {
+                padding: 16px 18px;
+            }
+
+            .toast {
+                right: 15px;
+                left: 15px;
+                bottom: 15px;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .unified-box {
+                padding: 8px 10px;
+                gap: 3px 6px;
+            }
+
+            .btn {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+
+            .counter-box {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+
+            .summary-total {
+                font-size: 14px;
+                padding: 2px 10px;
+                min-width: 50px;
+            }
+
+            .summary-customers {
+                font-size: 11px;
+                padding: 2px 8px;
+            }
+
+            .order {
+                padding: 12px 14px;
+            }
+
+            .order-row .row-label {
+                min-width: 60px;
+                font-size: 10px;
+            }
+
+            .order-row .row-value {
+                font-size: 11px;
+            }
+
+            .order-products .product-item {
+                font-size: 11px;
+                padding: 2px 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ==========================================
+        HEADER
+        ========================================== -->
+        <div class="header-top">
+            <div class="header-left">
+                <img class="header-logo"
+                     src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png"
+                     alt="Logo"
+                     onerror="this.style.display='none'">
+                <div class="header-info">
+                    <span class="header-title">📦 تقسيم أوردرات واتساب</span>
+                    <span class="header-subtitle">Created By Hussein Gamal Sr.Operation &amp; 3PL Logistics</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
+            </div>
+        </div>
+
+        <!-- ==========================================
+        INPUT
+        ========================================== -->
+        <h3>📋 الصق أوردرات Excel</h3>
+        <textarea id="input" placeholder="الصق البيانات هنا..."></textarea>
+
+        <!-- ==========================================
+        TOOLBAR (Clay)
+        ========================================== -->
+        <div class="unified-box">
+
+            <button class="btn btn-danger" onclick="deleteAllOrders()">🗑️ حذف الكل</button>
+            <button class="btn btn-outline" onclick="resetOrders()">🔄 إعادة تعيين</button>
+            <button class="btn btn-outline" onclick="downloadTemplate()">⬇️ Template Excel</button>
+
+            <span class="separator"></span>
+
+            <div class="counter-box">
+                <span class="total-orders">📦 عداد الأوردرات <span id="totalOrdersCount">0</span></span>
+                <span class="divider">|</span>
+                <span class="copied-orders">✅ المنسوخ <span id="copiedOrdersCount">0/0</span></span>
+            </div>
+
+            <span class="separator"></span>
+
+            <div class="summary-section">
+                <span class="summary-label">💰 إجمالي المبالغ المحصلة</span>
+                <span class="summary-total" id="totalAmount">0</span>
+                <span class="summary-customers" id="uniqueCustomers">👤 0 عميل</span>
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+        ORDERS CONTAINER
+        ========================================== -->
+        <h3>📦 الأوردرات بعد التنسيق</h3>
+        <div id="orders"></div>
+
+    </div>
+
+    <!-- ==========================================
+    TOAST
+    ========================================== -->
+    <div id="toast" class="toast">
+        <span class="toast-icon">✅</span>
+        <span id="toastMessage">تم النسخ</span>
+    </div>
+
+    <script>
+        // ==========================================
+        // CORE LOGIC (Unchanged - نفس الكود تماماً)
+        // ==========================================
+
+        function arabicOrder(num) {
+            const map = {
+                1: "الأول",
+                2: "الثاني",
+                3: "الثالث",
+                4: "الرابع",
+                5: "الخامس",
+                6: "السادس",
+                7: "السابع",
+                8: "الثامن",
+                9: "التاسع",
+                10: "العاشر",
+                11: "الحادي عشر",
+                12: "الثاني عشر",
+                13: "الثالث عشر",
+                14: "الرابع عشر",
+                15: "الخامس عشر",
+                16: "السادس عشر",
+                17: "السابع عشر",
+                18: "الثامن عشر",
+                19: "التاسع عشر",
+                20: "العشرون"
+            };
+            return map[num] || num;
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function extractAmountFromText(text) {
+            if (!text) return 0;
+            const match = text.match(/(\d+)/);
+            return match ? parseInt(match[1]) : 0;
+        }
+
+        const textarea = document.getElementById("input");
+        let copiedOrders = new Set();
+
+        // ==========================================
+        // THEME TOGGLE
+        // ==========================================
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+                showToast('☀️ تم التبديل إلى الوضع النهاري');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+                showToast('🌙 تم التبديل إلى الوضع الليلي');
+            }
+        }
+
+        window.addEventListener("load", function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+            parseOrders();
+        });
+
+        textarea.addEventListener("input", function() {
+            parseOrders();
+        });
+
+        // ==========================================
+        // DOWNLOAD TEMPLATE
+        // ==========================================
+        function downloadTemplate() {
+            const headers = [
+                "Name", "Total", "Lineitem quantity", "Lineitem name",
+                "Shipping Name", "Shipping Street", "Shipping City", "Shipping Phone", "Location"
+            ];
+            const notes = [
+                "رقم الاوردر يبدأ بـ #HM26-........",
+                "إجمالي المبلغ بعد خصم الديبوزت",
+                "عدد القطع",
+                "اسم المنتج",
+                "اسم العميل",
+                "عنوان العميل",
+                "المنطقة السكنية",
+                "رقم هاتف العميل",
+                "الموقع"
+            ];
+
+            const escapeHtml = (value) => String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;");
+
+            const headerRow = headers.map(h => `<th>${escapeHtml(h)}</th>`).join("");
+            const noteRow = notes.map(n => `<td class="note-cell">${escapeHtml(n)}</td>`).join("");
+
+            const excelHtml = `<!DOCTYPE html>
+        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:x="urn:schemas-microsoft-com:office:excel"
+              xmlns="http://www.w3.org/TR/REC-html40"
+              dir="rtl">
+        <head>
+        <meta charset="UTF-8">
+        <!--[if gte mso 9]><xml>
+        <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+                <x:ExcelWorksheet>
+                    <x:Name>Bulky Template</x:Name>
+                    <x:WorksheetOptions>
+                        <x:DisplayGridlines/>
+                    </x:WorksheetOptions>
+                </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+        </xml><![endif]-->
+        <style>
+            table {
+                border-collapse: collapse;
+                direction: rtl;
+                font-family: Calibri, Arial, sans-serif;
+                font-size: 11pt;
+            }
+            th {
+                background: #a67c6b;
+                color: #ffffff;
+                font-weight: 700;
+                border: 1px solid #b7c9c2;
+                padding: 8px 10px;
+                text-align: center;
+                white-space: nowrap;
+            }
+            td.note-cell {
+                background: #ffffff;
+                color: #555555;
+                border: 1px solid #d8e0dd;
+                padding: 8px 10px;
+                text-align: center;
+                white-space: nowrap;
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+            }
+        </style>
+        </head>
+        <body>
+        <table>
+            <thead><tr>${headerRow}</tr></thead>
+            <tbody><tr>${noteRow}</tr></tbody>
+        </table>
+        </body>
+        </html>`;
+
+            const blob = new Blob(["\uFEFF", excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "Bulky_Template.xls";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast("⬇️ تم تنزيل Bulky_Template.xls");
+        }
+
+        // ==========================================
+        // PARSE ORDERS
+        // ==========================================
+        function parseOrders() {
+            const lines = textarea.value.trim().split("\n");
+            const container = document.getElementById("orders");
+            container.innerHTML = "";
+
+            if (textarea.value.trim() === "") {
+                container.innerHTML =
+                    `<div class="empty">الصق البيانات وسيتم تحويلها تلقائياً</div>`;
+                updateStatsAndSummary([]);
+                return;
+            }
+
+            let orders = {};
+            let customers = {};
+
+            lines.forEach(line => {
+                const cols = line.split("\t");
+                const orderNumber = cols[0]?.trim();
+                const amountText = cols[1]?.trim() || "0";
+                const qty = parseInt(cols[2]) || 0;
+                const product = cols[3]?.trim();
+                const customer = cols[4]?.trim();
+                const street = cols[5]?.trim();
+                const city = cols[6]?.trim();
+                const phone = cols[7]?.trim();
+                const mapLink = cols[8]?.trim();
+
+                if (!orderNumber) return;
+
+                if (!orders[orderNumber]) {
+                    orders[orderNumber] = {
+                        customer: customer || "-",
+                        phone: phone || "-",
+                        amountText: amountText,
+                        amountNumber: extractAmountFromText(amountText),
+                        address: [street, city].filter(Boolean).join(" - "),
+                        location: mapLink || "-",
+                        products: {}
+                    };
+                    if (customer) {
+                        customers[customer] = (customers[customer] || 0) + extractAmountFromText(amountText);
+                    }
+                }
+
+                if (product) {
+                    orders[orderNumber].products[product] =
+                        (orders[orderNumber].products[product] || 0) + (qty || 1);
+                }
+            });
+
+            let counter = 1;
+
+            Object.entries(orders).forEach(([order, data]) => {
+                const productsHtml = Object.entries(data.products)
+                    .map(([name, qty]) =>
+                        `<div class="product-item">- العدد (${qty}) ${name}</div>`
+                    ).join("");
+
+                const orderId = `order-${order}-${counter}`;
+
+                const productsText = Object.entries(data.products)
+                    .map(([name, qty]) => `- العدد (${qty}) ${name}`)
+                    .join("\n");
+
+                const copyText =
+                    `🚚 *${arabicOrder(counter)} تسليم*\n` +
+                    `📦 *رقم الأوردر:* ${order}\n` +
+                    `👤 *اسم العميل:* ${data.customer || "-"}\n` +
+                    `📞 *الموبايل:* ${data.phone || "-"}\n` +
+                    `📍 *العنوان:* ${data.address || "-"}\n` +
+                    `🛒 *المنتجات:*\n${productsText}\n` +
+                    `💰 *المبلغ:* ${data.amountText}\n` +
+                    `📍 الموقع: ${data.location || "-"}`;
+
+                const div = document.createElement("div");
+                div.className = "order";
+                div.id = orderId;
+
+                const header = document.createElement("div");
+                header.className = "order-header";
+                header.innerHTML = `
+                    <span class="order-number">#${counter} - ${arabicOrder(counter)} تسليم</span>
+                    <span class="order-amount-header">💰 ${data.amountText}</span>
+                `;
+                div.appendChild(header);
+
+                const rowOrder = document.createElement("div");
+                rowOrder.className = "order-row";
+                rowOrder.innerHTML =
+                    `<span class="row-icon">📦</span><span class="row-label">رقم الأوردر</span><span class="row-value">${order}</span>`;
+                div.appendChild(rowOrder);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const rowCustomer = document.createElement("div");
+                rowCustomer.className = "order-row";
+                rowCustomer.innerHTML =
+                    `<span class="row-icon">👤</span><span class="row-label">اسم العميل</span><span class="row-value">${data.customer}</span>`;
+                div.appendChild(rowCustomer);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const rowPhone = document.createElement("div");
+                rowPhone.className = "order-row";
+                rowPhone.innerHTML =
+                    `<span class="row-icon">📞</span><span class="row-label">الموبايل</span><span class="row-value">${data.phone}</span>`;
+                div.appendChild(rowPhone);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const rowAddress = document.createElement("div");
+                rowAddress.className = "order-row";
+                rowAddress.innerHTML =
+                    `<span class="row-icon">📍</span><span class="row-label">العنوان</span><span class="row-value">${data.address}</span>`;
+                div.appendChild(rowAddress);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const productsSection = document.createElement("div");
+                productsSection.className = "order-products";
+                productsSection.innerHTML =
+                    `<div class="products-label">🛒 المنتجات</div>${productsHtml}`;
+                div.appendChild(productsSection);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const rowAmount = document.createElement("div");
+                rowAmount.className = "order-row";
+                rowAmount.innerHTML =
+                    `<span class="row-icon">💰</span><span class="row-label">المبلغ</span><span class="row-value amount-value">${data.amountText}</span>`;
+                div.appendChild(rowAmount);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const rowLocation = document.createElement("div");
+                rowLocation.className = "order-row";
+                rowLocation.innerHTML =
+                    `<span class="row-icon">📍</span><span class="row-label">الموقع</span><span class="row-value location-value">${data.location}</span>`;
+                div.appendChild(rowLocation);
+                div.appendChild(document.createElement("hr")).className = "order-divider";
+
+                const actions = document.createElement("div");
+                actions.className = "order-actions";
+
+                const copyBtn = document.createElement("button");
+                copyBtn.className = "btn-copy";
+                copyBtn.textContent = "📋 نسخ";
+                copyBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    copyOrder(this, orderId, copyText);
+                };
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "btn-delete";
+                deleteBtn.textContent = "🗑️ حذف";
+                deleteBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    div.remove();
+                    updateStatsAndSummary(getOrdersData());
+                    showToast('🗑️ تم حذف الأوردر');
+                };
+
+                actions.appendChild(copyBtn);
+                actions.appendChild(deleteBtn);
+                div.appendChild(actions);
+
+                if (copiedOrders.has(orderId)) {
+                    div.classList.add('copied-order');
+                    copyBtn.classList.add('copied');
+                    copyBtn.textContent = '✅ تم';
+                    copyBtn.disabled = true;
+                }
+
+                container.appendChild(div);
+                counter++;
+            });
+
+            updateStatsAndSummary(getOrdersData());
+        }
+
+        function getOrdersData() {
+            const orders = document.querySelectorAll('.order');
+            const data = [];
+            orders.forEach(order => {
+                const rows = order.querySelectorAll('.order-row');
+                let customer = '-';
+                let amount = 0;
+                rows.forEach(row => {
+                    const label = row.querySelector('.row-label')?.textContent || '';
+                    const value = row.querySelector('.row-value')?.textContent || '';
+                    if (label === 'اسم العميل') customer = value;
+                    if (label === 'المبلغ') amount = extractAmountFromText(value);
+                });
+                data.push({ amount, customer });
+            });
+            return data;
+        }
+
+        function updateStatsAndSummary(ordersData) {
+            const totalOrders = document.querySelectorAll('.order').length;
+            const copied = document.querySelectorAll('.order.copied-order').length;
+            document.getElementById('totalOrdersCount').textContent = totalOrders;
+            document.getElementById('copiedOrdersCount').textContent = `${copied}/${totalOrders}`;
+
+            let totalAmount = 0;
+            let customers = new Set();
+            ordersData.forEach(data => {
+                totalAmount += data.amount || 0;
+                if (data.customer && data.customer !== '-') customers.add(data.customer);
+            });
+            document.getElementById('totalAmount').textContent = formatNumber(totalAmount);
+            document.getElementById('uniqueCustomers').textContent = `👤 ${customers.size} عميل`;
+        }
+
+        function copyOrder(btn, orderId, text) {
+            navigator.clipboard.writeText(text)
+                .then(() => { markOrderAsCopied(btn, orderId); })
+                .catch(() => { fallbackCopy(text);
+                    markOrderAsCopied(btn, orderId); });
+        }
+
+        function markOrderAsCopied(btn, orderId) {
+            btn.classList.add('copied');
+            btn.textContent = '✅ تم';
+            btn.disabled = true;
+            const orderDiv = document.getElementById(orderId);
+            if (orderDiv) orderDiv.classList.add('copied-order');
+            copiedOrders.add(orderId);
+            updateStatsAndSummary(getOrdersData());
+            showToast('✅ تم نسخ الأوردر بنجاح');
+        }
+
+        function fallbackCopy(text) {
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+        }
+
+        function copyAllOrders() {
+            const orders = document.querySelectorAll('.order');
+            if (orders.length === 0) {
+                showToast('⚠️ لا توجد أوردرات للنسخ');
+                return;
+            }
+            let text = "";
+            let newlyCopied = 0;
+            orders.forEach((order, index) => {
+                let orderText = '';
+                const header = order.querySelector('.order-header');
+                if (header) {
+                    const num = header.querySelector('.order-number')?.textContent || `#${index + 1}`;
+                    const amount = header.querySelector('.order-amount-header')?.textContent || '';
+                    orderText += `${num} - ${amount}\n${'─'.repeat(40)}\n`;
+                }
+                const rows = order.querySelectorAll('.order-row');
+                rows.forEach(row => {
+                    const icon = row.querySelector('.row-icon')?.textContent || '';
+                    const label = row.querySelector('.row-label')?.textContent || '';
+                    const value = row.querySelector('.row-value')?.textContent || '';
+                    orderText += `${icon} ${label}: ${value}\n`;
+                });
+                const productsSection = order.querySelector('.order-products');
+                if (productsSection) {
+                    const items = productsSection.querySelectorAll('.product-item');
+                    if (items.length > 0) {
+                        orderText += '\n🛒 المنتجات:\n';
+                        items.forEach(item => { orderText += `${item.textContent}\n`; });
+                    }
+                }
+                orderText += '\n' + '═'.repeat(40) + '\n\n';
+                const orderId = order.id;
+                if (!copiedOrders.has(orderId)) {
+                    copiedOrders.add(orderId);
+                    order.classList.add('copied-order');
+                    const btn = order.querySelector('.btn-copy');
+                    if (btn) {
+                        btn.classList.add('copied');
+                        btn.textContent = '✅ تم';
+                        btn.disabled = true;
+                    }
+                    newlyCopied++;
+                }
+                text += orderText;
+            });
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    updateStatsAndSummary(getOrdersData());
+                    showToast(`✅ تم نسخ ${orders.length} أوردر (${newlyCopied} جديد)`);
+                })
+                .catch(() => {
+                    fallbackCopy(text);
+                    updateStatsAndSummary(getOrdersData());
+                    showToast(`✅ تم نسخ ${orders.length} أوردر (${newlyCopied} جديد)`);
+                });
+        }
+
+        function deleteAllOrders() {
+            const orders = document.querySelectorAll('.order');
+            if (orders.length === 0) {
+                showToast('⚠️ لا توجد أوردرات للحذف');
+                return;
+            }
+            if (confirm(`هل أنت متأكد من حذف ${orders.length} أوردر؟`)) {
+                orders.forEach(order => order.remove());
+                copiedOrders.clear();
+                updateStatsAndSummary([]);
+                showToast(`🗑️ تم حذف جميع الأوردرات`);
+            }
+        }
+
+        function resetOrders() {
+            const orders = document.querySelectorAll('.order.copied-order');
+            if (orders.length === 0) {
+                showToast('⚠️ لا توجد أوردرات منسوخة لإعادة تعيينها');
+                return;
+            }
+            if (confirm(`هل أنت متأكد من إعادة تعيين ${orders.length} أوردر منسوخ؟`)) {
+                orders.forEach(order => {
+                    const orderId = order.id;
+                    copiedOrders.delete(orderId);
+                    order.classList.remove('copied-order');
+                    const btn = order.querySelector('.btn-copy');
+                    if (btn) {
+                        btn.classList.remove('copied');
+                        btn.textContent = '📋 نسخ';
+                        btn.disabled = false;
+                    }
+                });
+                updateStatsAndSummary(getOrdersData());
+                showToast(`🔄 تم إعادة تعيين ${orders.length} أوردر`);
+            }
+        }
+
+        // ==========================================
+        // TOAST
+        // ==========================================
+        let toastTimeout;
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==========================================
+        // KEYBOARD SHORTCUTS
+        // ==========================================
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                copyAllOrders();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                deleteAllOrders();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+                e.preventDefault();
+                resetOrders();
+            }
+        });
+    </script>
+
+</body>
+</html>

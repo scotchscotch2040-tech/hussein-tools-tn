@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Formatter - Claymorphism</title>
+    <style>
+        /* ==========================================
+           RESET & BASE
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            min-height: 100vh;
+            background: #e8e0d5;
+            transition: all 0.4s ease;
+        }
+
+        /* ==========================================
+           ROOT VARIABLES (Light - Clay)
+           ========================================== */
+        :root {
+            --clay-bg: #e8e0d5;
+            --clay-card: #eae3d8;
+            --clay-shadow: 8px 8px 16px #cbc3b8,
+                -8px -8px 16px #fffff2;
+            --clay-inset: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            --clay-inset-deep: inset 6px 6px 14px #cbc3b8,
+                inset -6px -6px 14px #fffff2;
+            --clay-border: #d5cec3;
+            --clay-text: #3d3a36;
+            --clay-text-soft: #6b6560;
+            --clay-accent: #a67c6b;
+            --clay-accent-hover: #8f6b5a;
+            --clay-success: #7d9b7a;
+            --clay-danger: #b57a7a;
+            --clay-gold: #b8956e;
+            --clay-blue: #7a8fa6;
+            --clay-purple: #9b7ab5;
+            --clay-warning: #d4ae84;
+            --clay-teal: #7a9f9f;
+            --clay-radius: 24px;
+            --clay-radius-sm: 14px;
+        }
+
+        /* ==========================================
+           DARK THEME (Clay Dark)
+           ========================================== */
+        [data-theme="dark"] {
+            --clay-bg: #2a2724;
+            --clay-card: #36322e;
+            --clay-shadow: 8px 8px 16px #1e1b19,
+                -8px -8px 16px #4e4943;
+            --clay-inset: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+            --clay-inset-deep: inset 6px 6px 14px #1e1b19,
+                inset -6px -6px 14px #4e4943;
+            --clay-border: #4a4540;
+            --clay-text: #ede8e2;
+            --clay-text-soft: #b5aea6;
+            --clay-accent: #b8956e;
+            --clay-accent-hover: #d4ae84;
+            --clay-success: #8aaa87;
+            --clay-danger: #c48a8a;
+            --clay-gold: #d4ae84;
+            --clay-blue: #8aa3ba;
+            --clay-purple: #b59ac9;
+            --clay-warning: #d4ae84;
+            --clay-teal: #8ab5b5;
+        }
+
+        body {
+            background: var(--clay-bg);
+            transition: all 0.4s ease;
+        }
+
+        /* ==========================================
+           CLAY UTILITY
+           ========================================== */
+        .clay {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+        }
+
+        .clay-inset {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius-sm);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        /* ==========================================
+           CONTAINER
+           ========================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ==========================================
+           HEADER
+           ========================================== */
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 18px 24px;
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--clay-accent);
+            box-shadow: 6px 6px 14px #cbc3b8,
+                -6px -6px 14px #fffff2;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .header-logo {
+            box-shadow: 6px 6px 14px #1e1b19,
+                -6px -6px 14px #4e4943;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05) rotate(-5deg);
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title {
+            color: var(--clay-text);
+            font-size: 22px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .header-subtitle {
+            color: var(--clay-accent);
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--clay-card);
+            border: 1px solid var(--clay-border);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--clay-text);
+            box-shadow: 6px 6px 14px #cbc3b8,
+                -6px -6px 14px #fffff2;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            box-shadow: 6px 6px 14px #1e1b19,
+                -6px -6px 14px #4e4943;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        /* ==========================================
+           INPUT SECTION
+           ========================================== */
+        .input-section {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            padding: 22px;
+            box-shadow: var(--clay-shadow);
+            margin-bottom: 25px;
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+        }
+
+        .input-section:focus-within {
+            box-shadow: var(--clay-shadow);
+            border-color: var(--clay-accent);
+        }
+
+        #input {
+            width: 100%;
+            height: 150px;
+            padding: 18px 20px;
+            border: none;
+            border-radius: var(--clay-radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: var(--clay-card);
+            color: var(--clay-text);
+            direction: ltr;
+            box-shadow: var(--clay-inset-deep);
+            border: 1px solid var(--clay-border);
+        }
+
+        #input:focus {
+            outline: none;
+            box-shadow: var(--clay-inset-deep), 0 0 0 3px var(--clay-accent);
+        }
+
+        #input::placeholder {
+            color: var(--clay-text-soft);
+            opacity: 0.7;
+            direction: rtl;
+        }
+
+        /* ==========================================
+           ACTIONS / TOOLBAR
+           ========================================== */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--clay-radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            color: var(--clay-text);
+            background: var(--clay-card);
+            box-shadow: 4px 4px 10px #cbc3b8,
+                -4px -4px 10px #fffff2;
+            border: 1px solid var(--clay-border);
+            white-space: nowrap;
+        }
+
+        [data-theme="dark"] .btn {
+            box-shadow: 4px 4px 10px #1e1b19,
+                -4px -4px 10px #4e4943;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 6px 6px 16px #cbc3b8,
+                -6px -6px 16px #fffff2;
+        }
+
+        [data-theme="dark"] .btn:hover {
+            box-shadow: 6px 6px 16px #1e1b19,
+                -6px -6px 16px #4e4943;
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: var(--clay-inset);
+        }
+
+        .btn-primary {
+            color: var(--clay-success);
+        }
+        .btn-primary:hover {
+            color: #6a8a67;
+        }
+
+        .btn-outline {
+            color: var(--clay-accent);
+        }
+        .btn-outline:hover {
+            color: var(--clay-accent-hover);
+        }
+
+        .btn-warning {
+            color: var(--clay-warning);
+        }
+        .btn-warning:hover {
+            color: #c49a6e;
+        }
+
+        .btn-purple {
+            color: var(--clay-purple);
+        }
+        .btn-purple:hover {
+            color: #8a6ba3;
+        }
+
+        .btn-sort {
+            color: var(--clay-teal);
+        }
+        .btn-sort:hover {
+            color: #6a8f8f;
+        }
+
+        .btn-sort.active {
+            color: var(--clay-success);
+            box-shadow: var(--clay-inset);
+        }
+
+        .btn-danger {
+            color: var(--clay-danger);
+        }
+        .btn-danger:hover {
+            color: #a06565;
+        }
+
+        /* ==========================================
+           STATS
+           ========================================== */
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-right: auto;
+            font-size: 13px;
+            color: var(--clay-text);
+            flex-wrap: wrap;
+        }
+
+        .stats span {
+            background: var(--clay-card);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--clay-text);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        .stats .stat-total {
+            color: var(--clay-gold);
+        }
+
+        .stats .stat-wallet {
+            color: var(--clay-danger);
+        }
+
+        .stats .stat-instapay {
+            color: var(--clay-warning);
+        }
+
+        .stats .highlight-stat {
+            color: var(--clay-success);
+        }
+
+        /* ==========================================
+           LOADING INDICATOR
+           ========================================== */
+        .loading-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: var(--clay-text-soft);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 5px 14px;
+            border-radius: 20px;
+            background: var(--clay-card);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        .loading-indicator.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--clay-border);
+            border-top: 3px solid var(--clay-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ==========================================
+           CARDS GRID
+           ========================================== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================
+           CARD - Claymorphism
+           ========================================== */
+        .card {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            overflow: hidden;
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+            animation: slideUp 0.4s ease forwards;
+            opacity: 0;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--clay-accent), var(--clay-success), var(--clay-accent));
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+            border-radius: var(--clay-radius) var(--clay-radius) 0 0;
+        }
+
+        @keyframes shimmer {
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px #cbc3b8,
+                -12px -12px 24px #fffff2;
+        }
+
+        [data-theme="dark"] .card:hover {
+            box-shadow: 12px 12px 24px #1e1b19,
+                -12px -12px 24px #4e4943;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .card:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+        .card:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+        .card:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+        .card:nth-child(6) {
+            animation-delay: 0.3s;
+        }
+        .card:nth-child(7) {
+            animation-delay: 0.35s;
+        }
+        .card:nth-child(8) {
+            animation-delay: 0.4s;
+        }
+
+        /* ==========================================
+           CARD HEADER
+           ========================================== */
+        .cardHeader {
+            background: var(--clay-card);
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--clay-border);
+        }
+
+        .cardHeader h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--clay-text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cardHeader .badge {
+            background: var(--clay-card);
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--clay-text-soft);
+            box-shadow: var(--clay-inset);
+            border: 1px solid var(--clay-border);
+        }
+
+        .cardHeader .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .copyBtn {
+            background: var(--clay-card);
+            color: var(--clay-text);
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: var(--clay-radius-sm);
+            border: 1px solid var(--clay-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 70px;
+            justify-content: center;
+            box-shadow: 3px 3px 8px #cbc3b8,
+                -3px -3px 8px #fffff2;
+        }
+
+        [data-theme="dark"] .copyBtn {
+            box-shadow: 3px 3px 8px #1e1b19,
+                -3px -3px 8px #4e4943;
+        }
+
+        .copyBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 12px #cbc3b8,
+                -4px -4px 12px #fffff2;
+        }
+
+        [data-theme="dark"] .copyBtn:hover {
+            box-shadow: 4px 4px 12px #1e1b19,
+                -4px -4px 12px #4e4943;
+        }
+
+        .copyBtn:active {
+            transform: scale(0.95);
+            box-shadow: var(--clay-inset);
+        }
+
+        .copyBtn.copied {
+            color: var(--clay-success);
+            cursor: default;
+            opacity: 0.8;
+            box-shadow: var(--clay-inset);
+        }
+
+        .copyBtn.copied:hover {
+            transform: none;
+        }
+
+        /* ==========================================
+           CARD BODY
+           ========================================== */
+        .cardBody {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .row {
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--clay-border);
+            display: flex;
+            align-items: baseline;
+            transition: background 0.2s ease;
+            gap: 12px;
+            color: var(--clay-text-soft);
+        }
+
+        .row:hover {
+            background: var(--clay-bg);
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--clay-accent);
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .label .icon {
+            font-size: 14px;
+        }
+
+        .value {
+            font-size: 13px;
+            color: var(--clay-text);
+            word-break: break-word;
+            flex: 1;
+            transition: color 0.3s ease;
+        }
+
+        /* ===== تمييز طريقة الدفع ===== */
+        .value.method-wallet {
+            color: var(--clay-danger) !important;
+            font-weight: 700;
+            background: var(--clay-card);
+            padding: 4px 12px;
+            border-radius: var(--clay-radius-sm);
+            border-right: 4px solid var(--clay-danger);
+            display: inline-block;
+            box-shadow: var(--clay-inset);
+        }
+
+        .value.method-instapay {
+            color: var(--clay-warning) !important;
+            font-weight: 700;
+            background: var(--clay-card);
+            padding: 4px 12px;
+            border-radius: var(--clay-radius-sm);
+            border-right: 4px solid var(--clay-warning);
+            display: inline-block;
+            box-shadow: var(--clay-inset);
+        }
+
+        .value.method-default {
+            color: var(--clay-text);
+            background: var(--clay-card);
+            padding: 4px 12px;
+            border-radius: var(--clay-radius-sm);
+            display: inline-block;
+            box-shadow: var(--clay-inset);
+        }
+
+        /* ==========================================
+           COPIED CARD - Clay Glow Colors
+           ========================================== */
+        .card.copied-card.color-1 {
+            border-color: #7a8fa6;
+            box-shadow: 0 0 20px rgba(122, 143, 166, 0.2), var(--clay-shadow);
+            animation: pulse-blue 2s ease-in-out infinite;
+        }
+        .card.copied-card.color-1::before {
+            background: linear-gradient(90deg, #7a8fa6, #9bb5cc, #7a8fa6);
+        }
+        @keyframes pulse-blue {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(122, 143, 166, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(122, 143, 166, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-2 {
+            border-color: #b58ab5;
+            box-shadow: 0 0 20px rgba(181, 138, 181, 0.2), var(--clay-shadow);
+            animation: pulse-purple 2.2s ease-in-out infinite;
+        }
+        .card.copied-card.color-2::before {
+            background: linear-gradient(90deg, #b58ab5, #d4b5d4, #b58ab5);
+        }
+        @keyframes pulse-purple {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(181, 138, 181, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(181, 138, 181, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-3 {
+            border-color: #d4ae84;
+            box-shadow: 0 0 20px rgba(212, 174, 132, 0.2), var(--clay-shadow);
+            animation: pulse-gold 2.4s ease-in-out infinite;
+        }
+        .card.copied-card.color-3::before {
+            background: linear-gradient(90deg, #d4ae84, #e8c9a8, #d4ae84);
+        }
+        @keyframes pulse-gold {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(212, 174, 132, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(212, 174, 132, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-4 {
+            border-color: #b58a7a;
+            box-shadow: 0 0 20px rgba(181, 138, 122, 0.2), var(--clay-shadow);
+            animation: pulse-terracotta 2.6s ease-in-out infinite;
+        }
+        .card.copied-card.color-4::before {
+            background: linear-gradient(90deg, #b58a7a, #d4b0a0, #b58a7a);
+        }
+        @keyframes pulse-terracotta {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(181, 138, 122, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(181, 138, 122, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-5 {
+            border-color: #7a9f7a;
+            box-shadow: 0 0 20px rgba(122, 159, 122, 0.2), var(--clay-shadow);
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+        .card.copied-card.color-5::before {
+            background: linear-gradient(90deg, #7a9f7a, #a8c9a8, #7a9f7a);
+        }
+        @keyframes pulse-green {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(122, 159, 122, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(122, 159, 122, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-6 {
+            border-color: #7a9f9f;
+            box-shadow: 0 0 20px rgba(122, 159, 159, 0.2), var(--clay-shadow);
+            animation: pulse-teal 2.3s ease-in-out infinite;
+        }
+        .card.copied-card.color-6::before {
+            background: linear-gradient(90deg, #7a9f9f, #a8c9c9, #7a9f9f);
+        }
+        @keyframes pulse-teal {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(122, 159, 159, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(122, 159, 159, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-7 {
+            border-color: #b5957a;
+            box-shadow: 0 0 20px rgba(181, 149, 122, 0.2), var(--clay-shadow);
+            animation: pulse-brown 2.5s ease-in-out infinite;
+        }
+        .card.copied-card.color-7::before {
+            background: linear-gradient(90deg, #b5957a, #d4b8a0, #b5957a);
+        }
+        @keyframes pulse-brown {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(181, 149, 122, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(181, 149, 122, 0.4), var(--clay-shadow);
+            }
+        }
+
+        .card.copied-card.color-8 {
+            border-color: #b5a6a6;
+            box-shadow: 0 0 20px rgba(181, 166, 166, 0.2), var(--clay-shadow);
+            animation: pulse-grey 2.2s ease-in-out infinite;
+        }
+        .card.copied-card.color-8::before {
+            background: linear-gradient(90deg, #b5a6a6, #d4c9c9, #b5a6a6);
+        }
+        @keyframes pulse-grey {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(181, 166, 166, 0.2), var(--clay-shadow);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(181, 166, 166, 0.4), var(--clay-shadow);
+            }
+        }
+
+        /* ===== علامة النسخ على البطاقة ===== */
+        .card.copied-card::after {
+            content: "✅";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            opacity: 0.9;
+            pointer-events: none;
+            animation: float-check 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(125, 155, 122, 0.3));
+        }
+
+        @keyframes float-check {
+            0%,
+            100% {
+                transform: translateY(0px) scale(1) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-8px) scale(1.1) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(0px) scale(1.2) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-8px) scale(1.1) rotate(5deg);
+            }
+        }
+
+        .card.copied-card .cardHeader h3::after {
+            content: " ✨";
+            animation: sparkle 1s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.3);
+            }
+        }
+
+        /* ===== البطاقة الأعلى مبلغاً ===== */
+        .card.highest-amount {
+            border-color: var(--clay-gold) !important;
+            box-shadow: 0 0 30px rgba(184, 149, 110, 0.3), var(--clay-shadow) !important;
+        }
+
+        .card.highest-amount::before {
+            background: linear-gradient(90deg, var(--clay-gold), #e8c9a8, var(--clay-gold)) !important;
+        }
+
+        .card.highest-amount .cardHeader h3::before {
+            content: "👑 ";
+        }
+
+        .card.highest-amount .cardHeader h3 {
+            color: var(--clay-gold);
+        }
+
+        /* ==========================================
+           EMPTY STATE
+           ========================================== */
+        .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--clay-text-soft);
+            font-size: 18px;
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            border: 2px dashed var(--clay-border);
+            box-shadow: var(--clay-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .empty::before {
+            content: "📋";
+            display: block;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* ==========================================
+           TOAST
+           ========================================== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--clay-card);
+            color: var(--clay-text);
+            padding: 16px 28px;
+            border-radius: var(--clay-radius);
+            box-shadow: 12px 12px 24px #cbc3b8,
+                -12px -12px 24px #fffff2;
+            border: 1px solid var(--clay-border);
+            font-size: 14px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
+
+        [data-theme="dark"] .toast {
+            box-shadow: 12px 12px 24px #1e1b19,
+                -12px -12px 24px #4e4943;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast .toast-icon {
+            font-size: 20px;
+        }
+
+        /* ==========================================
+           RESPONSIVE
+           ========================================== */
+        @media(max-width:1000px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats {
+                display: none;
+            }
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-right {
+                align-self: flex-end;
+                margin-top: -40px;
+            }
+            .actions {
+                justify-content: center;
+            }
+        }
+
+        @media(max-width:600px) {
+            body {
+                padding: 15px;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-right {
+                align-self: flex-end;
+                margin-top: -40px;
+            }
+            .header-title {
+                font-size: 18px;
+            }
+            .header-subtitle {
+                font-size: 11px;
+            }
+            .header-logo {
+                width: 40px;
+                height: 40px;
+            }
+            #input {
+                height: 120px;
+                font-size: 13px;
+            }
+            .actions {
+                flex-direction: column;
+            }
+            .btn {
+                justify-content: center;
+                padding: 10px;
+                width: 100%;
+            }
+            .stats {
+                display: none;
+            }
+            .row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+                padding: 8px 14px;
+            }
+            .label {
+                min-width: auto;
+                font-size: 11px;
+            }
+            .value {
+                font-size: 13px;
+                width: 100%;
+            }
+            .cardHeader h3 {
+                font-size: 13px;
+            }
+            .cardHeader .badge {
+                display: none;
+            }
+            .toast {
+                right: 15px;
+                left: 15px;
+                bottom: 15px;
+                text-align: center;
+                justify-content: center;
+            }
+            .copyBtn {
+                min-width: 60px;
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+            .card.copied-card::after {
+                font-size: 18px;
+                top: 10px;
+                left: 10px;
+            }
+            .theme-toggle {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+            .input-section {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <div class="header-top">
+            <div class="header-left">
+                <img class="header-logo" src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png" alt="Logo" onerror="this.style.display='none'">
+                <div class="header-info">
+                    <span class="header-title">📋 Refund Formatter</span>
+                    <span class="header-subtitle">Created By Hussein Gamal Sr.Operation &amp; 3PL Logistics</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
+            </div>
+        </div>
+
+        <!-- ===== INPUT SECTION ===== -->
+        <div class="input-section">
+            <textarea id="input" placeholder="الصق البيانات القادمة من Excel هنا..."></textarea>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="copyAll()">📋 نسخ الكل</button>
+                <button class="btn btn-danger" onclick="clearAll()">🗑️ مسح الكل</button>
+                <button class="btn btn-warning" onclick="highlightCopied()">🔍 تمييز المنسوخ</button>
+                <button class="btn btn-purple" onclick="resetCopied()">🔄 إعادة تعيين</button>
+                <button class="btn btn-sort" id="sortBtn" onclick="toggleSort()">📊 ترتيب: أعلى مبلغ</button>
+                <div class="stats" id="statsContainer">
+                    <span class="stat-total" id="totalAmount">💰 0</span>
+                    <span class="stat-wallet" id="walletCount">💳 محفظة عادية: 0</span>
+                    <span class="stat-instapay" id="instapayCount">📱 انستا: 0</span>
+                    <span class="highlight-stat" id="copiedCount">0 ✅</span>
+                    <span id="cardCount">0 بيان</span>
+                </div>
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <span>جاري التحويل...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CARDS ===== -->
+        <div id="cards" class="cards">
+            <div class="empty">الصق البيانات وسيتم تحويلها تلقائياً</div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast">
+        <span class="toast-icon">✅</span>
+        <span id="toastMessage">تم النسخ</span>
+    </div>
+
+    <script>
+        const headers = [
+            "Order Number",
+            "Refund Number",
+            "Contact Name",
+            "Refund Method",
+            "Refund Amount",
+            "SR",
+            "Reasons for a refund"
+        ];
+
+        const headerIcons = {
+            "Order Number": "🆔",
+            "Refund Number": "🧾",
+            "Contact Name": "👤",
+            "Refund Method": "💳",
+            "Refund Amount": "💰",
+            "SR": "📌",
+            "Reasons for a refund": "📝"
+        };
+
+        const textarea = document.getElementById("input");
+        let copiedCards = new Map();
+        let colorCounter = 0;
+        let sortActive = false;
+        let currentData = [];
+
+        const colorClasses = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5', 'color-6', 'color-7', 'color-8'];
+
+        textarea.addEventListener("input", function() {
+            showLoading(true);
+            setTimeout(() => {
+                convert();
+                showLoading(false);
+            }, 150);
+        });
+
+        textarea.addEventListener("paste", function() {
+            setTimeout(() => {
+                showLoading(true);
+                setTimeout(() => {
+                    convert();
+                    showLoading(false);
+                }, 200);
+            }, 50);
+        });
+
+        window.addEventListener("load", function() {
+            textarea.focus();
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+        });
+
+        function showLoading(show) {
+            const indicator = document.getElementById('loadingIndicator');
+            if (show) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        }
+
+        function getNextColor() {
+            const color = colorClasses[colorCounter % colorClasses.length];
+            colorCounter++;
+            return color;
+        }
+
+        function getMethodClass(method) {
+            if (!method) return 'method-default';
+            const methodLower = method.toLowerCase().trim();
+            if (methodLower === 'محفظة عادية' || methodLower === 'wallet') {
+                return 'method-wallet';
+            } else if (methodLower === 'انستا' || methodLower === 'instapay' || methodLower === 'انستاباي') {
+                return 'method-instapay';
+            }
+            return 'method-default';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+                showToast('☀️ تم التبديل إلى الوضع النهاري');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+                showToast('🌙 تم التبديل إلى الوضع الليلي');
+            }
+        }
+
+        function toggleSort() {
+            sortActive = !sortActive;
+            const btn = document.getElementById('sortBtn');
+            if (sortActive) {
+                btn.classList.add('active');
+                btn.innerHTML = '📊 ترتيب: مفعل ✅';
+                showToast('📊 تم تفعيل ترتيب أعلى مبلغ');
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '📊 ترتيب: أعلى مبلغ';
+                showToast('📊 تم إلغاء الترتيب');
+            }
+            convert();
+        }
+
+        function convert() {
+            const value = textarea.value.trim();
+            const cards = document.getElementById("cards");
+
+            if (value == "") {
+                cards.innerHTML = `
+                    <div class="empty">الصق البيانات وسيتم تحويلها تلقائياً</div>
+                `;
+                updateStats([]);
+                return;
+            }
+
+            const lines = value.split(/\r?\n/);
+            const excelHeaders = lines.shift().split("\t");
+
+            const headerIndex = {};
+            excelHeaders.forEach((h, i) => {
+                headerIndex[h.trim()] = i;
+            });
+
+            let dataRows = [];
+
+            lines.forEach((line, index) => {
+                if (!line.trim()) return;
+                const cols = line.split("\t");
+                const data = {};
+                headers.forEach(h => {
+                    data[h] = cols[headerIndex[h.trim()]] || "";
+                });
+                data._index = index;
+                data._amount = parseFloat(data["Refund Amount"]) || 0;
+                data._method = data["Refund Method"] || '';
+                dataRows.push(data);
+            });
+
+            currentData = dataRows;
+
+            if (sortActive) {
+                dataRows.sort((a, b) => b._amount - a._amount);
+            }
+
+            let html = "";
+            let count = 0;
+
+            const highestAmount = dataRows.length > 0 ? Math.max(...dataRows.map(d => d._amount)) : 0;
+
+            dataRows.forEach((data, index) => {
+                count++;
+                const cardId = `card-${count}-${Date.now()}-${index}`;
+
+                let savedColor = '';
+                if (copiedCards.has(cardId)) {
+                    savedColor = copiedCards.get(cardId);
+                }
+
+                const methodClass = getMethodClass(data._method);
+                const isHighest = data._amount === highestAmount && highestAmount > 0;
+
+                html += `
+                    <div class="card ${savedColor} ${isHighest ? 'highest-amount' : ''}" id="${cardId}" data-index="${count}" data-amount="${data._amount}">
+                        <div class="cardHeader">
+                            <h3>
+                                📄 البيان رقم ${count}
+                                <span class="badge">${data["Refund Number"] || 'غير محدد'}</span>
+                                ${isHighest ? '👑' : ''}
+                            </h3>
+                            <div class="header-actions">
+                                <button class="copyBtn" onclick="copyCard(this, '${cardId}')">📋 نسخ</button>
+                            </div>
+                        </div>
+                        <div class="cardBody">
+                            ${headers.map(h => {
+                                let valueClass = '';
+                                let displayValue = data[h] || '—';
+                                
+                                if (h === 'Refund Method') {
+                                    valueClass = methodClass;
+                                }
+                                
+                                return `
+                                    <div class="row">
+                                        <div class="label">
+                                            <span class="icon">${headerIcons[h] || '📌'}</span>
+                                            ${h}
+                                        </div>
+                                        <div class="value ${valueClass}">${displayValue}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            cards.innerHTML = html;
+            updateStats(dataRows);
+
+            document.querySelectorAll('.card').forEach(card => {
+                const cardId = card.id;
+                if (copiedCards.has(cardId)) {
+                    const color = copiedCards.get(cardId);
+                    card.classList.add('copied-card', color);
+                    const btn = card.querySelector('.copyBtn');
+                    btn.classList.add('copied');
+                    btn.innerHTML = '✅ تم';
+                    btn.disabled = true;
+                }
+            });
+
+            document.querySelectorAll('.card').forEach((card, i) => {
+                card.style.animation = 'none';
+                card.offsetHeight;
+                card.style.animation = `slideUp 0.4s ease forwards`;
+                card.style.animationDelay = `${(i % 8) * 0.05 + 0.05}s`;
+            });
+        }
+
+        function updateStats(dataRows) {
+            const totalAmount = document.getElementById('totalAmount');
+            const walletCount = document.getElementById('walletCount');
+            const instapayCount = document.getElementById('instapayCount');
+            const cardCount = document.getElementById('cardCount');
+
+            let total = 0;
+            let wallet = 0;
+            let instapay = 0;
+
+            dataRows.forEach(data => {
+                total += data._amount || 0;
+                const method = (data._method || '').toLowerCase().trim();
+                if (method === 'محفظة عادية' || method === 'wallet') {
+                    wallet++;
+                } else if (method === 'انستا' || method === 'instapay' || method === 'انستاباي') {
+                    instapay++;
+                }
+            });
+
+            totalAmount.textContent = `💰 ${total.toFixed(2)}`;
+            walletCount.textContent = `💳 محفظة عادية: ${wallet}`;
+            instapayCount.textContent = `📱 انستا: ${instapay}`;
+            cardCount.textContent = `${dataRows.length} بيان`;
+
+            const copiedCount = document.getElementById('copiedCount');
+            const copied = document.querySelectorAll('.card.copied-card').length;
+            copiedCount.textContent = `${copied}/${dataRows.length} ✅`;
+        }
+
+        function copyCard(btn, cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+
+            let text = "";
+            card.querySelectorAll('.row').forEach(row => {
+                const label = row.querySelector('.label').innerText.replace(/[^\w\s\u0600-\u06FF]/g, '').trim();
+                const value = row.querySelector('.value').innerText;
+                text += label + " : " + value + "\n";
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                applyCopiedStyle(btn, card, cardId);
+                showToast('✅ تم نسخ البيان بنجاح');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                applyCopiedStyle(btn, card, cardId);
+                showToast('✅ تم نسخ البيان بنجاح');
+            });
+        }
+
+        function applyCopiedStyle(btn, card, cardId) {
+            let colorClass = '';
+            if (!copiedCards.has(cardId)) {
+                colorClass = getNextColor();
+                copiedCards.set(cardId, colorClass);
+            } else {
+                colorClass = copiedCards.get(cardId);
+            }
+
+            btn.classList.add('copied');
+            btn.innerHTML = '✅ تم';
+            btn.disabled = true;
+            card.classList.add('copied-card', colorClass);
+
+            updateStats(currentData);
+        }
+
+        function copyAll() {
+            const cards = document.querySelectorAll('.card');
+            if (cards.length === 0) {
+                showToast('⚠️ لا توجد بيانات للنسخ');
+                return;
+            }
+
+            let text = "";
+            let newlyCopied = 0;
+
+            cards.forEach((card, index) => {
+                const cardId = card.id;
+                text += "البيان رقم " + (index + 1) + "\n";
+                text += "----------------------\n";
+                card.querySelectorAll('.row').forEach(row => {
+                    const label = row.querySelector('.label').innerText.replace(/[^\w\s\u0600-\u06FF]/g, '').trim();
+                    const value = row.querySelector('.value').innerText;
+                    text += label + " : " + value + "\n";
+                });
+
+                if (!copiedCards.has(cardId)) {
+                    const colorClass = getNextColor();
+                    copiedCards.set(cardId, colorClass);
+                    const btn = card.querySelector('.copyBtn');
+                    btn.classList.add('copied');
+                    btn.innerHTML = '✅ تم';
+                    btn.disabled = true;
+                    card.classList.add('copied-card', colorClass);
+                    newlyCopied++;
+                }
+
+                text += "\n\n";
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                updateStats(currentData);
+                showToast(`✅ تم نسخ ${cards.length} بيان (${newlyCopied} بيان جديد)`);
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                updateStats(currentData);
+                showToast(`✅ تم نسخ ${cards.length} بيان (${newlyCopied} بيان جديد)`);
+            });
+        }
+
+        function clearAll() {
+            if (document.querySelectorAll('.card').length === 0) return;
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+                textarea.value = '';
+                copiedCards.clear();
+                colorCounter = 0;
+                currentData = [];
+                convert();
+                showToast('🗑️ تم مسح جميع البيانات');
+                textarea.focus();
+            }
+        }
+
+        function highlightCopied() {
+            const cards = document.querySelectorAll('.card');
+            if (cards.length === 0) {
+                showToast('⚠️ لا توجد بطاقات للتمييز');
+                return;
+            }
+
+            cards.forEach(card => {
+                card.style.transform = '';
+            });
+
+            let highlighted = 0;
+            cards.forEach(card => {
+                if (card.classList.contains('copied-card')) {
+                    card.style.transform = 'scale(1.03)';
+                    highlighted++;
+                }
+            });
+
+            if (highlighted === 0) {
+                showToast('⚠️ لا توجد بطاقات منسوخة للتمييز');
+            } else {
+                showToast(`🔍 تم تمييز ${highlighted} بطاقة منسوخة`);
+                setTimeout(() => {
+                    cards.forEach(card => {
+                        card.style.transform = '';
+                    });
+                }, 3000);
+            }
+        }
+
+        function resetCopied() {
+            const cards = document.querySelectorAll('.card.copied-card');
+            if (cards.length === 0) {
+                showToast('⚠️ لا توجد بطاقات منسوخة لإعادة تعيينها');
+                return;
+            }
+
+            if (confirm(`هل أنت متأكد من إعادة تعيين ${cards.length} بطاقة منسوخة؟`)) {
+                cards.forEach(card => {
+                    const cardId = card.id;
+                    copiedCards.delete(cardId);
+                    card.classList.remove('copied-card', ...colorClasses);
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+
+                    const btn = card.querySelector('.copyBtn');
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '📋 نسخ';
+                    btn.disabled = false;
+                });
+
+                colorCounter = 0;
+                updateStats(currentData);
+                showToast(`🔄 تم إعادة تعيين ${cards.length} بطاقة`);
+            }
+        }
+
+        let toastTimeout;
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                copyAll();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                clearAll();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'H') {
+                e.preventDefault();
+                highlightCopied();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+                e.preventDefault();
+                resetCopied();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+                e.preventDefault();
+                toggleSort();
+            }
+            if (e.key === 'Escape') {
+                document.activeElement?.blur();
+            }
+        });
+
+        // Drag and drop
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            document.querySelector('.input-section').style.borderColor = 'var(--clay-accent)';
+            document.querySelector('.input-section').style.boxShadow = '0 0 0 4px rgba(166,124,107,0.2)';
+        });
+
+        document.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            document.querySelector('.input-section').style.borderColor = '';
+            document.querySelector('.input-section').style.boxShadow = '';
+        });
+
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            document.querySelector('.input-section').style.borderColor = '';
+            document.querySelector('.input-section').style.boxShadow = '';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    textarea.value = event.target.result;
+                    showLoading(true);
+                    setTimeout(() => {
+                        convert();
+                        showLoading(false);
+                        showToast('📄 تم استيراد الملف بنجاح');
+                    }, 200);
+                };
+                reader.readAsText(file);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
