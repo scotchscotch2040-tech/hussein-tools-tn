@@ -545,6 +545,25 @@
             50%, 100% { opacity: 0.25; }
         }
 
+        /* ===== AM / PM ===== */
+        .period {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--clay-accent);
+            margin-right: 8px;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            text-transform: uppercase;
+            animation: periodPulse 2s ease-in-out infinite alternate;
+        }
+
+        [data-theme="dark"] .period { color: var(--clay-success); }
+
+        @keyframes periodPulse {
+            from { opacity: 0.65; }
+            to   { opacity: 1; }
+        }
+
         .progress-bar {
             position: relative;
             width: 100%;
@@ -792,6 +811,7 @@
             .toast { right: 12px; left: 12px; bottom: 12px; justify-content: center; font-size: 11px; padding: 8px 14px; }
             .clock-wrapper { padding: 18px 20px 16px; max-width: 400px; }
             .display { font-size: 42px; letter-spacing: 2px; gap: 5px; }
+            .period { font-size: 15px; margin-right: 5px; }
             .date-display { font-size: 11px; letter-spacing: 1px; gap: 5px; }
             .date-chip { padding: 4px 8px; border-radius: 8px; }
         }
@@ -813,6 +833,7 @@
             .menu-header h4 { font-size: 11px; }
             .clock-wrapper { padding: 14px 14px 12px; max-width: 320px; }
             .display { font-size: 32px; letter-spacing: 1px; gap: 3px; }
+            .period { font-size: 12px; margin-right: 4px; }
             .dots { gap: 4px; margin-top: 12px; }
             .dot { width: 7px; height: 7px; }
             .progress-bar { height: 8px; margin-top: 12px; }
@@ -878,7 +899,7 @@
 
         <div class="menu-divider"></div>
 
-            </div>
+    </div>
 
     <!-- ===== MAIN ===== -->
     <div class="container" id="mainContainer">
@@ -954,6 +975,7 @@
                                         <span class="digit" id="seconds-tens">0</span>
                                         <span class="digit" id="seconds-units">0</span>
                                     </div>
+                                    <span class="period" id="period">AM</span>
                                 </div>
 
                                 <div class="progress-bar">
@@ -1122,6 +1144,7 @@
         const minutesUnits = document.getElementById('minutes-units');
         const secondsTens = document.getElementById('seconds-tens');
         const secondsUnits = document.getElementById('seconds-units');
+        const periodEl = document.getElementById('period');
 
         const dayNameEl = document.getElementById('day-name');
         const dayEl = document.getElementById('day');
@@ -1150,9 +1173,13 @@
 
         function updateClock() {
             const now = new Date();
-            const hours = now.getHours();
+            const rawHours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
+
+            /* ===== تحويل من 24 ساعة إلى 12 ساعة ===== */
+            let hours = rawHours % 12;
+            hours = hours === 0 ? 12 : hours;
 
             hoursTens.textContent = Math.floor(hours / 10);
             hoursUnits.textContent = hours % 10;
@@ -1160,6 +1187,9 @@
             minutesUnits.textContent = minutes % 10;
             secondsTens.textContent = Math.floor(seconds / 10);
             secondsUnits.textContent = seconds % 10;
+
+            /* ===== AM / PM ===== */
+            periodEl.textContent = rawHours >= 12 ? 'PM' : 'AM';
 
             dayNameEl.textContent = arabicDays[now.getDay()];
             dayEl.textContent = now.getDate();
@@ -1171,10 +1201,10 @@
             const activeDot = hours % 12;
             dots.forEach((dot, i) => dot.classList.toggle('active', i === activeDot));
 
-            if (hours !== lastHour && lastHour !== -1) {
+            if (rawHours !== lastHour && lastHour !== -1) {
                 playClockFusion();
             }
-            lastHour = hours;
+            lastHour = rawHours;
         }
 
         setInterval(updateClock, 1000);
