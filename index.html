@@ -30,7 +30,7 @@
             --clay-radius-sm: 14px;
             --clay-radius-xs: 10px;
             --menu-width: 200px;
-            --lamp-glow: #f4d58d;
+            --lamp-glow: #c2185c;
             --lamp-base: #d9c9a8;
             --lamp-shade: #f0e6d2;
         }
@@ -185,54 +185,94 @@
             transition: background 0.6s ease;
         }
 
+        /* ==========================================
+           LAMP CORD — يبدأ من تحت الطبق + سحب من أي جزء
+           ========================================== */
         .lamp-cord {
             position: absolute;
-            top: 75px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 157px;                          /* 👈 من حد الطبق السفلي */
+            left: calc(50% - 1px);
             width: 2px;
             height: 60px;
-            background: linear-gradient(to bottom, var(--lamp-base) 0%, #c9b995 100%);
+            background: linear-gradient(to bottom, #8a7a5a 0%, #c9b995 100%);
             z-index: 4;
-            transition: background 0.6s ease, height 0.3s ease;
-            cursor: pointer;
             transform-origin: top center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            transition: background 0.6s ease;
+            cursor: grab;
         }
 
-        .lamp-cord:hover { height: 70px; }
-        .lamp-cord:active { height: 50px; }
-
-        .lamp-cord-knob {
+        /* Hit-area شفافة عريضة تغطي الحبل كله عشان يسهل الإمساك من أي نقطة */
+        .lamp-cord::after {
+            content: '';
             position: absolute;
-            bottom: -12px;
+            top: -8px;
+            bottom: -20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
+            width: 40px;
+            background: transparent;
+            z-index: -1;
+        }
+
+        .lamp-cord.dragging {
+            cursor: grabbing;
+            transition: none;
+        }
+
+        .lamp-cord.releasing {
+            transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* نقطة تعليق الحبل في الطبق */
+        .lamp-cord::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #f0e6d2, #c9b995);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .lamp-cord-knob:hover {
-            transform: translateX(-50%) scale(1.2);
-            box-shadow: 0 0 20px rgba(244, 213, 141, 0.9), 0 3px 8px rgba(0,0,0,0.35);
-        }
-
-        .lamp-cord-knob:active {
-            transform: translateX(-50%) scale(0.95);
+            background: radial-gradient(circle at 40% 40%, #a89878, #6a5a3a);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            z-index: 5;
         }
 
         @keyframes cordShake {
-            0%, 100% { transform: translateX(-50%) rotate(0deg); }
-            25% { transform: translateX(-50%) rotate(-8deg); }
-            75% { transform: translateX(-50%) rotate(8deg); }
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-6deg); }
+            75% { transform: rotate(6deg); }
         }
 
-        .lamp-cord.shaking { animation: cordShake 0.4s ease; }
+        .lamp-cord.shaking { animation: cordShake 0.5s ease; }
+
+        .lamp-cord-knob {
+            position: absolute;
+            bottom: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #f0e6d2, #c9b995);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+            transition: box-shadow 0.25s ease, transform 0.25s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+            pointer-events: none;
+        }
+
+        .lamp-cord:hover .lamp-cord-knob {
+            box-shadow: 0 0 20px rgba(244, 213, 141, 0.9), 0 3px 8px rgba(0,0,0,0.35);
+            transform: translateX(-50%) scale(1.15);
+        }
+
+        .lamp-cord.dragging .lamp-cord-knob {
+            box-shadow: 0 0 30px rgba(244, 213, 141, 1), 0 3px 8px rgba(0,0,0,0.4);
+            transform: translateX(-50%) scale(1.25);
+        }
 
         /* ===== الإرشادات الجانبية ===== */
         .lamp-instructions {
@@ -445,7 +485,6 @@
             75% { transform: translateX(6px); }
         }
 
-        /* ===== زر تسجيل الدخول ===== */
         .login-submit-btn {
             width: 100%;
             padding: 13px 16px;
@@ -1400,32 +1439,115 @@
             });
         }
 
-        function toggleLamp() {
-            lampCord.classList.add('shaking');
-            setTimeout(() => lampCord.classList.remove('shaking'), 400);
+        /* ==========================================
+           LAMP CORD — DRAG TO PULL (NEW!)
+           ========================================== */
+        const CORD_BASE_HEIGHT = 60;      // الطول الأصلي
+        const CORD_MIN_HEIGHT = 45;       // أقصى ضغط لفوق
+        const CORD_MAX_HEIGHT = 120;      // أقصى سحب لتحت
+        const CORD_TRIGGER = 100;         // لما يوصل الطول ده → يشتغل
 
-            setTimeout(() => {
-                loginScreen.classList.toggle('lamp-on');
-                
-                if (loginScreen.classList.contains('lamp-on')) {
-                    setTimeout(() => passwordInput.focus(), 800);
-                } else {
-                    passwordInput.value = '';
-                    loginStatus.textContent = '';
-                    loginStatus.className = 'login-status';
-                    passwordInput.classList.remove('error');
-                    passwordInput.disabled = false;
-                    passwordInput.style.borderColor = '';
-                    passwordInput.style.color = '';
-                    userSelect.value = '';
-                    clearTimeout(autoCheckTimer);
-                    document.getElementById('loginSubmitBtn').disabled = false;
-                }
-            }, 200);
+        let isDragging = false;
+        let dragStartY = 0;
+        let dragStartHeight = CORD_BASE_HEIGHT;
+        let hasToggledThisDrag = false;
+
+        function getClientY(e) {
+            if (e.touches && e.touches.length) return e.touches[0].clientY;
+            if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientY;
+            return e.clientY;
         }
 
-        lampCord.addEventListener('click', toggleLamp);
+        function onDragStart(e) {
+            if (isDragging) return;
+            isDragging = true;
+            hasToggledThisDrag = false;
+            dragStartY = getClientY(e);
+            dragStartHeight = parseFloat(getComputedStyle(lampCord).height) || CORD_BASE_HEIGHT;
 
+            lampCord.classList.add('dragging');
+            lampCord.classList.remove('releasing', 'shaking');
+
+            e.preventDefault();
+        }
+
+        function onDragMove(e) {
+            if (!isDragging) return;
+
+            const currentY = getClientY(e);
+            const deltaY = currentY - dragStartY;             // موجب = لتحت
+            let newHeight = dragStartHeight + deltaY;
+
+            // حدود
+            if (newHeight < CORD_MIN_HEIGHT) newHeight = CORD_MIN_HEIGHT;
+            if (newHeight > CORD_MAX_HEIGHT) newHeight = CORD_MAX_HEIGHT;
+
+            lampCord.style.height = newHeight + 'px';
+
+            // لو وصل للحد → شغّل/اطفي الأباجورة مرة واحدة بس في السحبة دي
+            if (newHeight >= CORD_TRIGGER && !hasToggledThisDrag) {
+                hasToggledThisDrag = true;
+                triggerLampToggle();
+            }
+
+            e.preventDefault();
+        }
+
+        function onDragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+
+            lampCord.classList.remove('dragging');
+            lampCord.classList.add('releasing', 'shaking');
+
+            // رجّع الحبل لطوله الأصلي
+            requestAnimationFrame(() => {
+                lampCord.style.height = CORD_BASE_HEIGHT + 'px';
+            });
+
+            setTimeout(() => {
+                lampCord.classList.remove('releasing', 'shaking');
+            }, 500);
+        }
+
+        // Mouse
+        lampCord.addEventListener('mousedown', onDragStart);
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+
+        // Touch
+        lampCord.addEventListener('touchstart', onDragStart, { passive: false });
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('touchend', onDragEnd);
+        document.addEventListener('touchcancel', onDragEnd);
+
+        /* ==========================================
+           LAMP TOGGLE ACTION
+           ========================================== */
+        function triggerLampToggle() {
+            loginScreen.classList.toggle('lamp-on');
+
+            if (loginScreen.classList.contains('lamp-on')) {
+                // نورت → ركّز على الباسورد
+                setTimeout(() => passwordInput.focus(), 800);
+            } else {
+                // طفت → صفّر الفورم
+                passwordInput.value = '';
+                loginStatus.textContent = '';
+                loginStatus.className = 'login-status';
+                passwordInput.classList.remove('error');
+                passwordInput.disabled = false;
+                passwordInput.style.borderColor = '';
+                passwordInput.style.color = '';
+                userSelect.value = '';
+                clearTimeout(autoCheckTimer);
+                document.getElementById('loginSubmitBtn').disabled = false;
+            }
+        }
+
+        /* ==========================================
+           VERIFY LOGIN
+           ========================================== */
         function verifyLogin() {
             const selectedIndex = userSelect.value;
             const password = passwordInput.value.trim();
@@ -1456,7 +1578,7 @@
 
                 currentUser = user;
                 saveSession(user);
-                applyPermissions(user);          // 👈 تطبيق الصلاحيات
+                applyPermissions(user);
                 addAuditLog('login', '✅', `تسجيل دخول ناجح`, user.username);
                 sessionStorage.setItem('hussein_current_user', JSON.stringify(user));
 
@@ -1644,6 +1766,9 @@
             document.querySelectorAll('.menu-item[data-tab]').forEach(i => i.style.display = '');
             document.querySelectorAll('.preview-card[data-tab-card]').forEach(c => c.style.display = '');
 
+            // إعادة تصفير الحبل
+            lampCord.style.height = CORD_BASE_HEIGHT + 'px';
+
             loginScreen.classList.remove('lamp-on');
             loginScreen.classList.remove('hidden');
 
@@ -1799,7 +1924,7 @@
                 }
                 
                 updateUserInfo();
-                applyPermissions(currentUser);   // 👈 تطبيق الصلاحيات للجلسة المحفوظة
+                applyPermissions(currentUser);
                 startInactivityTimer();
                 setTimeout(() => showToast(`🏠 أهلاً بعودتك ${session.username}!`, '✅'), 500);
                 addAuditLog('login', '🔄', 'دخول تلقائي (جلسة محفوظة)', session.username);
@@ -1988,7 +2113,7 @@
                     const tabId = tabMap[e.key];
                     if (tabId) {
                         e.preventDefault();
-                        switchTab(tabId);   // 🔒 switchTab نفسها بتحمي بالصلاحيات
+                        switchTab(tabId);
                     }
                 }
                 if (e.key === 'Escape' && sideMenu.classList.contains('open')) closeMenu();
@@ -2003,6 +2128,7 @@
         console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
         console.log('  ⚡ Auto-Check: 1.5s after typing, or Enter/Button');
         console.log('  🔒 Permissions system enabled');
+        console.log('  🪢 Cord drag system enabled');
     </script>
 
 </body>
