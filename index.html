@@ -1229,25 +1229,25 @@
                         </div>
 
                         <div class="tab-preview-grid">
-                            <div class="preview-card" onclick="switchTab('refund')">
+                            <div class="preview-card" data-tab-card="refund" onclick="switchTab('refund')">
                                 <span class="preview-icon">📋</span>
                                 <div class="preview-title">Refund Formatter</div>
                                 <div class="preview-desc">تنسيق بيانات المرتجعات مع إحصائيات ونسخ</div>
                                 <span class="preview-tag">📋 نسخ</span>
                             </div>
-                            <div class="preview-card" onclick="switchTab('orders')">
+                            <div class="preview-card" data-tab-card="orders" onclick="switchTab('orders')">
                                 <span class="preview-icon">📦</span>
                                 <div class="preview-title">تقسيم الأوردرات</div>
                                 <div class="preview-desc">تقسيم الأوردرات إلى رسائل للواتساب</div>
                                 <span class="preview-tag">📱 WhatsApp</span>
                             </div>
-                            <div class="preview-card" onclick="switchTab('transfers')">
+                            <div class="preview-card" data-tab-card="transfers" onclick="switchTab('transfers')">
                                 <span class="preview-icon">📊</span>
                                 <div class="preview-title">Account Transfers</div>
                                 <div class="preview-desc">إدارة التحويلات مع جدول وتصدير Excel</div>
                                 <span class="preview-tag">📊 Excel</span>
                             </div>
-                            <div class="preview-card" onclick="switchTab('discount')">
+                            <div class="preview-card" data-tab-card="discount" onclick="switchTab('discount')">
                                 <span class="preview-icon">✂️</span>
                                 <div class="preview-title">معالج الخصم</div>
                                 <div class="preview-desc">خصم تلقائي من سعر المنتج عند pending</div>
@@ -1335,14 +1335,42 @@
 
     <script>
         /* ==========================================
-           USERS
+           USERS + PERMISSIONS
            ========================================== */
         const USERS = [
-            { username: 'Hussein', password: '1129+', role: 'Admin' },
-            { username: 'Saher', password: '123456', role: 'Customer Service Manager' },
-            { username: 'Walaa', password: '11995', role: 'Team Leader CS' },
-            { username: 'Mai', password: 'mai2003', role: 'Customer Service' },
-            { username: 'Maryaim', password: '271997', role: 'Customer Service' }
+            {
+                username: 'Hussein',
+                password: '1129+',
+                role: 'Admin',
+                allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
+            },
+            {
+                username: 'Saher',
+                password: '123456',
+                role: 'Customer Service Manager',
+                allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
+            },
+            {
+                username: 'Walaa',
+                password: '11995',
+                role: 'Team Leader CS',
+                // ❌ ممنوعة من: transfers + discount
+                allowedTabs: ['home', 'refund', 'orders', 'audit']
+            },
+            {
+                username: 'Maryaim',
+                password: '271997',
+                role: 'Customer Service',
+                // ❌ ممنوعة من: refund + transfers + discount
+                allowedTabs: ['home', 'orders', 'audit']
+            },
+            {
+                username: 'Mai',
+                password: '123456', // ⚠️ غيّرها لكلمة المرور الفعلية
+                role: 'Customer Service',
+                // ❌ ممنوعة من: refund + transfers + discount
+                allowedTabs: ['home', 'orders', 'audit']
+            }
         ];
 
         const SESSION_DURATION = 8 * 60 * 60 * 1000; // 8 ساعات
@@ -1402,14 +1430,12 @@
             const selectedIndex = userSelect.value;
             const password = passwordInput.value.trim();
 
-            // لو مفيش مستخدم مختار
             if (selectedIndex === '') {
                 loginStatus.textContent = '⚠️ اختر المستخدم أولاً';
                 loginStatus.className = 'login-status error';
                 return;
             }
 
-            // لو الباسورد أقل من 4 خانات
             if (password.length < 4) {
                 loginStatus.textContent = '⚠️ كلمة المرور قصيرة جداً (4 خانات على الأقل)';
                 loginStatus.className = 'login-status error';
@@ -1421,7 +1447,6 @@
             const user = USERS[parseInt(selectedIndex)];
 
             if (user && user.password === password) {
-                // ✅ نجاح
                 loginStatus.textContent = `✅ أهلاً ${user.username}! جاري الدخول...`;
                 loginStatus.className = 'login-status success';
                 passwordInput.style.borderColor = 'var(--clay-success)';
@@ -1431,6 +1456,7 @@
 
                 currentUser = user;
                 saveSession(user);
+                applyPermissions(user);          // 👈 تطبيق الصلاحيات
                 addAuditLog('login', '✅', `تسجيل دخول ناجح`, user.username);
                 sessionStorage.setItem('hussein_current_user', JSON.stringify(user));
 
@@ -1441,7 +1467,6 @@
                     setTimeout(() => showToast(`🏠 أهلاً ${user.username}!`), 500);
                 }, 900);
             } else {
-                // ❌ خطأ
                 loginStatus.textContent = '❌ كلمة المرور غلط، اسأل حسين 😂';
                 loginStatus.className = 'login-status error';
                 passwordInput.classList.add('error');
@@ -1459,7 +1484,6 @@
         }
 
         passwordInput.addEventListener('input', (e) => {
-            // السماح بالأرقام، الحروف، والرموز
             e.target.value = e.target.value.replace(/[^0-9a-zA-Z@#$%!_\-.+=?&*^()\[\]{}<>|~`]/g, '');
             
             loginStatus.textContent = '';
@@ -1468,21 +1492,16 @@
             passwordInput.style.borderColor = '';
             passwordInput.style.color = '';
 
-            // إلغاء أي تحقق تلقائي قديم
             clearTimeout(autoCheckTimer);
-
             const len = e.target.value.length;
 
-            // ✅ لو المستخدم وصل للحد الأقصى (20 خانة)، تحقق فوراً
             if (len >= 20) {
                 verifyLogin();
                 return;
             }
 
-            // ⏱️ لو المستخدم وصل للحد الأدنى (4 خانات)، استنى 1.5 ثانية من آخر ضغطة
             if (len >= 4) {
                 autoCheckTimer = setTimeout(() => {
-                    // تأكد إن المستخدم مكملش كتابة
                     const currentLen = passwordInput.value.length;
                     if (currentLen >= 4 && currentLen < 20) {
                         verifyLogin();
@@ -1509,6 +1528,42 @@
         });
 
         /* ==========================================
+           PERMISSIONS
+           ========================================== */
+        function applyPermissions(user) {
+            const allowed = (user && user.allowedTabs) ? user.allowedTabs : 
+                            ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
+
+            // 1) عناصر المنيو الجانبي
+            document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
+                const tab = item.dataset.tab;
+                item.style.display = allowed.includes(tab) ? '' : 'none';
+            });
+
+            // 2) كروت الصفحة الرئيسية
+            document.querySelectorAll('.preview-card[data-tab-card]').forEach(card => {
+                const tab = card.dataset.tabCard;
+                card.style.display = allowed.includes(tab) ? '' : 'none';
+            });
+
+            // 3) لو واقف على تاب مش مسموح، رجّعه للرئيسية
+            const activePane = document.querySelector('.tab-pane.active');
+            if (activePane) {
+                const currentTab = activePane.id.replace('tab-', '');
+                if (currentTab !== 'home' && !allowed.includes(currentTab)) {
+                    switchTab('home');
+                }
+            }
+        }
+
+        function isTabAllowed(tabId) {
+            if (!currentUser) return false;
+            const allowed = currentUser.allowedTabs || 
+                            ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
+            return allowed.includes(tabId);
+        }
+
+        /* ==========================================
            SESSION
            ========================================== */
         function saveSession(user) {
@@ -1516,6 +1571,7 @@
                 loggedIn: true,
                 username: user.username,
                 role: user.role,
+                allowedTabs: user.allowedTabs || [],
                 loginTime: Date.now(),
                 expiry: Date.now() + SESSION_DURATION
             };
@@ -1583,6 +1639,10 @@
             document.getElementById('loginSubmitBtn').disabled = false;
 
             closeMenu();
+
+            // إعادة إظهار كل المنيو والكروت (مخفية عشان الصلاحيات)
+            document.querySelectorAll('.menu-item[data-tab]').forEach(i => i.style.display = '');
+            document.querySelectorAll('.preview-card[data-tab-card]').forEach(c => c.style.display = '');
 
             loginScreen.classList.remove('lamp-on');
             loginScreen.classList.remove('hidden');
@@ -1739,6 +1799,7 @@
                 }
                 
                 updateUserInfo();
+                applyPermissions(currentUser);   // 👈 تطبيق الصلاحيات للجلسة المحفوظة
                 startInactivityTimer();
                 setTimeout(() => showToast(`🏠 أهلاً بعودتك ${session.username}!`, '✅'), 500);
                 addAuditLog('login', '🔄', 'دخول تلقائي (جلسة محفوظة)', session.username);
@@ -1795,9 +1856,16 @@
         }
 
         /* ==========================================
-           TAB SWITCHING
+           TAB SWITCHING (WITH PERMISSIONS)
            ========================================== */
         function switchTab(tabId) {
+            // 🔒 حماية الصلاحيات
+            if (tabId !== 'home' && !isTabAllowed(tabId)) {
+                showToast('⛔ لا تملك صلاحية الوصول لهذا القسم', '🚫');
+                addAuditLog('fail', '⛔', `محاولة وصول مرفوضة: ${getTabName(tabId)}`);
+                return;
+            }
+
             closeMenu();
 
             const compactHeader = document.getElementById('compactHeader');
@@ -1920,7 +1988,7 @@
                     const tabId = tabMap[e.key];
                     if (tabId) {
                         e.preventDefault();
-                        switchTab(tabId);
+                        switchTab(tabId);   // 🔒 switchTab نفسها بتحمي بالصلاحيات
                     }
                 }
                 if (e.key === 'Escape' && sideMenu.classList.contains('open')) closeMenu();
@@ -1934,6 +2002,7 @@
         console.log('🏠 Hussein Gamal Suite - Lamp Login Edition 💡');
         console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
         console.log('  ⚡ Auto-Check: 1.5s after typing, or Enter/Button');
+        console.log('  🔒 Permissions system enabled');
     </script>
 
 </body>
