@@ -20,7 +20,6 @@
             padding: 30px;
             min-height: 100vh;
             background: #e8e0d5;
-            /* خلفية دافئة ناعمة */
             transition: all 0.4s ease;
         }
 
@@ -261,6 +260,270 @@
         }
 
         /* ==========================================
+           MANUAL ORDER FORM
+           ========================================== */
+        .manual-order-box {
+            background: var(--clay-card);
+            border-radius: var(--clay-radius);
+            box-shadow: var(--clay-shadow);
+            border: 1px solid var(--clay-border);
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .manual-order-box h3 {
+            margin-bottom: 12px;
+            padding-right: 0;
+        }
+
+        .manual-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px 14px;
+            margin-bottom: 12px;
+        }
+
+        .manual-form-grid .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .manual-form-grid .form-field label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--clay-accent);
+            padding-right: 2px;
+        }
+
+        .manual-form-grid .form-field > input,
+.manual-form-grid .form-field > textarea {
+    width: 100%;
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid var(--clay-border);
+            border-radius: var(--clay-radius-sm);
+            background: var(--clay-card);
+            color: var(--clay-text);
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            resize: vertical;
+            min-height: 0;
+        }
+
+        [data-theme="dark"] .manual-form-grid .form-field input,
+        [data-theme="dark"] .manual-form-grid .form-field textarea {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .manual-form-grid .form-field input:focus,
+        .manual-form-grid .form-field textarea:focus {
+            outline: none;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2,
+                0 0 0 2px var(--clay-accent);
+        }
+
+        [data-theme="dark"] .manual-form-grid .form-field input:focus,
+        [data-theme="dark"] .manual-form-grid .form-field textarea:focus {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943,
+                0 0 0 2px var(--clay-accent);
+        }
+
+        .manual-form-grid .form-field input::placeholder,
+        .manual-form-grid .form-field textarea::placeholder {
+            color: var(--clay-text-soft);
+            opacity: 0.6;
+            font-size: 12px;
+        }
+
+        .manual-form-grid .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .manual-form-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .manual-form-actions .btn {
+            padding: 10px 24px;
+            font-size: 14px;
+        }
+
+        /* ==========================================
+           PRODUCT LINES (Dynamic product lines)
+           ========================================== */
+        .product-lines-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .product-line {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .product-line .qty-input {
+            width: 40px;
+            flex-shrink: 0;
+            text-align: center;
+            padding: 8px 4px;
+            font-size: 13px;
+            border: 1px solid var(--clay-border);
+            border-radius: var(--clay-radius-sm);
+            background: var(--clay-card);
+            color: var(--clay-text);
+            font-family: inherit;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .product-line .qty-input {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .product-line .qty-input:focus {
+            outline: none;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2,
+                0 0 0 2px var(--clay-accent);
+        }
+
+        [data-theme="dark"] .product-line .qty-input:focus {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943,
+                0 0 0 2px var(--clay-accent);
+        }
+
+        .product-line .product-name-input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid var(--clay-border);
+            border-radius: var(--clay-radius-sm);
+            background: var(--clay-card);
+            color: var(--clay-text);
+            font-family: inherit;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .product-line .product-name-input {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943;
+        }
+
+        .product-line .product-name-input:focus {
+            outline: none;
+            box-shadow: inset 3px 3px 8px #cbc3b8,
+                inset -3px -3px 8px #fffff2,
+                0 0 0 2px var(--clay-accent);
+        }
+
+        [data-theme="dark"] .product-line .product-name-input:focus {
+            box-shadow: inset 3px 3px 8px #1e1b19,
+                inset -3px -3px 8px #4e4943,
+                0 0 0 2px var(--clay-accent);
+        }
+
+        .product-line .remove-product-btn {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border: none;
+            border-radius: 50%;
+            background: var(--clay-card);
+            color: var(--clay-danger);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 8px #cbc3b8,
+                -3px -3px 8px #fffff2;
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        [data-theme="dark"] .product-line .remove-product-btn {
+            box-shadow: 3px 3px 8px #1e1b19,
+                -3px -3px 8px #4e4943;
+        }
+
+        .product-line .remove-product-btn:hover {
+            transform: scale(1.1);
+            color: #a06565;
+        }
+
+        .product-line .remove-product-btn:active {
+            transform: scale(0.95);
+            box-shadow: inset 2px 2px 6px #cbc3b8,
+                inset -2px -2px 6px #fffff2;
+        }
+
+        [data-theme="dark"] .product-line .remove-product-btn:active {
+            box-shadow: inset 2px 2px 6px #1e1b19,
+                inset -2px -2px 6px #4e4943;
+        }
+
+        .add-product-btn {
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 50%;
+            background: var(--clay-card);
+            color: var(--clay-success);
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 8px #cbc3b8,
+                -3px -3px 8px #fffff2;
+            border: 1px solid var(--clay-border);
+            transition: all 0.3s ease;
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+
+        [data-theme="dark"] .add-product-btn {
+            box-shadow: 3px 3px 8px #1e1b19,
+                -3px -3px 8px #4e4943;
+        }
+
+        .add-product-btn:hover {
+            transform: scale(1.1);
+            color: #6a8a67;
+        }
+
+        .add-product-btn:active {
+            transform: scale(0.95);
+            box-shadow: inset 2px 2px 6px #cbc3b8,
+                inset -2px -2px 6px #fffff2;
+        }
+
+        [data-theme="dark"] .add-product-btn:active {
+            box-shadow: inset 2px 2px 6px #1e1b19,
+                inset -2px -2px 6px #4e4943;
+        }
+
+        /* ==========================================
            UNIFIED BOX (Clay Toolbar)
            ========================================== */
         .unified-box {
@@ -328,29 +591,12 @@
                 inset -3px -3px 8px #4e4943;
         }
 
-        .btn-danger {
-            color: #b57a7a;
-        }
-
-        .btn-danger:hover {
-            color: #a06565;
-        }
-
-        .btn-outline {
-            color: var(--clay-accent);
-        }
-
-        .btn-outline:hover {
-            color: var(--clay-accent-hover);
-        }
-
-        .btn-primary {
-            color: var(--clay-success);
-        }
-
-        .btn-primary:hover {
-            color: #6a8a67;
-        }
+        .btn-danger { color: #b57a7a; }
+        .btn-danger:hover { color: #a06565; }
+        .btn-outline { color: var(--clay-accent); }
+        .btn-outline:hover { color: var(--clay-accent-hover); }
+        .btn-primary { color: var(--clay-success); }
+        .btn-primary:hover { color: #6a8a67; }
 
         /* ==========================================
            SEPARATOR
@@ -484,7 +730,7 @@
         }
 
         /* ==========================================
-           ORDER CARDS - Claymorphism
+           ORDER CARDS
            ========================================== */
         .order {
             background: var(--clay-card);
@@ -513,34 +759,16 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .order:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        .order:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        .order:nth-child(3) {
-            animation-delay: 0.15s;
-        }
-        .order:nth-child(4) {
-            animation-delay: 0.2s;
-        }
-        .order:nth-child(5) {
-            animation-delay: 0.25s;
-        }
-        .order:nth-child(6) {
-            animation-delay: 0.3s;
-        }
+        .order:nth-child(1) { animation-delay: 0.05s; }
+        .order:nth-child(2) { animation-delay: 0.1s; }
+        .order:nth-child(3) { animation-delay: 0.15s; }
+        .order:nth-child(4) { animation-delay: 0.2s; }
+        .order:nth-child(5) { animation-delay: 0.25s; }
+        .order:nth-child(6) { animation-delay: 0.3s; }
 
         /* ==========================================
            ORDER HEADER
@@ -639,7 +867,7 @@
         }
 
         /* ==========================================
-           ORDER ACTIONS (Buttons inside card)
+           ORDER ACTIONS
            ========================================== */
         .order-actions {
             display: flex;
@@ -697,13 +925,8 @@
                 inset -3px -3px 8px #4e4943;
         }
 
-        .btn-copy {
-            color: var(--clay-success);
-        }
-
-        .btn-copy:hover {
-            color: #6a8a67;
-        }
+        .btn-copy { color: var(--clay-success); }
+        .btn-copy:hover { color: #6a8a67; }
 
         .btn-copy.copied {
             color: var(--clay-text-soft);
@@ -712,34 +935,17 @@
             transform: none !important;
         }
 
-        .btn-delete {
-            color: var(--clay-danger);
-        }
-
-        .btn-delete:hover {
-            color: #a06565;
-        }
+        .btn-delete { color: var(--clay-danger); }
+        .btn-delete:hover { color: #a06565; }
 
         /* ==========================================
-           COPIED ORDER - RGB Glow with Clay
+           COPIED ORDER
            ========================================== */
         @keyframes clay-glow {
-            0% {
-                border-color: #b57a7a;
-                box-shadow: 0 0 20px rgba(181, 122, 122, 0.2), var(--clay-shadow);
-            }
-            33% {
-                border-color: #b8956e;
-                box-shadow: 0 0 20px rgba(184, 149, 110, 0.2), var(--clay-shadow);
-            }
-            66% {
-                border-color: #7d9b7a;
-                box-shadow: 0 0 20px rgba(125, 155, 122, 0.2), var(--clay-shadow);
-            }
-            100% {
-                border-color: #b57a7a;
-                box-shadow: 0 0 20px rgba(181, 122, 122, 0.2), var(--clay-shadow);
-            }
+            0% { border-color: #b57a7a; box-shadow: 0 0 20px rgba(181, 122, 122, 0.2), var(--clay-shadow); }
+            33% { border-color: #b8956e; box-shadow: 0 0 20px rgba(184, 149, 110, 0.2), var(--clay-shadow); }
+            66% { border-color: #7d9b7a; box-shadow: 0 0 20px rgba(125, 155, 122, 0.2), var(--clay-shadow); }
+            100% { border-color: #b57a7a; box-shadow: 0 0 20px rgba(181, 122, 122, 0.2), var(--clay-shadow); }
         }
 
         .order.copied-order {
@@ -758,13 +964,8 @@
         }
 
         @keyframes float-check {
-            0%,
-            100% {
-                transform: translateY(0px) scale(1);
-            }
-            50% {
-                transform: translateY(-5px) scale(1.1);
-            }
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-5px) scale(1.1); }
         }
 
         /* ==========================================
@@ -832,32 +1033,13 @@
            RESPONSIVE
            ========================================== */
         @media (max-width: 820px) {
-            body {
-                padding: 15px;
-            }
+            body { padding: 15px; }
 
-            .header-top {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .header-right {
-                align-self: flex-end;
-                margin-top: -40px;
-            }
-
-            .header-title {
-                font-size: 18px;
-            }
-
-            .header-subtitle {
-                font-size: 11px;
-            }
-
-            .header-logo {
-                width: 40px;
-                height: 40px;
-            }
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .header-right { align-self: flex-end; margin-top: -40px; }
+            .header-title { font-size: 18px; }
+            .header-subtitle { font-size: 11px; }
+            .header-logo { width: 40px; height: 40px; }
 
             .unified-box {
                 flex-direction: row;
@@ -867,61 +1049,20 @@
                 justify-content: center;
             }
 
-            .unified-box .separator {
-                display: none;
-            }
+            .unified-box .separator { display: none; }
+            .btn { padding: 6px 12px; font-size: 12px; }
+            .counter-box { font-size: 12px; padding: 4px 12px; }
+            .summary-section { justify-content: center; width: 100%; }
+            .summary-total { font-size: 16px; padding: 3px 14px; min-width: 60px; }
+            .summary-customers { font-size: 12px; padding: 3px 12px; }
 
-            .btn {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
+            .order-row { flex-wrap: wrap; gap: 3px; }
+            .order-row .row-label { min-width: 70px; font-size: 11px; }
+            .order-row .row-value { font-size: 12px; }
 
-            .counter-box {
-                font-size: 12px;
-                padding: 4px 12px;
-            }
-
-            .summary-section {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .summary-total {
-                font-size: 16px;
-                padding: 3px 14px;
-                min-width: 60px;
-            }
-
-            .summary-customers {
-                font-size: 12px;
-                padding: 3px 12px;
-            }
-
-            .order-row {
-                flex-wrap: wrap;
-                gap: 3px;
-            }
-
-            .order-row .row-label {
-                min-width: 70px;
-                font-size: 11px;
-            }
-
-            .order-row .row-value {
-                font-size: 12px;
-            }
-
-            .order-actions {
-                flex-direction: column;
-            }
-
-            .order-actions button {
-                justify-content: center;
-            }
-
-            .order {
-                padding: 16px 18px;
-            }
+            .order-actions { flex-direction: column; }
+            .order-actions button { justify-content: center; }
+            .order { padding: 16px 18px; }
 
             .toast {
                 right: 15px;
@@ -930,51 +1071,31 @@
                 text-align: center;
                 justify-content: center;
             }
+
+            .manual-form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 480px) {
-            .unified-box {
-                padding: 8px 10px;
-                gap: 3px 6px;
+            .unified-box { padding: 8px 10px; gap: 3px 6px; }
+            .btn { padding: 4px 10px; font-size: 11px; }
+            .counter-box { font-size: 11px; padding: 3px 8px; }
+            .summary-total { font-size: 14px; padding: 2px 10px; min-width: 50px; }
+            .summary-customers { font-size: 11px; padding: 2px 8px; }
+            .order { padding: 12px 14px; }
+            .order-row .row-label { min-width: 60px; font-size: 10px; }
+            .order-row .row-value { font-size: 11px; }
+            .order-products .product-item { font-size: 11px; padding: 2px 14px; }
+
+            .manual-form-grid {
+                grid-template-columns: 1fr;
             }
 
-            .btn {
-                padding: 4px 10px;
-                font-size: 11px;
-            }
-
-            .counter-box {
-                font-size: 11px;
-                padding: 3px 8px;
-            }
-
-            .summary-total {
-                font-size: 14px;
-                padding: 2px 10px;
-                min-width: 50px;
-            }
-
-            .summary-customers {
-                font-size: 11px;
-                padding: 2px 8px;
-            }
-
-            .order {
-                padding: 12px 14px;
-            }
-
-            .order-row .row-label {
-                min-width: 60px;
-                font-size: 10px;
-            }
-
-            .order-row .row-value {
-                font-size: 11px;
-            }
-
-            .order-products .product-item {
-                font-size: 11px;
-                padding: 2px 14px;
+            .product-line .qty-input {
+                width: 45px;
+                padding: 6px 2px;
+                font-size: 12px;
             }
         }
     </style>
@@ -1004,10 +1125,54 @@
         </div>
 
         <!-- ==========================================
-        INPUT
+        INPUT (PASTE AREA)
         ========================================== -->
         <h3>📋 الصق أوردرات Excel</h3>
         <textarea id="input" placeholder="الصق البيانات هنا..."></textarea>
+
+        <!-- ==========================================
+        MANUAL ORDER FORM
+        ========================================== -->
+        <div class="manual-order-box">
+            <h3>✍️ إضافة أوردر يدوي</h3>
+            <div class="manual-form-grid">
+                <div class="form-field">
+                    <label>📦 رقم الأوردر</label>
+                    <input type="text" id="manualOrderNumber" placeholder="#HM26-........" />
+                </div>
+                <div class="form-field">
+                    <label>👤 اسم العميل</label>
+                    <input type="text" id="manualCustomer" placeholder="اسم العميل" />
+                </div>
+                <div class="form-field">
+                    <label>📞 الموبايل</label>
+                    <input type="text" id="manualPhone" placeholder="رقم الهاتف" />
+                </div>
+                <div class="form-field full-width">
+                    <label>📍 العنوان</label>
+                    <input type="text" id="manualAddress" placeholder="العنوان بالتفصيل" />
+                </div>
+                <div class="form-field full-width">
+                    <label>🛒 المنتجات (العدد + اسم المنتج)</label>
+                    <div class="product-lines-container" id="productLinesContainer">
+                        <!-- Product lines will be added dynamically -->
+                    </div>
+                    <button type="button" class="add-product-btn" onclick="addProductLine()" title="إضافة منتج جديد">+</button>
+                </div>
+                <div class="form-field">
+                    <label>💰 المبلغ</label>
+                    <input type="text" id="manualAmount" placeholder="مثال: 500 EGP" />
+                </div>
+                <div class="form-field">
+                    <label>📍 الموقع (رابط الخريطة)</label>
+                    <input type="text" id="manualLocation" placeholder="https://maps.google.com/..." />
+                </div>
+            </div>
+            <div class="manual-form-actions">
+                <button class="btn btn-primary" onclick="addManualOrder()">➕ إضافة الأوردر</button>
+                <button class="btn btn-outline" onclick="clearManualForm()">🧹 مسح الحقول</button>
+            </div>
+        </div>
 
         <!-- ==========================================
         TOOLBAR (Clay)
@@ -1054,31 +1219,16 @@
 
     <script>
         // ==========================================
-        // CORE LOGIC (Unchanged - نفس الكود تماماً)
+        // CORE LOGIC
         // ==========================================
 
         function arabicOrder(num) {
             const map = {
-                1: "الأول",
-                2: "الثاني",
-                3: "الثالث",
-                4: "الرابع",
-                5: "الخامس",
-                6: "السادس",
-                7: "السابع",
-                8: "الثامن",
-                9: "التاسع",
-                10: "العاشر",
-                11: "الحادي عشر",
-                12: "الثاني عشر",
-                13: "الثالث عشر",
-                14: "الرابع عشر",
-                15: "الخامس عشر",
-                16: "السادس عشر",
-                17: "السابع عشر",
-                18: "الثامن عشر",
-                19: "التاسع عشر",
-                20: "العشرون"
+                1: "الأول", 2: "الثاني", 3: "الثالث", 4: "الرابع", 5: "الخامس",
+                6: "السادس", 7: "السابع", 8: "الثامن", 9: "التاسع", 10: "العاشر",
+                11: "الحادي عشر", 12: "الثاني عشر", 13: "الثالث عشر", 14: "الرابع عشر",
+                15: "الخامس عشر", 16: "السادس عشر", 17: "السابع عشر", 18: "الثامن عشر",
+                19: "التاسع عشر", 20: "العشرون"
             };
             return map[num] || num;
         }
@@ -1091,6 +1241,12 @@
             if (!text) return 0;
             const match = text.match(/(\d+)/);
             return match ? parseInt(match[1]) : 0;
+        }
+
+        // Clean phone number: remove all spaces
+        function cleanPhone(phone) {
+            if (!phone) return '-';
+            return phone.replace(/\s+/g, '');
         }
 
         const textarea = document.getElementById("input");
@@ -1120,6 +1276,8 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
                 document.querySelector('.theme-toggle').textContent = '☀️';
             }
+            // Add initial product line
+            addProductLine();
             parseOrders();
         });
 
@@ -1176,33 +1334,9 @@
         </x:ExcelWorkbook>
         </xml><![endif]-->
         <style>
-            table {
-                border-collapse: collapse;
-                direction: rtl;
-                font-family: Calibri, Arial, sans-serif;
-                font-size: 11pt;
-            }
-            th {
-                background: #a67c6b;
-                color: #ffffff;
-                font-weight: 700;
-                border: 1px solid #b7c9c2;
-                padding: 8px 10px;
-                text-align: center;
-                white-space: nowrap;
-            }
-            td.note-cell {
-                background: #ffffff;
-                color: #555555;
-                border: 1px solid #d8e0dd;
-                padding: 8px 10px;
-                text-align: center;
-                white-space: nowrap;
-                user-select: none;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-            }
+            table { border-collapse: collapse; direction: rtl; font-family: Calibri, Arial, sans-serif; font-size: 11pt; }
+            th { background: #a67c6b; color: #ffffff; font-weight: 700; border: 1px solid #b7c9c2; padding: 8px 10px; text-align: center; white-space: nowrap; }
+            td.note-cell { background: #ffffff; color: #555555; border: 1px solid #d8e0dd; padding: 8px 10px; text-align: center; white-space: nowrap; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
         </style>
         </head>
         <body>
@@ -1226,7 +1360,7 @@
         }
 
         // ==========================================
-        // PARSE ORDERS
+        // PARSE ORDERS (FROM TEXTAREA)
         // ==========================================
         function parseOrders() {
             const lines = textarea.value.trim().split("\n");
@@ -1252,7 +1386,7 @@
                 const customer = cols[4]?.trim();
                 const street = cols[5]?.trim();
                 const city = cols[6]?.trim();
-                const phone = cols[7]?.trim();
+                const phone = cleanPhone(cols[7]?.trim());
                 const mapLink = cols[8]?.trim();
 
                 if (!orderNumber) return;
@@ -1260,7 +1394,7 @@
                 if (!orders[orderNumber]) {
                     orders[orderNumber] = {
                         customer: customer || "-",
-                        phone: phone || "-",
+                        phone: phone,
                         amountText: amountText,
                         amountNumber: extractAmountFromText(amountText),
                         address: [street, city].filter(Boolean).join(" - "),
@@ -1305,6 +1439,7 @@
                 const div = document.createElement("div");
                 div.className = "order";
                 div.id = orderId;
+                div.dataset.copyText = copyText;
 
                 const header = document.createElement("div");
                 header.className = "order-header";
@@ -1371,7 +1506,7 @@
                 copyBtn.textContent = "📋 نسخ";
                 copyBtn.onclick = function(e) {
                     e.stopPropagation();
-                    copyOrder(this, orderId, copyText);
+                    copyOrder(this, orderId, div.dataset.copyText);
                 };
 
                 const deleteBtn = document.createElement("button");
@@ -1399,9 +1534,118 @@
                 counter++;
             });
 
+            if (Object.keys(orders).length === 0 && textarea.value.trim() !== "") {
+                if (!container.querySelector('.empty')) {
+                    container.innerHTML = `<div class="empty">لم يتم التعرف على أي أوردر. تأكد من وجود أرقام أوردرات في العمود الأول.</div>`;
+                }
+            }
+
             updateStatsAndSummary(getOrdersData());
         }
 
+        // ==========================================
+        // PRODUCT LINES (Dynamic add/remove)
+        // ==========================================
+        function addProductLine() {
+            const container = document.getElementById('productLinesContainer');
+            const line = document.createElement('div');
+            line.className = 'product-line';
+            line.innerHTML = `
+                <input type="text" class="qty-input" placeholder="العدد" inputmode="numeric" pattern="[0-9]*" maxlength="3" />
+                <input type="text" class="product-name-input" placeholder="اسم المنتج" />
+                <button type="button" class="remove-product-btn" onclick="removeProductLine(this)" title="حذف">✕</button>
+            `;
+            container.appendChild(line);
+            // Focus on the qty input of the new line
+            line.querySelector('.qty-input').focus();
+        }
+
+        function removeProductLine(btn) {
+            const container = document.getElementById('productLinesContainer');
+            if (container.children.length <= 1) {
+                // Clear the inputs instead of removing the last line
+                const line = btn.closest('.product-line');
+                line.querySelector('.qty-input').value = '';
+                line.querySelector('.product-name-input').value = '';
+                return;
+            }
+            btn.closest('.product-line').remove();
+        }
+
+        // ==========================================
+        // ADD MANUAL ORDER
+        // ==========================================
+        function addManualOrder() {
+            const orderNumber = document.getElementById('manualOrderNumber').value.trim();
+            const customer = document.getElementById('manualCustomer').value.trim() || '-';
+            const phone = cleanPhone(document.getElementById('manualPhone').value.trim()) || '-';
+            const address = document.getElementById('manualAddress').value.trim() || '-';
+            const amountText = document.getElementById('manualAmount').value.trim() || '0';
+            const location = document.getElementById('manualLocation').value.trim() || '-';
+
+            if (!orderNumber) {
+                showToast('⚠️ يجب إدخال رقم الأوردر');
+                return;
+            }
+
+            // Collect products from dynamic lines
+            let products = {};
+            const lines = document.querySelectorAll('#productLinesContainer .product-line');
+            lines.forEach(line => {
+                const qty = parseInt(line.querySelector('.qty-input').value.trim()) || 0;
+                const name = line.querySelector('.product-name-input').value.trim();
+                if (name) {
+                    products[name] = (products[name] || 0) + (qty || 1);
+                }
+            });
+
+            // Build tab-separated lines to append to textarea
+            let linesToAppend = [];
+            const productEntries = Object.entries(products);
+            if (productEntries.length === 0) {
+                linesToAppend.push(
+                    [orderNumber, amountText, '1', '', customer, address, '', phone, location].join('\t')
+                );
+            } else {
+                productEntries.forEach(([name, qty]) => {
+                    linesToAppend.push(
+                        [orderNumber, amountText, qty.toString(), name, customer, address, '', phone, location].join('\t')
+                    );
+                });
+            }
+
+            const currentText = textarea.value.trim();
+            const newText = currentText + (currentText ? '\n' : '') + linesToAppend.join('\n');
+            textarea.value = newText;
+
+            clearManualForm();
+            parseOrders();
+
+            const orders = document.querySelectorAll('.order');
+            if (orders.length > 0) {
+                orders[orders.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            showToast('✅ تم إضافة الأوردر اليدوي');
+        }
+
+        function clearManualForm() {
+            document.getElementById('manualOrderNumber').value = '';
+            document.getElementById('manualCustomer').value = '';
+            document.getElementById('manualPhone').value = '';
+            document.getElementById('manualAddress').value = '';
+            document.getElementById('manualAmount').value = '';
+            document.getElementById('manualLocation').value = '';
+
+            // Reset product lines: clear all, keep one empty line
+            const container = document.getElementById('productLinesContainer');
+            container.innerHTML = '';
+            addProductLine();
+        }
+
+        // ==========================================
+        // GET ORDERS DATA
+        // ==========================================
         function getOrdersData() {
             const orders = document.querySelectorAll('.order');
             const data = [];
@@ -1530,6 +1774,7 @@
             if (confirm(`هل أنت متأكد من حذف ${orders.length} أوردر؟`)) {
                 orders.forEach(order => order.remove());
                 copiedOrders.clear();
+                textarea.value = '';
                 updateStatsAndSummary([]);
                 showToast(`🗑️ تم حذف جميع الأوردرات`);
             }
