@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مقارنة المخزون مع أوردرات Shopify</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+    min-height: 100vh;
+    background: var(--clay-bg);
+    transition: all 0.4s ease;
+  }
+
+  :root {
+    --clay-bg: #e8e0d5;
+    --clay-card: #eae3d8;
+    --clay-shadow: 8px 8px 16px #cbc3b8, -8px -8px 16px #fffff2;
+    --clay-inset: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2;
+    --clay-border: #d5cec3;
+    --clay-text: #3d3a36;
+    --clay-text-soft: #6b6560;
+    --clay-accent: #a67c6b;
+    --clay-accent-hover: #8f6b5a;
+    --clay-success: #7d9b7a;
+    --clay-danger: #b57a7a;
+    --clay-gold: #b8956e;
+    --clay-blue: #7a8fa6;
+    --clay-warning: #d4a373;
+    --clay-radius: 24px;
+    --clay-radius-sm: 14px;
+  }
+
+  [data-theme="dark"] {
+    --clay-bg: #2a2724;
+    --clay-card: #36322e;
+    --clay-shadow: 8px 8px 16px #1e1b19, -8px -8px 16px #4e4943;
+    --clay-inset: inset 3px 3px 8px #1e1b19, inset -3px -3px 8px #4e4943;
+    --clay-border: #4a4540;
+    --clay-text: #ede8e2;
+    --clay-text-soft: #b5aea6;
+    --clay-accent: #b8956e;
+    --clay-accent-hover: #d4ae84;
+    --clay-success: #8aaa87;
+    --clay-danger: #c48a8a;
+    --clay-gold: #d4ae84;
+    --clay-blue: #8aa3ba;
+    --clay-warning: #e0b88a;
+  }
+
+  .container { max-width: 1600px; margin: 0 auto; }
+
+  /* HEADER */
+  .header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 25px; flex-wrap: wrap; gap: 15px;
+    padding: 18px 24px; background: var(--clay-card);
+    border-radius: var(--clay-radius); box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border); transition: all 0.4s ease;
+  }
+  .header-left { display: flex; align-items: center; gap: 15px; }
+  .header-logo {
+    width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--clay-accent);
+    box-shadow: 6px 6px 14px #cbc3b8, -6px -6px 14px #fffff2;
+    transition: all 0.3s ease;
+  }
+  [data-theme="dark"] .header-logo { box-shadow: 6px 6px 14px #1e1b19, -6px -6px 14px #4e4943; }
+  .header-logo:hover { transform: scale(1.05) rotate(-5deg); }
+  .header-info { display: flex; flex-direction: column; }
+  .header-title { color: var(--clay-text); font-size: 22px; font-weight: 700; }
+  .header-subtitle { color: var(--clay-accent); font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
+  .theme-toggle {
+    background: var(--clay-card); border: 1px solid var(--clay-border);
+    border-radius: 50%; width: 48px; height: 48px; font-size: 22px;
+    cursor: pointer; transition: all 0.3s ease;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--clay-text);
+    box-shadow: 6px 6px 14px #cbc3b8, -6px -6px 14px #fffff2;
+  }
+  [data-theme="dark"] .theme-toggle { box-shadow: 6px 6px 14px #1e1b19, -6px -6px 14px #4e4943; }
+  .theme-toggle:hover { transform: rotate(30deg) scale(1.1); }
+
+  h3 { color: var(--clay-text); margin-bottom: 12px; font-size: 16px; font-weight: 600; padding-right: 6px; }
+
+  /* UPLOAD / PASTE */
+  .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+  @media (max-width: 900px) { .upload-grid { grid-template-columns: 1fr; } }
+
+  .upload-card {
+    background: var(--clay-card); border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
+    padding: 20px; transition: all 0.4s ease;
+    border-top: 4px solid var(--clay-accent); position: relative;
+  }
+  .upload-card.orders { border-top-color: var(--clay-gold); }
+
+  .upload-card .card-header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 12px;
+  }
+  .upload-card .card-header-row h3 { margin: 0; }
+
+  .clear-card-btn {
+    padding: 6px 12px; font-size: 11px;
+    border: 1px solid var(--clay-border); border-radius: var(--clay-radius-sm);
+    background: var(--clay-card); color: var(--clay-danger);
+    cursor: pointer; font-family: inherit; font-weight: 700;
+    box-shadow: 3px 3px 8px #cbc3b8, -3px -3px 8px #fffff2;
+    transition: all 0.3s ease; display: flex; align-items: center;
+    gap: 4px; white-space: nowrap;
+  }
+  [data-theme="dark"] .clear-card-btn { box-shadow: 3px 3px 8px #1e1b19, -3px -3px 8px #4e4943; }
+  .clear-card-btn:hover { transform: translateY(-2px); box-shadow: 5px 5px 12px #cbc3b8, -5px -5px 12px #fffff2; }
+  [data-theme="dark"] .clear-card-btn:hover { box-shadow: 5px 5px 12px #1e1b19, -5px -5px 12px #4e4943; }
+
+  .file-drop {
+    border: 2px dashed var(--clay-border); border-radius: var(--clay-radius-sm);
+    padding: 18px 15px; text-align: center; cursor: pointer;
+    transition: all 0.3s ease; background: var(--clay-card);
+    box-shadow: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2;
+    display: block; margin-bottom: 10px;
+  }
+  [data-theme="dark"] .file-drop { box-shadow: inset 3px 3px 8px #1e1b19, inset -3px -3px 8px #4e4943; }
+  .file-drop:hover, .file-drop.dragover { border-color: var(--clay-accent); transform: translateY(-2px); }
+  .file-drop.has-file { border-color: var(--clay-success); background: rgba(125, 155, 122, 0.08); }
+  .file-drop input { display: none; }
+  .file-drop .icon { font-size: 28px; margin-bottom: 6px; }
+  .file-drop .label { font-size: 12px; color: var(--clay-text-soft); }
+  .file-drop .filename { font-size: 12px; color: var(--clay-success); font-weight: 600; margin-top: 4px; word-break: break-all; }
+
+  .paste-area {
+    width: 100%; min-height: 110px; padding: 12px 14px; font-size: 12px;
+    border: 1px solid var(--clay-border); border-radius: var(--clay-radius-sm);
+    background: var(--clay-card); color: var(--clay-text); font-family: inherit;
+    resize: vertical;
+    box-shadow: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2;
+    transition: all 0.3s ease;
+  }
+  [data-theme="dark"] .paste-area { box-shadow: inset 3px 3px 8px #1e1b19, inset -3px -3px 8px #4e4943; }
+  .paste-area:focus { outline: none; box-shadow: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2, 0 0 0 2px var(--clay-accent); }
+  .paste-area::placeholder { color: var(--clay-text-soft); opacity: 0.6; }
+
+  .paste-hint { font-size: 11px; color: var(--clay-text-soft); margin-top: 4px; padding-right: 4px; opacity: 0.8; }
+
+  .or-divider {
+    display: flex; align-items: center; gap: 10px; margin: 12px 0;
+    color: var(--clay-text-soft); font-size: 12px; font-weight: 600;
+  }
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--clay-border); }
+
+  /* BUTTONS */
+  .btn {
+    padding: 10px 20px; border: none; border-radius: var(--clay-radius-sm);
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.3s ease; display: inline-flex; align-items: center;
+    gap: 6px; font-family: inherit; color: var(--clay-text);
+    background: var(--clay-card);
+    box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
+    border: 1px solid var(--clay-border); white-space: nowrap;
+  }
+  [data-theme="dark"] .btn { box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943; }
+  .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); box-shadow: 6px 6px 16px #cbc3b8, -6px -6px 16px #fffff2; }
+  [data-theme="dark"] .btn:hover:not(:disabled) { box-shadow: 6px 6px 16px #1e1b19, -6px -6px 16px #4e4943; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { color: var(--clay-success); font-weight: 700; }
+  .btn-export { color: var(--clay-gold); font-weight: 700; }
+  .btn-danger-outline { color: var(--clay-danger); font-weight: 700; }
+
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 25px; }
+  @media (max-width: 1100px) { .stats { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat-card {
+    background: var(--clay-card); border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
+    padding: 18px 14px; text-align: center; transition: all 0.3s ease;
+  }
+  .stat-card:hover { transform: translateY(-4px); }
+  .stat-card .num { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .stat-card .lbl { font-size: 12px; color: var(--clay-text-soft); font-weight: 600; }
+  .stat-card.total .num { color: var(--clay-blue); }
+  .stat-card.available .num { color: var(--clay-success); }
+  .stat-card.oos .num { color: var(--clay-danger); }
+  .stat-card.nosku .num { color: var(--clay-warning); }
+  .stat-card.pricemismatch .num { color: var(--clay-gold); }
+  .stat-card.notinbranch .num { color: #c48a8a; }
+
+  /* EXPORT ROW */
+  .export-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--clay-card); border-radius: var(--clay-radius);
+    overflow: hidden; box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+    margin-bottom: 20px; position: relative;
+  }
+
+  .table-scroll { overflow-x: auto; max-height: 65vh; overflow-y: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+  thead { position: sticky; top: 0; z-index: 10; }
+  thead th {
+    background: var(--clay-card); color: var(--clay-accent);
+    text-align: center; font-weight: 700; font-size: 12px;
+    border-bottom: 2px solid var(--clay-border);
+    border-left: 1px solid var(--clay-border);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    padding: 8px 6px 6px 6px; vertical-align: top;
+  }
+  [data-theme="dark"] thead th { box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+
+  .th-content { display: flex; flex-direction: column; gap: 4px; align-items: stretch; }
+  .th-label { font-size: 12px; font-weight: 700; color: var(--clay-accent); text-align: center; padding: 2px 4px; }
+
+  .th-filter {
+    width: 100%; padding: 4px 8px; font-size: 11px; font-family: inherit;
+    background: var(--clay-bg); color: var(--clay-text);
+    border: 1px solid var(--clay-border); border-radius: 8px;
+    box-shadow: inset 1px 1px 4px #cbc3b8, inset -1px -1px 4px #fffff2;
+    transition: all 0.2s ease;
+  }
+  [data-theme="dark"] .th-filter { box-shadow: inset 1px 1px 4px #1e1b19, inset -1px -1px 4px #4e4943; }
+  .th-filter:focus { outline: none; border-color: var(--clay-accent); box-shadow: inset 1px 1px 4px #cbc3b8, inset -1px -1px 4px #fffff2, 0 0 0 2px var(--clay-accent); }
+  .th-filter::placeholder { color: var(--clay-text-soft); opacity: 0.5; font-size: 10px; }
+  .th-filter-select { cursor: pointer; background: var(--clay-bg); }
+
+  tbody td {
+    padding: 9px 10px; text-align: center;
+    border-bottom: 1px solid var(--clay-border);
+    border-left: 1px solid rgba(213, 206, 195, 0.4);
+    color: var(--clay-text); transition: background 0.2s ease;
+  }
+  [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
+  tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
+
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 10px; font-weight: 700;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.08), inset -2px -2px 5px rgba(255,255,255,0.15);
+  }
+  .badge-available { background: rgba(125, 155, 122, 0.22); color: var(--clay-success); }
+  .badge-oos { background: rgba(181, 122, 122, 0.22); color: var(--clay-danger); }
+  .badge-nosku { background: rgba(212, 163, 115, 0.22); color: var(--clay-warning); }
+  .badge-pricemismatch { background: rgba(184, 149, 110, 0.25); color: var(--clay-gold); }
+  .badge-notinbranch { background: rgba(196, 138, 138, 0.22); color: #c48a8a; }
+
+  .stock-num { font-weight: 700; color: var(--clay-text); }
+  .stock-zero { color: var(--clay-text-soft); opacity: 0.5; font-weight: 400; }
+  .stock-total { color: var(--clay-success); font-weight: 700; font-size: 13px; }
+  .stock-held { color: var(--clay-gold); font-weight: 600; }
+
+  .order-link { color: var(--clay-blue); font-weight: 700; font-size: 12px; }
+
+  .product-name {
+    text-align: right !important; max-width: 260px;
+    white-space: normal; font-size: 12px; line-height: 1.5;
+  }
+
+  .price-cell { font-weight: 700; color: var(--clay-gold); direction: ltr; }
+  .price-mismatch { color: var(--clay-danger); font-weight: 700; position: relative; }
+  .price-mismatch::after { content: " ⚠️"; font-size: 11px; }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--clay-text-soft);
+    font-size: 16px; background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    border: 2px dashed var(--clay-border);
+    box-shadow: var(--clay-shadow);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px;
+    background: var(--clay-card); color: var(--clay-text);
+    padding: 16px 28px; border-radius: var(--clay-radius);
+    box-shadow: 12px 12px 24px #cbc3b8, -12px -12px 24px #fffff2;
+    border: 1px solid var(--clay-border); font-size: 14px;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 1000; display: flex; align-items: center; gap: 12px;
+    max-width: 90%; font-weight: 600;
+  }
+  [data-theme="dark"] .toast { box-shadow: 12px 12px 24px #1e1b19, -12px -12px 24px #4e4943; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast .toast-icon { font-size: 20px; }
+
+  @media (max-width: 820px) {
+    body { padding: 15px; }
+    .header-top { flex-direction: column; align-items: flex-start; }
+    .header-right { align-self: flex-end; margin-top: -40px; }
+    .header-title { font-size: 18px; }
+    .header-subtitle { font-size: 11px; }
+    .header-logo { width: 40px; height: 40px; }
+    .btn { padding: 8px 14px; font-size: 12px; }
+    .stat-card .num { font-size: 22px; }
+    .toast { right: 15px; left: 15px; bottom: 15px; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header-top">
+    <div class="header-left">
+      <img class="header-logo"
+           src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png"
+           alt="Logo"
+           onerror="this.style.display='none'">
+      <div class="header-info">
+        <span class="header-title">📦 مقارنة المخزون مع أوردرات Shopify</span>
+        <span class="header-subtitle">Created By Hussein Gamal Sr.Operation &amp; 3PL Logistics</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
+    </div>
+  </div>
+
+  <!-- UPLOAD + PASTE -->
+  <div class="upload-grid">
+    <!-- STOCK -->
+    <div class="upload-card" id="stockCard">
+      <div class="card-header-row">
+        <h3>📊 شيت المخزون (warehouseStocks)</h3>
+        <button class="clear-card-btn" onclick="clearStock()" title="إزالة الملف والبيانات">🗑️ إزالة</button>
+      </div>
+      <label class="file-drop" id="stockDrop">
+        <input type="file" id="stockFile" accept=".xlsx,.xls,.csv">
+        <div class="icon">📁</div>
+        <div class="label">اضغط أو اسحب الملف هنا</div>
+        <div class="filename" id="stockName"></div>
+      </label>
+      <div class="or-divider">أو</div>
+      <textarea class="paste-area" id="stockPaste"
+        placeholder="الصق هنا البيانات من Excel مباشرة (Ctrl+V)&#10;يقبل مع الهيدر أو بدونه..."></textarea>
+      <div class="paste-hint">💡 يقبل النسخ مع الهيدر أو بدونه — هيشتغل تلقائي</div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="upload-card orders" id="ordersCard">
+      <div class="card-header-row">
+        <h3>🛒 شيت أوردرات Shopify</h3>
+        <button class="clear-card-btn" onclick="clearOrders()" title="إزالة الملف والبيانات">🗑️ إزالة</button>
+      </div>
+      <label class="file-drop" id="ordersDrop">
+        <input type="file" id="ordersFile" accept=".xlsx,.xls,.csv">
+        <div class="icon">📁</div>
+        <div class="label">اضغط أو اسحب الملف هنا</div>
+        <div class="filename" id="ordersName"></div>
+      </label>
+      <div class="or-divider">أو</div>
+      <textarea class="paste-area" id="ordersPaste"
+        placeholder="الصق هنا البيانات من Excel مباشرة (Ctrl+V)&#10;لازم يكون فيه صف رؤوس الأعمدة (Name, Lineitem sku, ...)"></textarea>
+      <div class="paste-hint">💡 لازم تلزق مع الهيدر</div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn btn-primary" id="compareBtn" disabled>🔍 ابدأ المقارنة</button>
+    <button class="btn btn-danger-outline" id="clearAllBtn">🗑️ مسح الكل</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats" id="stats" style="display:none;">
+    <div class="stat-card total">
+      <div class="num" id="statTotal">0</div>
+      <div class="lbl">إجمالي الصفوف</div>
+    </div>
+    <div class="stat-card available">
+      <div class="num" id="statAvailable">0</div>
+      <div class="lbl">متوفر في المخزون</div>
+    </div>
+    <div class="stat-card notinbranch">
+      <div class="num" id="statNotInBranch">0</div>
+      <div class="lbl">غير متوفر في الهرم</div>
+    </div>
+    <div class="stat-card oos">
+      <div class="num" id="statOos">0</div>
+      <div class="lbl">Out of Stock</div>
+    </div>
+    <div class="stat-card nosku">
+      <div class="num" id="statNosku">0</div>
+      <div class="lbl">ملهوش كود على Shopify</div>
+    </div>
+    <div class="stat-card pricemismatch">
+      <div class="num" id="statPriceMismatch">0</div>
+      <div class="lbl">سعر غير مطابق</div>
+    </div>
+  </div>
+
+  <!-- EXPORT ROW -->
+  <div class="export-row" id="exportRow" style="display:none;">
+    <button class="btn btn-export" onclick="exportCSV('all')">⬇️ تحميل الكل CSV</button>
+    <button class="btn btn-export" onclick="exportCSV('oos')">⬇️ تحميل Out of Stock CSV</button>
+    <button class="btn btn-export" onclick="exportCSV('nosku')">⬇️ تحميل ملهوش كود CSV</button>
+    <button class="btn btn-export" onclick="exportCSV('pricemismatch')">⬇️ تحميل سعر غير مطابق CSV</button>
+    <button class="btn btn-export" onclick="exportCSV('notinbranch')">⬇️ تحميل غير متوفر في الهرم CSV</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap" id="tableWrap" style="display:none;">
+    <div class="table-scroll">
+      <table id="resultTable">
+        <thead>
+          <tr id="tableHeaderRow"></tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="icon">📤</div>
+    <div>ارفع الشيتين أو الصق البيانات عشان تبدأ المقارنة</div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast">
+  <span class="toast-icon">✅</span>
+  <span id="toastMessage">تم</span>
+</div>
+
+<script>
+// ================== Globals ==================
+let stockMap = {};
+let ordersRows = [];
+let results = [];
+let stockLoaded = false;
+let ordersLoaded = false;
+
+let columnFilters = {
+  order: '', product: '', sku: '', model: '', qty: '', shopifyPrice: '', stockPrice: '',
+  status: 'all', haram: '', bahary: '', suez: '', nasr: '', online: '', total: '', held: '', transfer: ''
+};
+
+// ================== Helpers ==================
+function normalizeKey(v) {
+  if (v === null || v === undefined) return '';
+  return String(v).trim();
+}
+
+function toNumber(v) {
+  if (v === null || v === undefined || v === '') return 0;
+  const n = Number(String(v).replace(/,/g, '').trim());
+  return isNaN(n) ? 0 : n;
+}
+
+function findCol(headers, ...candidates) {
+  const norm = headers.map(h => normalizeKey(h).toLowerCase().replace(/\s+/g, ' '));
+  for (const cand of candidates) {
+    const c = cand.toLowerCase().replace(/\s+/g, ' ');
+    const idx = norm.findIndex(h => h === c);
+    if (idx !== -1) return headers[idx];
+  }
+  for (const cand of candidates) {
+    const c = cand.toLowerCase().replace(/\s+/g, ' ');
+    const idx = norm.findIndex(h => h.includes(c));
+    if (idx !== -1) return headers[idx];
+  }
+  return null;
+}
+
+// ================== Toast ==================
+let toastTimeout;
+function showToast(message, icon = '✅') {
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toastMessage');
+  toast.querySelector('.toast-icon').textContent = icon;
+  toastMessage.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ================== Theme ==================
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.querySelector('.theme-toggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.textContent = '☀️';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+// ================== File Upload ==================
+function setupDrop(dropId, inputId, nameId, onLoad) {
+  const drop = document.getElementById(dropId);
+  const input = document.getElementById(inputId);
+  const nameEl = document.getElementById(nameId);
+
+  input.addEventListener('change', e => {
+    if (e.target.files.length) handleFile(e.target.files[0], drop, nameEl, onLoad);
+  });
+
+  ['dragenter', 'dragover'].forEach(ev =>
+    drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('dragover'); })
+  );
+  ['dragleave', 'drop'].forEach(ev =>
+    drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('dragover'); })
+  );
+  drop.addEventListener('drop', e => {
+    if (e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      handleFile(e.dataTransfer.files[0], drop, nameEl, onLoad);
+    }
+  });
+}
+
+function handleFile(file, dropEl, nameEl, onLoad) {
+  dropEl.classList.add('has-file');
+  nameEl.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array', codepage: 65001, cellText: true, cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(ws, { defval: '', raw: false, codepage: 65001 });
+      onLoad(json);
+      showToast('تم تحميل: ' + file.name, '📁');
+      tryAutoCompare();
+    } catch (err) {
+      alert('خطأ في قراءة الملف: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ================== Paste Parser ==================
+function parsePastedText(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+  if (lines.length < 1) return { rows: [], hasHeader: false, headers: [] };
+
+  const firstLine = lines[0];
+  const tabCount = (firstLine.match(/\t/g) || []).length;
+  const commaCount = (firstLine.match(/,/g) || []).length;
+  const delimiter = tabCount >= commaCount ? '\t' : ',';
+
+  const firstCells = splitLine(firstLine, delimiter);
+  const hasHeader = detectHeader(firstCells);
+
+  let headers, dataStartIdx;
+  if (hasHeader) {
+    headers = firstCells;
+    dataStartIdx = 1;
+  } else {
+    // No header - use default column map (only meaningful for Stock)
+    headers = null;
+    dataStartIdx = 0;
+  }
+
+  const rows = [];
+  for (let i = dataStartIdx; i < lines.length; i++) {
+    const cells = splitLine(lines[i], delimiter);
+    if (hasHeader) {
+      const obj = {};
+      headers.forEach((h, idx) => { obj[h] = cells[idx] !== undefined ? cells[idx] : ''; });
+      rows.push(obj);
+    } else {
+      // Return array-of-arrays form for default mapping
+      rows.push(cells);
+    }
+  }
+
+  return { rows, hasHeader, headers, delimiter };
+}
+
+// Detect whether the first row is a header
+function detectHeader(cells) {
+  // Known keywords (case-insensitive, partial)
+  const keywords = [
+    'كود الصنف', 'الصنف', 'المحتجز', 'كود الموديل', 'سعر البيع', 'رصيد رهن التحويل',
+    'إجمالي', 'الهرم', 'البحر', 'السويس', 'مدينة', 'Online', 'تسلسل',
+    'name', 'email', 'lineitem', 'sku', 'id', 'price', 'quantity', 'order'
+  ];
+  const joined = cells.map(c => String(c).toLowerCase().trim()).join('|');
+  let matched = 0;
+  for (const kw of keywords) {
+    if (joined.includes(kw.toLowerCase())) matched++;
+  }
+  // If at least 2 keywords matched → header
+  return matched >= 2;
+}
+
+function splitLine(line, delimiter) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if (ch === delimiter && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current);
+  return result.map(c => c.trim());
+}
+
+// ================== Default Stock Column Map (for header-less paste) ==================
+const STOCK_DEFAULT_MAP = {
+  0:  'كود الصنف',
+  1:  'المحتجز',
+  2:  'الصنف',
+  3:  'كود الموديل',
+  4:  'سعر البيع',
+  5:  'رصيد رهن التحويل',
+  6:  'إجمالي',
+  7:  'الهرم',
+  8:  'البحر_الاعظم',
+  9:  'السويس',
+  10: 'مدينة_نصر',
+  11: 'Online'
+};
+
+function buildDefaultStockRows(rows) {
+  return rows.map(cells => {
+    const obj = {};
+    for (const [idx, name] of Object.entries(STOCK_DEFAULT_MAP)) {
+      obj[name] = cells[Number(idx)] !== undefined ? cells[Number(idx)] : '';
+    }
+    return obj;
+  });
+}
+
+// ================== Load Stock ==================
+function loadStock(json) {
+  stockMap = {};
+  if (!json.length) { alert('شيت المخزون فاضي!'); return; }
+
+  const headers = Object.keys(json[0]);
+  // Try "كود الصنف" first, then "تسلسل الصنف" as fallback
+  let colSku = findCol(headers, 'كود الصنف', 'كود', 'sku', 'code');
+  if (!colSku) colSku = findCol(headers, 'تسلسل الصنف', 'تسلسل');
+
+  const colName    = findCol(headers, 'الصنف', 'اسم المنتج', 'name', 'product');
+  const colModel   = findCol(headers, 'كود الموديل', 'الموديل', 'model');
+  const colPrice   = findCol(headers, 'سعر البيع', 'السعر', 'price');
+  const colTotal   = findCol(headers, 'إجمالي', 'اجمالي', 'total');
+  const colHeld    = findCol(headers, 'المحتجز', 'محجوز', 'held');
+  const colTrans   = findCol(headers, 'رصيد رهن التحويل', 'رهن التحويل');
+  const colHaram   = findCol(headers, 'الهرم');
+  const colBahary  = findCol(headers, 'البحر_الاعظم', 'البحر الأعظم', 'البحر_الأعظم');
+  const colSuez    = findCol(headers, 'السويس');
+  const colNasr    = findCol(headers, 'مدينة_نصر', 'مدينة نصر');
+  const colOnline  = findCol(headers, 'Online', 'أونلاين', 'اونلاين');
+
+  if (!colSku) {
+    alert('مش لاقي عمود "كود الصنف" في شيت المخزون.');
+    return;
+  }
+
+  json.forEach(row => {
+    const sku = normalizeKey(row[colSku]);
+    if (!sku) return;
+    stockMap[sku] = {
+      sku,
+      name: normalizeKey(row[colName]),
+      model: normalizeKey(row[colModel]),
+      price: toNumber(row[colPrice]),
+      total: toNumber(row[colTotal]),
+      held: toNumber(row[colHeld]),
+      transfer: toNumber(row[colTrans]),
+      haram: toNumber(row[colHaram]),
+      bahary: toNumber(row[colBahary]),
+      suez: toNumber(row[colSuez]),
+      nasr: toNumber(row[colNasr]),
+      online: toNumber(row[colOnline]),
+    };
+  });
+
+  stockLoaded = Object.keys(stockMap).length > 0;
+  updateCompareButton();
+  console.log('Stock loaded:', Object.keys(stockMap).length, 'products');
+}
+
+// ================== Load Orders ==================
+function loadOrders(json) {
+  ordersRows = [];
+  if (!json.length) { alert('شيت الأوردرات فاضي!'); return; }
+
+  const headers = Object.keys(json[0]);
+  const colOrder = findCol(headers, 'Name', 'Id', 'Order', 'الأوردر');
+  const colSku   = findCol(headers, 'Lineitem sku', 'SKU', 'sku');
+  const colName  = findCol(headers, 'Lineitem name', 'Product', 'المنتج');
+  const colQty   = findCol(headers, 'Lineitem quantity', 'Quantity', 'الكمية');
+  const colPrice = findCol(headers, 'Lineitem price', 'Price', 'السعر');
+
+  if (!colOrder) {
+    alert('مش لاقي عمود "Name" أو "Id" في شيت الأوردرات.');
+    return;
+  }
+
+  let lastOrder = '';
+  json.forEach(row => {
+    let orderVal = normalizeKey(row[colOrder]);
+    if (orderVal) lastOrder = orderVal;
+    else orderVal = lastOrder;
+
+    const sku = normalizeKey(row[colSku]);
+    const name = normalizeKey(row[colName]);
+    const qty = toNumber(row[colQty]);
+    const price = toNumber(row[colPrice]);
+
+    if (!name && !sku) return;
+
+    ordersRows.push({
+      order: orderVal,
+      sku: sku,
+      name: name,
+      qty: qty || 1,
+      price: price,
+    });
+  });
+
+  ordersLoaded = ordersRows.length > 0;
+  updateCompareButton();
+  console.log('Orders loaded:', ordersRows.length, 'line items');
+}
+
+// ================== Compare ==================
+function compare() {
+  results = [];
+
+  ordersRows.forEach(item => {
+    const sku = item.sku;
+
+    if (!sku) {
+      results.push({
+        order: item.order, name: item.name, sku: '—', model: '—',
+        qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
+        status: 'nosku', priceMismatch: false,
+        haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
+        total: '-', held: '-', transfer: '-',
+      });
+      return;
+    }
+
+    const stock = stockMap[sku];
+
+    if (!stock) {
+      results.push({
+        order: item.order, name: item.name, sku: sku, model: '—',
+        qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
+        status: 'oos', priceMismatch: false,
+        haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
+        total: '-', held: '-', transfer: '-',
+      });
+      return;
+    }
+
+    const priceMismatch = (item.price > 0 && stock.price > 0 && item.price !== stock.price);
+    const totalAvailable = stock.haram + stock.bahary + stock.suez + stock.nasr + stock.online;
+
+    if (totalAvailable <= 0 && stock.total <= 0) {
+      results.push({
+        order: item.order, name: item.name, sku: sku, model: stock.model,
+        qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
+        status: 'oos', priceMismatch: priceMismatch,
+        haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
+        nasr: stock.nasr, online: stock.online,
+        total: stock.total, held: stock.held, transfer: stock.transfer,
+      });
+      return;
+    }
+
+    if (stock.haram <= 0) {
+      results.push({
+        order: item.order, name: item.name, sku: sku, model: stock.model,
+        qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
+        status: 'notinbranch', priceMismatch: priceMismatch,
+        haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
+        nasr: stock.nasr, online: stock.online,
+        total: stock.total, held: stock.held, transfer: stock.transfer,
+      });
+      return;
+    }
+
+    results.push({
+      order: item.order, name: item.name, sku: sku, model: stock.model,
+      qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
+      status: priceMismatch ? 'pricemismatch' : 'available',
+      priceMismatch: priceMismatch,
+      haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
+      nasr: stock.nasr, online: stock.online,
+      total: stock.total, held: stock.held, transfer: stock.transfer,
+    });
+  });
+
+  renderStats();
+  buildTableHeader();
+  renderTable();
+  document.getElementById('stats').style.display = 'grid';
+  document.getElementById('tableWrap').style.display = 'block';
+  document.getElementById('exportRow').style.display = 'flex';
+  document.getElementById('emptyState').style.display = 'none';
+  showToast('تمت المقارنة بنجاح', '🔍');
+}
+
+function tryAutoCompare() {
+  if (stockLoaded && ordersLoaded) compare();
+}
+
+// ================== Stats ==================
+function renderStats() {
+  const total = results.length;
+  const avail = results.filter(r => r.status === 'available').length;
+  const notInBranch = results.filter(r => r.status === 'notinbranch').length;
+  const oos = results.filter(r => r.status === 'oos').length;
+  const nosku = results.filter(r => r.status === 'nosku').length;
+  const priceMismatch = results.filter(r => r.priceMismatch).length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statAvailable').textContent = avail;
+  document.getElementById('statNotInBranch').textContent = notInBranch;
+  document.getElementById('statOos').textContent = oos;
+  document.getElementById('statNosku').textContent = nosku;
+  document.getElementById('statPriceMismatch').textContent = priceMismatch;
+}
+
+// ================== Table Header with Filters ==================
+const COLUMNS = [
+  { key: 'idx',            label: '#',              filterType: 'none' },
+  { key: 'order',          label: 'الأوردر',        filterType: 'text' },
+  { key: 'name',           label: 'المنتج',         filterType: 'text' },
+  { key: 'sku',            label: 'كود الصنف',      filterType: 'text' },
+  { key: 'model',          label: 'كود الموديل',    filterType: 'text' },
+  { key: 'qty',            label: 'الكمية',         filterType: 'text' },
+  { key: 'shopifyPrice',   label: 'سعر Shopify',    filterType: 'text' },
+  { key: 'stockPrice',     label: 'سعر المخزون',    filterType: 'text' },
+  { key: 'status',         label: 'الحالة',         filterType: 'select' },
+  { key: 'haram',          label: 'الهرم',          filterType: 'text' },
+  { key: 'bahary',         label: 'البحر الأعظم',   filterType: 'text' },
+  { key: 'suez',           label: 'السويس',         filterType: 'text' },
+  { key: 'nasr',           label: 'مدينة نصر',      filterType: 'text' },
+  { key: 'online',         label: 'Online',         filterType: 'text' },
+  { key: 'total',          label: 'الإجمالي',       filterType: 'text' },
+  { key: 'held',           label: 'المحتجز',        filterType: 'text' },
+  { key: 'transfer',       label: 'رهن التحويل',    filterType: 'text' },
+];
+
+function buildTableHeader() {
+  const row = document.getElementById('tableHeaderRow');
+  let html = '';
+  COLUMNS.forEach(col => {
+    let filterHtml = '';
+    if (col.filterType === 'text') {
+      const val = columnFilters[col.key] || '';
+      filterHtml = `<input type="text" class="th-filter" data-col="${col.key}"
+                    value="${val}" placeholder="فلتر..." oninput="onColumnFilter(this)">`;
+    } else if (col.filterType === 'select') {
+      const v = columnFilters[col.key] || 'all';
+      filterHtml = `<select class="th-filter th-filter-select" data-col="${col.key}" onchange="onColumnFilter(this)">
+        <option value="all" ${v === 'all' ? 'selected' : ''}>الكل</option>
+        <option value="available" ${v === 'available' ? 'selected' : ''}>متوفر</option>
+        <option value="notinbranch" ${v === 'notinbranch' ? 'selected' : ''}>غير متوفر في الهرم</option>
+        <option value="pricemismatch" ${v === 'pricemismatch' ? 'selected' : ''}>سعر غير مطابق</option>
+        <option value="oos" ${v === 'oos' ? 'selected' : ''}>Out of Stock</option>
+        <option value="nosku" ${v === 'nosku' ? 'selected' : ''}>ملهوش كود</option>
+      </select>`;
+    }
+    html += `<th><div class="th-content">
+      <div class="th-label">${col.label}</div>
+      ${filterHtml}
+    </div></th>`;
+  });
+  row.innerHTML = html;
+}
+
+function onColumnFilter(el) {
+  const key = el.dataset.col;
+  columnFilters[key] = el.value;
+  renderTable();
+}
+
+// ================== Render Table ==================
+function renderTable() {
+  const filtered = results.filter(r => {
+    for (const key of ['order', 'sku', 'model']) {
+      const f = (columnFilters[key] || '').toLowerCase();
+      if (f && !String(r[key] || '').toLowerCase().includes(f)) return false;
+    }
+    const fProduct = (columnFilters.product || '').toLowerCase();
+    if (fProduct && !String(r.name || '').toLowerCase().includes(fProduct)) return false;
+
+    for (const key of ['qty', 'shopifyPrice', 'stockPrice', 'haram', 'bahary', 'suez', 'nasr', 'online', 'total', 'held', 'transfer']) {
+      const f = (columnFilters[key] || '').toString().trim();
+      if (f !== '') {
+        const v = String(r[key] ?? '');
+        if (!v.includes(f)) return false;
+      }
+    }
+    const sf = columnFilters.status || 'all';
+    if (sf !== 'all' && r.status !== sf) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('resultBody');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="17" style="padding:40px;color:var(--clay-text-soft);">مفيش نتائج مطابقة</td></tr>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach((r, i) => {
+    let badge;
+    if (r.status === 'available') badge = '<span class="badge badge-available">متوفر</span>';
+    else if (r.status === 'notinbranch') badge = '<span class="badge badge-notinbranch">غير متوفر في الهرم</span>';
+    else if (r.status === 'pricemismatch') badge = '<span class="badge badge-pricemismatch">سعر غير مطابق</span>';
+    else if (r.status === 'oos') badge = '<span class="badge badge-oos">Out of Stock</span>';
+    else badge = '<span class="badge badge-nosku">ملهوش كود</span>';
+
+    const numCell = v => {
+      if (v === '-') return '<span class="stock-zero">-</span>';
+      const n = Number(v);
+      if (n === 0) return '<span class="stock-zero">0</span>';
+      return `<span class="stock-num">${n}</span>`;
+    };
+
+    const shopifyPriceCell = r.shopifyPrice > 0
+      ? `<span class="price-cell">${r.shopifyPrice}</span>`
+      : '<span class="stock-zero">-</span>';
+
+    const stockPriceCell = (r.stockPrice !== '—' && r.stockPrice > 0)
+      ? `<span class="price-cell ${r.priceMismatch ? 'price-mismatch' : ''}">${r.stockPrice}</span>`
+      : '<span class="stock-zero">—</span>';
+
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td><span class="order-link">${r.order || '—'}</span></td>
+      <td class="product-name">${r.name || '—'}</td>
+      <td>${r.sku}</td>
+      <td>${r.model || '—'}</td>
+      <td>${r.qty}</td>
+      <td>${shopifyPriceCell}</td>
+      <td>${stockPriceCell}</td>
+      <td>${badge}</td>
+      <td>${numCell(r.haram)}</td>
+      <td>${numCell(r.bahary)}</td>
+      <td>${numCell(r.suez)}</td>
+      <td>${numCell(r.nasr)}</td>
+      <td>${numCell(r.online)}</td>
+      <td>${r.total === '-' ? '-' : `<span class="stock-total">${r.total}</span>`}</td>
+      <td>${r.held === '-' ? '-' : `<span class="stock-held">${r.held}</span>`}</td>
+      <td>${r.transfer === '-' ? '-' : r.transfer}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+}
+
+// ================== Export CSV ==================
+function exportCSV(type = 'all') {
+  if (!results.length) return;
+
+  const headers = ['الأوردر','المنتج','كود الصنف','كود الموديل','الكمية',
+    'سعر Shopify','سعر المخزون','الحالة',
+    'الهرم','البحر الأعظم','السويس','مدينة نصر','Online',
+    'الإجمالي','المحتجز','رهن التحويل'];
+
+  const statusAr = {
+    available: 'متوفر',
+    notinbranch: 'غير متوفر في الهرم',
+    oos: 'Out of Stock',
+    nosku: 'ملهوش كود على Shopify',
+    pricemismatch: 'سعر غير مطابق'
+  };
+
+  let filtered, fileName;
+  if (type === 'all') { filtered = results; fileName = 'المقارنة_الكامل'; }
+  else if (type === 'pricemismatch') { filtered = results.filter(r => r.priceMismatch); fileName = 'سعر_غير_مطابق'; }
+  else {
+    filtered = results.filter(r => r.status === type);
+    const names = { oos: 'Out_of_Stock', nosku: 'ملهوش_كود', notinbranch: 'غير_متوفر_في_الهرم' };
+    fileName = names[type] || type;
+  }
+
+  if (!filtered.length) { showToast('مفيش بيانات للتحميل', '⚠️'); return; }
+
+  const rows = filtered.map(r => [
+    r.order, r.name, r.sku, r.model, r.qty,
+    r.shopifyPrice, r.stockPrice,
+    statusAr[r.status] + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
+    r.haram, r.bahary, r.suez, r.nasr, r.online,
+    r.total, r.held, r.transfer
+  ]);
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  const dateStr = new Date().toISOString().slice(0,10);
+  link.download = `${fileName}_${dateStr}.csv`;
+  link.click();
+  showToast(`تم تحميل ${fileName} (${filtered.length} صف)`, '⬇️');
+}
+
+// ================== Clear ==================
+function clearStock() {
+  stockMap = {}; stockLoaded = false;
+  document.getElementById('stockPaste').value = '';
+  document.getElementById('stockFile').value = '';
+  document.getElementById('stockName').textContent = '';
+  document.getElementById('stockDrop').classList.remove('has-file');
+  updateCompareButton();
+  resetResultsIfNoData();
+  showToast('تم إزالة شيت المخزون', '🗑️');
+}
+
+function clearOrders() {
+  ordersRows = []; ordersLoaded = false;
+  document.getElementById('ordersPaste').value = '';
+  document.getElementById('ordersFile').value = '';
+  document.getElementById('ordersName').textContent = '';
+  document.getElementById('ordersDrop').classList.remove('has-file');
+  updateCompareButton();
+  resetResultsIfNoData();
+  showToast('تم إزالة شيت الأوردرات', '🗑️');
+}
+
+function clearAll() {
+  clearStock();
+  clearOrders();
+  results = [];
+  columnFilters = {
+    order: '', product: '', sku: '', model: '', qty: '', shopifyPrice: '', stockPrice: '',
+    status: 'all', haram: '', bahary: '', suez: '', nasr: '', online: '', total: '', held: '', transfer: ''
+  };
+  document.getElementById('stats').style.display = 'none';
+  document.getElementById('tableWrap').style.display = 'none';
+  document.getElementById('exportRow').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'block';
+  showToast('تم مسح كل البيانات', '🗑️');
+}
+
+function resetResultsIfNoData() {
+  if (!stockLoaded || !ordersLoaded) {
+    results = [];
+    document.getElementById('stats').style.display = 'none';
+    document.getElementById('tableWrap').style.display = 'none';
+    document.getElementById('exportRow').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+  }
+}
+
+// ================== UI Wiring ==================
+function updateCompareButton() {
+  const btn = document.getElementById('compareBtn');
+  btn.disabled = !(stockLoaded && ordersLoaded);
+}
+
+setupDrop('stockDrop', 'stockFile', 'stockName', loadStock);
+setupDrop('ordersDrop', 'ordersFile', 'ordersName', loadOrders);
+
+// ===== STOCK PASTE HANDLER =====
+document.getElementById('stockPaste').addEventListener('input', e => {
+  const val = e.target.value.trim();
+  if (!val) { stockLoaded = false; updateCompareButton(); resetResultsIfNoData(); return; }
+
+  const parsed = parsePastedText(val);
+  let jsonRows;
+
+  if (parsed.hasHeader) {
+    // Has header → use as-is
+    jsonRows = parsed.rows;
+  } else {
+    // No header → apply default stock map
+    jsonRows = buildDefaultStockRows(parsed.rows);
+  }
+
+  if (jsonRows.length) {
+    loadStock(jsonRows);
+    tryAutoCompare();
+  }
+});
+
+// ===== ORDERS PASTE HANDLER =====
+document.getElementById('ordersPaste').addEventListener('input', e => {
+  const val = e.target.value.trim();
+  if (!val) { ordersLoaded = false; updateCompareButton(); resetResultsIfNoData(); return; }
+
+  const parsed = parsePastedText(val);
+  if (!parsed.hasHeader) {
+    showToast('⚠️ شيت الأوردرات لازم يتلزق مع الهيدر', '⚠️');
+    ordersLoaded = false;
+    updateCompareButton();
+    resetResultsIfNoData();
+    return;
+  }
+
+  if (parsed.rows.length) {
+    loadOrders(parsed.rows);
+    tryAutoCompare();
+  }
+});
+
+document.getElementById('compareBtn').addEventListener('click', compare);
+document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+
+window.addEventListener('load', function() {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.querySelector('.theme-toggle').textContent = '☀️';
+  }
+});
+</script>
+</body>
+</html>
