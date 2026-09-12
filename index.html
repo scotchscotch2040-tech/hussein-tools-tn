@@ -1315,6 +1315,11 @@
       خصم
       <span class="item-badge">Pending</span>
     </div>
+    <div class="menu-item" data-tab="stock" onclick="switchTab('stock')">
+      <span class="item-icon">📦</span>
+      Stock-Edara
+      <span class="item-badge">Stock</span>
+    </div>
 
     <div class="menu-divider"></div>
 
@@ -1392,6 +1397,15 @@
                 </div>
                 <div class="card-desc">خصم تلقائي من سعر المنتج عند pending</div>
                 <span class="card-badge">⏳ Pending</span>
+              </div>
+              <div class="unified-card" data-tab-card="stock" onclick="switchTab('stock')">
+                <span class="preview-icon">📦</span>
+                <div class="card-title">
+                  <span class="title-emoji">📦</span>
+                  Stock-Edara
+                </div>
+                <div class="card-desc">إدارة المخزون والكميات والجرد</div>
+                <span class="card-badge">📦 Stock</span>
               </div>
             </div>
 
@@ -1518,6 +1532,11 @@
             <iframe id="iframe-discount" src="discount-processor.html"></iframe>
           </div>
         </div>
+        <div class="tab-pane" id="tab-stock">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-stock" src="stock-edara.html"></iframe>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -1537,31 +1556,31 @@
         username: 'Hussein',
         password: '1129+',
         role: 'Admin',
-        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
+        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit']
       },
       {
         username: 'Saher',
         password: '123456',
         role: 'Customer Service Manager',
-        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
+        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit']
       },
       {
         username: 'Walaa',
         password: '11995',
         role: 'Team Leader CS',
-        allowedTabs: ['home', 'refund', 'orders', 'audit']
+        allowedTabs: ['home', 'refund', 'orders', 'stock', 'audit']
       },
       {
         username: 'Maryaim',
         password: '271997',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'audit']
+        allowedTabs: ['home', 'orders', 'stock', 'audit']
       },
       {
         username: 'Mai',
         password: 'mai2003',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'audit']
+        allowedTabs: ['home', 'orders', 'stock', 'audit']
       }
     ];
 
@@ -1797,7 +1816,7 @@
        ========================================== */
     function applyPermissions(user) {
       const allowed = (user && user.allowedTabs) ? user.allowedTabs : 
-                      ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
+                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit'];
 
       document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
         const tab = item.dataset.tab;
@@ -1822,7 +1841,7 @@
     function isTabAllowed(tabId) {
       if (!currentUser) return false;
       const allowed = currentUser.allowedTabs || 
-                      ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
+                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit'];
       return allowed.includes(tabId);
     }
 
@@ -2133,7 +2152,7 @@
 
       const compactHeader = document.getElementById('compactHeader');
       const container = document.querySelector('.container');
-      const isTool = ['refund', 'orders', 'transfers', 'discount', 'audit'].includes(tabId);
+      const isTool = ['refund', 'orders', 'transfers', 'discount', 'stock', 'audit'].includes(tabId);
 
       compactHeader.classList.toggle('visible', isTool);
       container.classList.toggle('tool-active', isTool);
@@ -2160,6 +2179,7 @@
         'orders': 'تقسيم الأوردرات',
         'transfers': 'Account Transfers',
         'discount': 'معالج الخصم',
+        'stock': 'Stock-Edara',
         'audit': 'سجل العمليات'
       };
       return names[tabId] || tabId;
@@ -2247,7 +2267,7 @@
     document.addEventListener('keydown', function(e) {
       if (loginScreen.classList.contains('hidden')) {
         if (e.ctrlKey && !e.shiftKey) {
-          const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'audit' };
+          const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'stock', '7': 'audit' };
           const tabId = tabMap[e.key];
           if (tabId) {
             e.preventDefault();
@@ -2265,6 +2285,7 @@
     console.log('🏠 Hussein Gamal Suite - Unified Card Style 💡');
     console.log('  ✅ All cards now share the same style');
     console.log('  🖼️ Large images preserved in quick links');
+    console.log('  📦 Stock-Edara added successfully');
     console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
     console.log('  🔒 Permissions system enabled');
   </script>
