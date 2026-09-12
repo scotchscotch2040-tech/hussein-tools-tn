@@ -1,2135 +1,2274 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hussein Gamal - Suite</title>
-
-    <style>
-        /* ==========================================
-           RESET & VARIABLES
-           ========================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --clay-bg: #e8e0d5;
-            --clay-card: #eae3d8;
-            --clay-shadow: 8px 8px 16px #cbc3b8, -8px -8px 16px #fffff2;
-            --clay-inset: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2;
-            --clay-border: #d5cec3;
-            --clay-text: #3d3a36;
-            --clay-text-soft: #6b6560;
-            --clay-accent: #a67c6b;
-            --clay-gold: #b8956e;
-            --clay-success: #7d9b7a;
-            --clay-purple: #9b7ab5;
-            --clay-teal: #7a9f9f;
-            --clay-blue: #7a8fa6;
-            --clay-danger: #b57a7a;
-            --clay-radius: 24px;
-            --clay-radius-sm: 14px;
-            --clay-radius-xs: 10px;
-            --menu-width: 200px;
-            --lamp-glow: #c2185c;
-            --lamp-base: #d9c9a8;
-            --lamp-shade: #f0e6d2;
-        }
-
-        [data-theme="dark"] {
-            --clay-bg: #2a2724;
-            --clay-card: #36322e;
-            --clay-shadow: 8px 8px 16px #1e1b19, -8px -8px 16px #4e4943;
-            --clay-inset: inset 3px 3px 8px #1e1b19, inset -3px -3px 8px #4e4943;
-            --clay-border: #4a4540;
-            --clay-text: #ede8e2;
-            --clay-text-soft: #b5aea6;
-            --clay-accent: #b8956e;
-            --clay-gold: #d4ae84;
-            --clay-success: #8aaa87;
-            --clay-purple: #b59ac9;
-            --clay-teal: #8ab5b5;
-            --clay-blue: #8aa3ba;
-            --clay-danger: #c48a8a;
-            --lamp-glow: #ffd97a;
-            --lamp-base: #4a4540;
-            --lamp-shade: #e8dcc4;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--clay-bg);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: all 0.4s ease;
-        }
-
-        /* ==========================================
-           LOGIN SCREEN (LAMP WITH PULL CORD)
-           ========================================== */
-        #login-screen {
-            position: fixed;
-            inset: 0;
-            background: #1a1816;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-            overflow: hidden;
-        }
-
-        #login-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .darkness-overlay {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 50%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.92) 70%);
-            transition: opacity 1s ease;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        #login-screen.lamp-on .darkness-overlay {
-            opacity: 0;
-        }
-
-        .login-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 50px;
-            position: relative;
-            z-index: 2;
-            flex-wrap: wrap;
-            padding: 20px;
-            max-width: 1000px;
-            width: 100%;
-        }
-
-        /* ===== الأباجورة ===== */
-        .lamp-container {
-            position: relative;
-            width: 180px;
-            height: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            flex-shrink: 0;
-        }
-
-        .lamp-glow {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--lamp-glow) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            pointer-events: none;
-            filter: blur(25px);
-            z-index: 0;
-        }
-
-        .lamp-on .lamp-glow {
-            opacity: 0.95;
-            animation: glowPulse 2.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes glowPulse {
-            from { opacity: 0.75; transform: translateX(-50%) scale(0.95); }
-            to { opacity: 1; transform: translateX(-50%) scale(1.08); }
-        }
-
-        .lamp-shade {
-            width: 140px;
-            height: 65px;
-            background: var(--lamp-shade);
-            border-radius: 70px 70px 10px 10px;
-            position: relative;
-            z-index: 3;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transition: background 0.6s ease, box-shadow 0.6s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .lamp-on .lamp-shade {
-            background: linear-gradient(180deg, #fff9e6 0%, var(--lamp-glow) 100%);
-            box-shadow: 0 0 40px var(--lamp-glow), 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        .lamp-pole {
-            width: 8px;
-            height: 150px;
-            background: var(--lamp-base);
-            border-radius: 4px;
-            z-index: 2;
-            box-shadow: inset -2px 0 3px rgba(0,0,0,0.1);
-            transition: background 0.6s ease;
-        }
-
-        .lamp-base {
-            width: 80px;
-            height: 16px;
-            background: var(--lamp-base);
-            border-radius: 8px;
-            z-index: 2;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            transition: background 0.6s ease;
-        }
-
-        /* ==========================================
-           LAMP CORD — يبدأ من تحت الطبق + سحب من أي جزء
-           ========================================== */
-        .lamp-cord {
-            position: absolute;
-            top: 157px;                          /* 👈 من حد الطبق السفلي */
-            left: calc(50% - 1px);
-            width: 2px;
-            height: 60px;
-            background: linear-gradient(to bottom, #8a7a5a 0%, #c9b995 100%);
-            z-index: 4;
-            transform-origin: top center;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: none;
-            transition: background 0.6s ease;
-            cursor: grab;
-        }
-
-        /* Hit-area شفافة عريضة تغطي الحبل كله عشان يسهل الإمساك من أي نقطة */
-        .lamp-cord::after {
-            content: '';
-            position: absolute;
-            top: -8px;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            background: transparent;
-            z-index: -1;
-        }
-
-        .lamp-cord.dragging {
-            cursor: grabbing;
-            transition: none;
-        }
-
-        .lamp-cord.releasing {
-            transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* نقطة تعليق الحبل في الطبق */
-        .lamp-cord::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 40% 40%, #a89878, #6a5a3a);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            z-index: 5;
-        }
-
-        @keyframes cordShake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-6deg); }
-            75% { transform: rotate(6deg); }
-        }
-
-        .lamp-cord.shaking { animation: cordShake 0.5s ease; }
-
-        .lamp-cord-knob {
-            position: absolute;
-            bottom: -11px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #f0e6d2, #c9b995);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-            transition: box-shadow 0.25s ease, transform 0.25s ease;
-            border: 1px solid rgba(255,255,255,0.2);
-            pointer-events: none;
-        }
-
-        .lamp-cord:hover .lamp-cord-knob {
-            box-shadow: 0 0 20px rgba(244, 213, 141, 0.9), 0 3px 8px rgba(0,0,0,0.35);
-            transform: translateX(-50%) scale(1.15);
-        }
-
-        .lamp-cord.dragging .lamp-cord-knob {
-            box-shadow: 0 0 30px rgba(244, 213, 141, 1), 0 3px 8px rgba(0,0,0,0.4);
-            transform: translateX(-50%) scale(1.25);
-        }
-
-        /* ===== الإرشادات الجانبية ===== */
-        .lamp-instructions {
-            position: absolute;
-            top: 50%;
-            right: calc(100% + 25px);
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: var(--clay-radius-sm);
-            padding: 14px 18px;
-            color: #f0e6d2;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: right;
-            white-space: nowrap;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            z-index: 5;
-            animation: floatTip 3s ease-in-out infinite;
-            transition: all 0.5s ease;
-            direction: rtl;
-        }
-
-        .lamp-instructions::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: -8px;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-right: 8px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .lamp-instructions .inst-icon {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 4px;
-            text-align: center;
-            animation: iconBounce 1.5s ease-in-out infinite;
-        }
-
-        .lamp-instructions .inst-line {
-            display: block;
-            line-height: 1.6;
-        }
-
-        .lamp-instructions .inst-line .highlight {
-            color: var(--lamp-glow);
-            font-weight: 800;
-        }
-
-        @keyframes floatTip {
-            0%, 100% { transform: translateY(-50%) translateX(0); }
-            50% { transform: translateY(-50%) translateX(-6px); }
-        }
-
-        @keyframes iconBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .lamp-on .lamp-instructions {
-            opacity: 0;
-            transform: translateY(-50%) translateX(20px);
-            pointer-events: none;
-        }
-
-        /* ===== فورم الدخول ===== */
-        .login-form-box {
-            background: var(--clay-card);
-            padding: 30px 26px;
-            border-radius: var(--clay-radius);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--clay-border);
-            border: 1px solid var(--clay-border);
-            width: 100%;
-            max-width: 340px;
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            pointer-events: none;
-            position: relative;
-            z-index: 5;
-        }
-
-        .lamp-on .login-form-box {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: all;
-            transition-delay: 0.3s;
-        }
-
-        .login-form-box h3 {
-            color: var(--clay-text);
-            font-size: 20px;
-            margin-bottom: 4px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .login-form-box .subtitle {
-            color: var(--clay-text-soft);
-            font-size: 12px;
-            margin-bottom: 22px;
-            text-align: center;
-        }
-
-        .input-group {
-            margin-bottom: 16px;
-            text-align: right;
-        }
-
-        .input-group label {
-            display: block;
-            color: var(--clay-text-soft);
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            padding-right: 4px;
-        }
-
-        .select-wrapper { position: relative; }
-
-        .select-wrapper::after {
-            content: '▼';
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--clay-text-soft);
-            font-size: 10px;
-            pointer-events: none;
-        }
-
-        .user-select {
-            width: 100%;
-            padding: 13px 16px;
-            border-radius: var(--clay-radius-sm);
-            border: 1px solid var(--clay-border);
-            background: var(--clay-bg);
-            box-shadow: var(--clay-inset);
-            color: var(--clay-text);
-            font-size: 14px;
-            font-weight: 600;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            padding-left: 40px;
-            font-family: inherit;
-        }
-
-        .user-select:focus {
-            border-color: var(--clay-accent);
-            box-shadow: 0 0 0 2px rgba(166, 124, 107, 0.2), var(--clay-inset);
-        }
-
-        .user-select option {
-            background: var(--clay-card);
-            color: var(--clay-text);
-            padding: 10px;
-            font-weight: 600;
-        }
-
-        .password-input {
-            width: 100%;
-            padding: 13px 16px;
-            border-radius: var(--clay-radius-sm);
-            border: 1px solid var(--clay-border);
-            background: var(--clay-bg);
-            box-shadow: var(--clay-inset);
-            color: var(--clay-text);
-            font-size: 15px;
-            font-weight: 700;
-            outline: none;
-            transition: all 0.3s ease;
-            text-align: center;
-            letter-spacing: 2px;
-            direction: ltr;
-            font-family: inherit;
-        }
-
-        .password-input::placeholder {
-            letter-spacing: 0;
-            font-weight: 400;
-            color: var(--clay-text-soft);
-            font-size: 12px;
-            direction: rtl;
-        }
-
-        .password-input:focus {
-            border-color: var(--clay-accent);
-            box-shadow: 0 0 0 2px rgba(166, 124, 107, 0.2), var(--clay-inset);
-        }
-
-        .password-input.error {
-            border-color: var(--clay-danger);
-            color: var(--clay-danger);
-            animation: shake 0.4s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
-
-        .login-submit-btn {
-            width: 100%;
-            padding: 13px 16px;
-            margin-top: 8px;
-            border-radius: var(--clay-radius-sm);
-            border: 1px solid var(--clay-border);
-            background: var(--clay-card);
-            box-shadow: var(--clay-shadow);
-            color: var(--clay-accent);
-            font-weight: 800;
-            font-size: 15px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .login-submit-btn:hover {
-            transform: translateY(-2px);
-            border-color: var(--clay-accent);
-            box-shadow: 0 0 20px rgba(166, 124, 107, 0.35), var(--clay-shadow);
-        }
-
-        .login-submit-btn:active {
-            transform: scale(0.97);
-            box-shadow: var(--clay-inset);
-        }
-
-        .login-submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .login-status {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--clay-text-soft);
-            min-height: 20px;
-            text-align: center;
-            margin-top: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .login-status.error { color: var(--clay-danger); }
-        .login-status.success { color: var(--clay-success); }
-
-        @media(max-width: 900px) {
-            .lamp-instructions {
-                right: auto;
-                left: 50%;
-                top: auto;
-                bottom: -90px;
-                transform: translateX(-50%);
-                animation: floatTipMobile 3s ease-in-out infinite;
-            }
-            .lamp-instructions::after {
-                top: -8px;
-                left: 50%;
-                transform: translateX(-50%) rotate(90deg);
-            }
-            @keyframes floatTipMobile {
-                0%, 100% { transform: translateX(-50%) translateY(0); }
-                50% { transform: translateX(-50%) translateY(-6px); }
-            }
-            .lamp-on .lamp-instructions {
-                transform: translateX(-50%) translateY(20px);
-            }
-        }
-
-        @media(max-width: 768px) {
-            .login-wrapper { flex-direction: column; gap: 30px; }
-            .lamp-container { height: 280px; transform: scale(0.9); }
-        }
-
-        @media(max-width: 480px) {
-            .lamp-container { transform: scale(0.8); height: 250px; }
-            .login-form-box { padding: 22px 18px; max-width: 300px; }
-            .lamp-instructions { font-size: 11px; padding: 10px 14px; bottom: -80px; }
-        }
-
-        /* ==========================================
-           MAIN APP STYLES
-           ========================================== */
-        .container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .top-controls {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .theme-float-btn, .logout-float-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 1px solid var(--clay-border);
-            background: var(--clay-card);
-            box-shadow: var(--clay-shadow);
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
-
-        .theme-float-btn:hover { transform: rotate(30deg) scale(1.1); }
-        .theme-float-btn:active { transform: scale(0.9); box-shadow: var(--clay-inset); }
-
-        .logout-float-btn {
-            color: var(--clay-danger);
-            font-size: 18px;
-            display: none;
-        }
-
-        .logout-float-btn.show { display: flex; }
-
-        .logout-float-btn:hover {
-            transform: scale(1.1);
-            border-color: var(--clay-danger);
-            box-shadow: 0 0 20px rgba(181, 122, 122, 0.5), var(--clay-shadow);
-        }
-
-        .logout-float-btn:active { transform: scale(0.9); box-shadow: var(--clay-inset); }
-
-        .container.tool-active .top-controls { display: none; }
-
-        .menu-toggle-wrapper {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            cursor: pointer;
-            background: var(--clay-card);
-            border: 1px solid var(--clay-border);
-            border-radius: var(--clay-radius-sm);
-            padding: 6px 12px;
-            box-shadow: var(--clay-shadow);
-            transition: all 0.3s ease;
-            z-index: 100;
-        }
-
-        .menu-toggle-wrapper:hover { transform: scale(1.05); }
-        .menu-toggle-wrapper:active { transform: scale(0.95); box-shadow: var(--clay-inset); }
-        .menu-toggle-wrapper .menu-icon { font-size: 18px; line-height: 1; }
-        .menu-toggle-wrapper .menu-label { font-size: 8px; font-weight: 700; color: var(--clay-text-soft); }
-        .menu-toggle-wrapper.active { box-shadow: var(--clay-inset); border-color: var(--clay-accent); }
-
-        .top-header {
-            position: fixed;
-            top: 8px;
-            right: 10px;
-            display: none;
-            align-items: center;
-            gap: 7px;
-            z-index: 120;
-            direction: rtl;
-        }
-        .top-header.show { display: flex; }
-        .top-header .menu-toggle-wrapper { position: static; padding: 4px 8px; min-width: 38px; border-radius: 10px; gap: 1px; }
-        .top-header .menu-toggle-wrapper .menu-icon { font-size: 14px; }
-        .top-header .menu-toggle-wrapper .menu-label { font-size: 6px; }
-
-        .compact-header {
-            position: fixed;
-            top: 8px;
-            right: 8px;
-            z-index: 80;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            direction: rtl;
-        }
-        .compact-header.visible { display: flex; }
-        .compact-menu-btn {
-            width: 34px;
-            height: 34px;
-            border: 1px solid var(--clay-border);
-            border-radius: 10px;
-            background: var(--clay-card);
-            color: var(--clay-text);
-            box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: all 0.25s ease;
-        }
-        [data-theme="dark"] .compact-menu-btn { box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943; }
-        .compact-menu-btn:active { transform: scale(0.92); box-shadow: var(--clay-inset); }
-        .container.tool-active .menu-toggle-wrapper { display: none; }
-
-        /* ==========================================
-           SIDE MENU
-           ========================================== */
-        .side-menu-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(3px);
-            z-index: 50;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        .side-menu-overlay.active { opacity: 1; visibility: visible; }
-
-        .side-menu {
-            position: fixed;
-            top: 0;
-            right: calc(-1 * var(--menu-width));
-            width: var(--menu-width);
-            height: 100vh;
-            background: var(--clay-card);
-            box-shadow: var(--clay-shadow);
-            border-left: 1px solid var(--clay-border);
-            z-index: 60;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            padding: 14px 12px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .side-menu.open { right: 0; }
-
-        .menu-header {
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--clay-border);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        .menu-header .menu-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--clay-accent);
-            box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
-            margin-bottom: 4px;
-        }
-        [data-theme="dark"] .menu-header .menu-logo { box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943; }
-        .menu-header h4 { color: var(--clay-text); font-size: 13px; }
-        .menu-header p { color: var(--clay-text-soft); font-size: 9px; }
-
-        .menu-user-info {
-            background: var(--clay-bg);
-            border-radius: var(--clay-radius-sm);
-            padding: 8px 10px;
-            box-shadow: var(--clay-inset);
-            border: 1px solid var(--clay-border);
-            text-align: center;
-            margin-bottom: 6px;
-        }
-        .menu-user-info .user-name {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--clay-accent);
-        }
-        .menu-user-info .user-role {
-            font-size: 9px;
-            color: var(--clay-text-soft);
-            margin-top: 2px;
-        }
-
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border-radius: var(--clay-radius-sm);
-            background: var(--clay-card);
-            border: 1px solid var(--clay-border);
-            box-shadow: 2px 2px 6px #cbc3b8, -2px -2px 6px #fffff2;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            color: var(--clay-danger);
-            font-weight: 700;
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
-
-        [data-theme="dark"] .logout-btn {
-            box-shadow: 2px 2px 6px #1e1b19, -2px -2px 6px #4e4943;
-        }
-
-        .logout-btn:hover {
-            transform: scale(1.03);
-            border-color: var(--clay-danger);
-            box-shadow: 0 0 15px rgba(181, 122, 122, 0.4), 2px 2px 6px #cbc3b8;
-        }
-
-        .logout-btn:active {
-            transform: scale(0.96);
-            box-shadow: var(--clay-inset);
-        }
-
-        .logout-btn .logout-icon {
-            font-size: 16px;
-            transition: transform 0.3s ease;
-        }
-
-        .logout-btn:hover .logout-icon {
-            transform: translateX(-5px);
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border-radius: var(--clay-radius-sm);
-            background: var(--clay-card);
-            border: 1px solid var(--clay-border);
-            box-shadow: 2px 2px 6px #cbc3b8, -2px -2px 6px #fffff2;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            color: var(--clay-text-soft);
-            font-weight: 500;
-            font-size: 12px;
-        }
-        [data-theme="dark"] .menu-item { box-shadow: 2px 2px 6px #1e1b19, -2px -2px 6px #4e4943; }
-        .menu-item:hover { transform: translateX(-3px) scale(1.02); color: var(--clay-text); }
-        .menu-item:active { transform: translateX(-2px) scale(0.97); box-shadow: var(--clay-inset); }
-        .menu-item.active { color: var(--clay-accent); box-shadow: var(--clay-inset); border-color: var(--clay-accent); }
-        [data-theme="dark"] .menu-item.active { color: var(--clay-success); border-color: var(--clay-success); }
-
-        .menu-item .item-icon {
-            font-size: 16px;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--clay-radius-xs);
-            background: var(--clay-bg);
-            box-shadow: var(--clay-inset);
-            flex-shrink: 0;
-        }
-        .menu-item .item-badge {
-            margin-right: auto;
-            padding: 1px 8px;
-            border-radius: 20px;
-            font-size: 8px;
-            font-weight: 700;
-            background: var(--clay-card);
-            color: var(--clay-text-soft);
-            box-shadow: var(--clay-inset);
-            border: 1px solid var(--clay-border);
-        }
-        .menu-item.active .item-badge { color: var(--clay-accent); }
-        [data-theme="dark"] .menu-item.active .item-badge { color: var(--clay-success); }
-        .menu-divider { height: 1px; background: var(--clay-border); margin: 4px 6px; opacity: 0.4; }
-
-        .main-content { flex: 1; overflow: hidden; width: 100%; height: 100vh; }
-        .tab-content { width: 100%; height: 100%; position: relative; }
-        .tab-pane { display: none; width: 100%; height: 100%; animation: fadeSlideIn 0.35s ease forwards; }
-        .tab-pane.active { display: block; }
-        @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .home-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 70px 20px 20px;
-            overflow-y: auto;
-        }
-        .home-header { margin-bottom: 14px; text-align: center; }
-        .home-header h2 { color: var(--clay-text); font-size: 20px; margin-bottom: 4px; }
-
-        .tab-preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-        .preview-card {
-            background: var(--clay-card);
-            border-radius: var(--clay-radius);
-            box-shadow: var(--clay-shadow);
-            border: 1px solid var(--clay-border);
-            padding: 18px 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-align: center;
-        }
-        .preview-card:hover { transform: translateY(-4px) scale(1.01); border-color: var(--clay-accent); }
-        .preview-card .preview-icon { font-size: 34px; margin-bottom: 6px; display: block; }
-        .preview-card .preview-title { font-size: 14px; font-weight: 700; color: var(--clay-text); margin-bottom: 4px; }
-        .preview-card .preview-desc { font-size: 11px; color: var(--clay-text-soft); line-height: 1.4; }
-        .preview-card .preview-tag {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--clay-accent);
-            background: var(--clay-card);
-            box-shadow: var(--clay-inset);
-            border: 1px solid var(--clay-border);
-        }
-
-        /* ==========================================
-           AUDIT LOG
-           ========================================== */
-        .audit-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 70px 20px 20px;
-            overflow-y: auto;
-        }
-        .audit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .audit-header h2 { color: var(--clay-text); font-size: 20px; }
-        .audit-clear-btn {
-            padding: 8px 16px;
-            border-radius: var(--clay-radius-sm);
-            border: 1px solid var(--clay-border);
-            background: var(--clay-card);
-            box-shadow: var(--clay-shadow);
-            color: var(--clay-danger);
-            font-weight: 700;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-        .audit-clear-btn:hover { transform: translateY(-2px); border-color: var(--clay-danger); }
-        .audit-clear-btn:active { transform: scale(0.96); box-shadow: var(--clay-inset); }
-
-        .audit-list { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-        .audit-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--clay-card);
-            border-radius: var(--clay-radius-sm);
-            border: 1px solid var(--clay-border);
-            box-shadow: var(--clay-shadow);
-            transition: all 0.25s ease;
-            animation: fadeSlideIn 0.3s ease forwards;
-        }
-        .audit-item:hover { transform: translateX(-3px); border-color: var(--clay-accent); }
-        .audit-item .audit-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--clay-bg);
-            box-shadow: var(--clay-inset);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-        .audit-item .audit-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-        .audit-item .audit-action { font-size: 13px; font-weight: 700; color: var(--clay-text); }
-        .audit-item .audit-user { font-size: 10px; font-weight: 600; color: var(--clay-accent); margin-top: 2px; }
-        .audit-item .audit-time { font-size: 10px; color: var(--clay-text-soft); direction: ltr; text-align: left; }
-
-        .audit-item.login .audit-icon { background: rgba(125, 155, 122, 0.15); }
-        .audit-item.fail .audit-icon { background: rgba(181, 122, 122, 0.15); }
-        .audit-item.tab .audit-icon { background: rgba(122, 159, 159, 0.15); }
-        .audit-item.theme .audit-icon { background: rgba(155, 122, 181, 0.15); }
-        .audit-item.other .audit-icon { background: rgba(166, 124, 107, 0.15); }
-
-        .audit-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--clay-text-soft);
-            font-size: 14px;
-            background: var(--clay-card);
-            border-radius: var(--clay-radius);
-            border: 1px dashed var(--clay-border);
-            box-shadow: var(--clay-inset);
-        }
-
-        /* ==========================================
-           IFRAME
-           ========================================== */
-        .iframe-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
-        .iframe-wrapper iframe { width: 100%; height: 100%; border: none; background: var(--clay-bg); }
-
-        /* ==========================================
-           TOAST
-           ========================================== */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--clay-card);
-            color: var(--clay-text);
-            padding: 10px 18px;
-            border-radius: var(--clay-radius);
-            box-shadow: 10px 10px 20px #cbc3b8, -10px -10px 20px #fffff2;
-            border: 1px solid var(--clay-border);
-            font-size: 12px;
-            transform: translateY(80px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            max-width: 90%;
-        }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        .toast .toast-icon { font-size: 16px; }
-
-        /* ==========================================
-           CLOCK
-           ========================================== */
-        .clock-section { display: flex; justify-content: center; align-items: center; width: 100%; margin: 22px 0 6px; }
-        .clock-wrapper {
-            position: relative;
-            padding: 20px 28px 18px;
-            background: var(--clay-card);
-            border-radius: 20px;
-            border: 1px solid var(--clay-border);
-            box-shadow: var(--clay-shadow);
-            overflow: visible;
-            width: 100%;
-            max-width: 450px;
-        }
-        .display { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 64px; font-weight: 800; letter-spacing: 4px; direction: ltr; }
-        .digit-group { display: flex; gap: 4px; }
-        .digit { display: inline-block; text-align: center; color: var(--clay-text); font-weight: 800; }
-        .colon { color: var(--clay-accent); font-weight: 800; margin-bottom: 6px; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.25; } }
-        .period {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--clay-accent);
-            margin-right: 8px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            animation: periodPulse 2s ease-in-out infinite alternate;
-        }
-        @keyframes periodPulse { from { opacity: 0.65; } to { opacity: 1; } }
-        .progress-bar { position: relative; width: 100%; height: 10px; background: var(--clay-bg); border-radius: 12px; margin-top: 18px; overflow: hidden; box-shadow: var(--clay-inset); }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--clay-accent), var(--clay-gold)); border-radius: 12px; transition: width 0.3s linear; }
-        .dots { display: flex; justify-content: center; gap: 6px; margin-top: 16px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--clay-bg); transition: all 0.3s ease; box-shadow: var(--clay-inset); }
-        .dot.active { background: linear-gradient(135deg, var(--clay-accent), var(--clay-gold)); box-shadow: 0 0 10px rgba(166, 124, 107, 0.7); transform: scale(1.3); }
-        .date-display { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 18px; font-size: 13px; color: var(--clay-text); font-weight: 600; letter-spacing: 2px; flex-wrap: wrap; }
-        .date-chip { padding: 6px 12px; background: var(--clay-bg); border-radius: var(--clay-radius-xs); box-shadow: 2px 2px 5px #cbc3b8, -2px -2px 5px #fffff2; }
-
-        .home-footer {
-            margin-top: 14px;
-            padding: 10px 16px;
-            background: var(--clay-card);
-            border-radius: var(--clay-radius-sm);
-            box-shadow: var(--clay-inset);
-            border: 1px solid var(--clay-border);
-            text-align: center;
-        }
-        .home-footer p { color: var(--clay-text-soft); font-size: 11px; }
-        .home-footer strong { color: var(--clay-accent); }
-
-        /* ==========================================
-           RESPONSIVE
-           ========================================== */
-        @media(max-width:768px) {
-            :root { --menu-width: 180px; }
-            .side-menu { width: var(--menu-width); padding: 10px 8px; }
-            .home-container, .audit-container { padding: 65px 14px 14px; }
-            .tab-preview-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .preview-card { padding: 14px 12px; }
-            .preview-card .preview-icon { font-size: 28px; }
-            .preview-card .preview-title { font-size: 12px; }
-            .preview-card .preview-desc { font-size: 10px; }
-            .home-header h2, .audit-header h2 { font-size: 17px; }
-            .toast { right: 12px; left: 12px; bottom: 12px; justify-content: center; font-size: 11px; padding: 8px 14px; }
-            .clock-wrapper { padding: 18px 20px 16px; max-width: 400px; }
-            .display { font-size: 42px; letter-spacing: 2px; gap: 5px; }
-            .period { font-size: 15px; margin-right: 5px; }
-            .date-display { font-size: 11px; letter-spacing: 1px; gap: 5px; }
-            .date-chip { padding: 4px 8px; border-radius: 8px; }
-        }
-
-        @media(max-width:480px) {
-            :root { --menu-width: 160px; }
-            .side-menu { width: var(--menu-width); padding: 8px 6px; }
-            .home-container, .audit-container { padding: 55px 10px 10px; }
-            .tab-preview-grid { grid-template-columns: 1fr; gap: 8px; }
-            .preview-card { padding: 10px; }
-            .preview-card .preview-icon { font-size: 24px; }
-            .home-header h2, .audit-header h2 { font-size: 15px; }
-            .home-footer p { font-size: 9px; }
-            .menu-item { font-size: 11px; padding: 6px 10px; }
-            .menu-item .item-icon { width: 22px; height: 22px; font-size: 13px; }
-            .clock-wrapper { padding: 14px 14px 12px; max-width: 320px; }
-            .display { font-size: 32px; letter-spacing: 1px; gap: 3px; }
-            .period { font-size: 12px; margin-right: 4px; }
-            .dots { gap: 4px; margin-top: 12px; }
-            .dot { width: 7px; height: 7px; }
-            .progress-bar { height: 8px; margin-top: 12px; }
-            .date-display { font-size: 10px; margin-top: 12px; }
-
-            .top-controls { top: 10px; left: 10px; gap: 6px; }
-            .theme-float-btn, .logout-float-btn { width: 38px; height: 38px; font-size: 17px; }
-            .logout-float-btn { font-size: 16px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hussein Gamal - Suite (Unified Style)</title>
+<style>
+  /* ==========================================
+     RESET & VARIABLES
+     ========================================== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --clay-bg: #e8e0d5;
+    --clay-card: #eae3d8;
+    --clay-shadow: 8px 8px 16px #cbc3b8, -8px -8px 16px #fffff2;
+    --clay-inset: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2;
+    --clay-border: #d5cec3;
+    --clay-text: #3d3a36;
+    --clay-text-soft: #6b6560;
+    --clay-accent: #a67c6b;
+    --clay-gold: #b8956e;
+    --clay-success: #7d9b7a;
+    --clay-purple: #9b7ab5;
+    --clay-teal: #7a9f9f;
+    --clay-blue: #7a8fa6;
+    --clay-danger: #b57a7a;
+    --clay-radius: 24px;
+    --clay-radius-sm: 14px;
+    --clay-radius-xs: 10px;
+    --menu-width: 200px;
+    --lamp-glow: #c2185c;
+    --lamp-base: #d9c9a8;
+    --lamp-shade: #f0e6d2;
+  }
+
+  [data-theme="dark"] {
+    --clay-bg: #2a2724;
+    --clay-card: #36322e;
+    --clay-shadow: 8px 8px 16px #1e1b19, -8px -8px 16px #4e4943;
+    --clay-inset: inset 3px 3px 8px #1e1b19, inset -3px -3px 8px #4e4943;
+    --clay-border: #4a4540;
+    --clay-text: #ede8e2;
+    --clay-text-soft: #b5aea6;
+    --clay-accent: #b8956e;
+    --clay-gold: #d4ae84;
+    --clay-success: #8aaa87;
+    --clay-purple: #b59ac9;
+    --clay-teal: #8ab5b5;
+    --clay-blue: #8aa3ba;
+    --clay-danger: #c48a8a;
+    --lamp-glow: #ffd97a;
+    --lamp-base: #4a4540;
+    --lamp-shade: #e8dcc4;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--clay-bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: all 0.4s ease;
+  }
+
+  /* ==========================================
+     LOGIN SCREEN (LAMP WITH PULL CORD)
+     ========================================== */
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    background: #1a1816;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+    overflow: hidden;
+  }
+
+  #login-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .darkness-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.92) 70%);
+    transition: opacity 1s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  #login-screen.lamp-on .darkness-overlay {
+    opacity: 0;
+  }
+
+  .login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+    padding: 20px;
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  .lamp-container {
+    position: relative;
+    width: 180px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+
+  .lamp-glow {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lamp-glow) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+    filter: blur(25px);
+    z-index: 0;
+  }
+
+  .lamp-on .lamp-glow {
+    opacity: 0.95;
+    animation: glowPulse 2.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes glowPulse {
+    from { opacity: 0.75; transform: translateX(-50%) scale(0.95); }
+    to { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  }
+
+  .lamp-shade {
+    width: 140px;
+    height: 65px;
+    background: var(--lamp-shade);
+    border-radius: 70px 70px 10px 10px;
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: background 0.6s ease, box-shadow 0.6s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .lamp-on .lamp-shade {
+    background: linear-gradient(180deg, #fff9e6 0%, var(--lamp-glow) 100%);
+    box-shadow: 0 0 40px var(--lamp-glow), 0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .lamp-pole {
+    width: 8px;
+    height: 150px;
+    background: var(--lamp-base);
+    border-radius: 4px;
+    z-index: 2;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.1);
+    transition: background 0.6s ease;
+  }
+
+  .lamp-base {
+    width: 80px;
+    height: 16px;
+    background: var(--lamp-base);
+    border-radius: 8px;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background 0.6s ease;
+  }
+
+  .lamp-cord {
+    position: absolute;
+    top: 157px;
+    left: calc(50% - 1px);
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(to bottom, #8a7a5a 0%, #c9b995 100%);
+    z-index: 4;
+    transform-origin: top center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    transition: background 0.6s ease;
+    cursor: grab;
+  }
+
+  .lamp-cord::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    background: transparent;
+    z-index: -1;
+  }
+
+  .lamp-cord.dragging {
+    cursor: grabbing;
+    transition: none;
+  }
+
+  .lamp-cord.releasing {
+    transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .lamp-cord::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #a89878, #6a5a3a);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    z-index: 5;
+  }
+
+  @keyframes cordShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-6deg); }
+    75% { transform: rotate(6deg); }
+  }
+
+  .lamp-cord.shaking { animation: cordShake 0.5s ease; }
+
+  .lamp-cord-knob {
+    position: absolute;
+    bottom: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #f0e6d2, #c9b995);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+    pointer-events: none;
+  }
+
+  .lamp-cord:hover .lamp-cord-knob {
+    box-shadow: 0 0 20px rgba(244, 213, 141, 0.9), 0 3px 8px rgba(0,0,0,0.35);
+    transform: translateX(-50%) scale(1.15);
+  }
+
+  .lamp-cord.dragging .lamp-cord-knob {
+    box-shadow: 0 0 30px rgba(244, 213, 141, 1), 0 3px 8px rgba(0,0,0,0.4);
+    transform: translateX(-50%) scale(1.25);
+  }
+
+  .lamp-instructions {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 25px);
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--clay-radius-sm);
+    padding: 14px 18px;
+    color: #f0e6d2;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    z-index: 5;
+    animation: floatTip 3s ease-in-out infinite;
+    transition: all 0.5s ease;
+    direction: rtl;
+  }
+
+  .lamp-instructions::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .lamp-instructions .inst-icon {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 4px;
+    text-align: center;
+    animation: iconBounce 1.5s ease-in-out infinite;
+  }
+
+  .lamp-instructions .inst-line {
+    display: block;
+    line-height: 1.6;
+  }
+
+  .lamp-instructions .inst-line .highlight {
+    color: var(--lamp-glow);
+    font-weight: 800;
+  }
+
+  @keyframes floatTip {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50% { transform: translateY(-50%) translateX(-6px); }
+  }
+
+  @keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .lamp-on .lamp-instructions {
+    opacity: 0;
+    transform: translateY(-50%) translateX(20px);
+    pointer-events: none;
+  }
+
+  .login-form-box {
+    background: var(--clay-card);
+    padding: 30px 26px;
+    border-radius: var(--clay-radius);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--clay-border);
+    border: 1px solid var(--clay-border);
+    width: 100%;
+    max-width: 340px;
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    position: relative;
+    z-index: 5;
+  }
+
+  .lamp-on .login-form-box {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+    transition-delay: 0.3s;
+  }
+
+  .login-form-box h3 {
+    color: var(--clay-text);
+    font-size: 20px;
+    margin-bottom: 4px;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .login-form-box .subtitle {
+    color: var(--clay-text-soft);
+    font-size: 12px;
+    margin-bottom: 22px;
+    text-align: center;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+    text-align: right;
+  }
+
+  .input-group label {
+    display: block;
+    color: var(--clay-text-soft);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    padding-right: 4px;
+  }
+
+  .select-wrapper { position: relative; }
+
+  .select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--clay-text-soft);
+    font-size: 10px;
+    pointer-events: none;
+  }
+
+  .user-select {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: var(--clay-radius-sm);
+    border: 1px solid var(--clay-border);
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    color: var(--clay-text);
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-left: 40px;
+    font-family: inherit;
+  }
+
+  .user-select:focus {
+    border-color: var(--clay-accent);
+    box-shadow: 0 0 0 2px rgba(166, 124, 107, 0.2), var(--clay-inset);
+  }
+
+  .user-select option {
+    background: var(--clay-card);
+    color: var(--clay-text);
+    padding: 10px;
+    font-weight: 600;
+  }
+
+  .password-input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: var(--clay-radius-sm);
+    border: 1px solid var(--clay-border);
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    color: var(--clay-text);
+    font-size: 15px;
+    font-weight: 700;
+    outline: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    letter-spacing: 2px;
+    direction: ltr;
+    font-family: inherit;
+  }
+
+  .password-input::placeholder {
+    letter-spacing: 0;
+    font-weight: 400;
+    color: var(--clay-text-soft);
+    font-size: 12px;
+    direction: rtl;
+  }
+
+  .password-input:focus {
+    border-color: var(--clay-accent);
+    box-shadow: 0 0 0 2px rgba(166, 124, 107, 0.2), var(--clay-inset);
+  }
+
+  .password-input.error {
+    border-color: var(--clay-danger);
+    color: var(--clay-danger);
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .login-submit-btn {
+    width: 100%;
+    padding: 13px 16px;
+    margin-top: 8px;
+    border-radius: var(--clay-radius-sm);
+    border: 1px solid var(--clay-border);
+    background: var(--clay-card);
+    box-shadow: var(--clay-shadow);
+    color: var(--clay-accent);
+    font-weight: 800;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .login-submit-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--clay-accent);
+    box-shadow: 0 0 20px rgba(166, 124, 107, 0.35), var(--clay-shadow);
+  }
+
+  .login-submit-btn:active {
+    transform: scale(0.97);
+    box-shadow: var(--clay-inset);
+  }
+
+  .login-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .login-status {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--clay-text-soft);
+    min-height: 20px;
+    text-align: center;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .login-status.error { color: var(--clay-danger); }
+  .login-status.success { color: var(--clay-success); }
+
+  @media(max-width: 900px) {
+    .lamp-instructions {
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: -90px;
+      transform: translateX(-50%);
+      animation: floatTipMobile 3s ease-in-out infinite;
+    }
+    .lamp-instructions::after {
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(90deg);
+    }
+    @keyframes floatTipMobile {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-6px); }
+    }
+    .lamp-on .lamp-instructions {
+      transform: translateX(-50%) translateY(20px);
+    }
+  }
+
+  @media(max-width: 768px) {
+    .login-wrapper { flex-direction: column; gap: 30px; }
+    .lamp-container { height: 280px; transform: scale(0.9); }
+  }
+
+  @media(max-width: 480px) {
+    .lamp-container { transform: scale(0.8); height: 250px; }
+    .login-form-box { padding: 22px 18px; max-width: 300px; }
+    .lamp-instructions { font-size: 11px; padding: 10px 14px; bottom: -80px; }
+  }
+
+  /* ==========================================
+     MAIN APP STYLES
+     ========================================== */
+  .container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .top-controls {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .theme-float-btn, .logout-float-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--clay-border);
+    background: var(--clay-card);
+    box-shadow: var(--clay-shadow);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+
+  .theme-float-btn:hover { transform: rotate(30deg) scale(1.1); }
+  .theme-float-btn:active { transform: scale(0.9); box-shadow: var(--clay-inset); }
+
+  .logout-float-btn {
+    color: var(--clay-danger);
+    font-size: 18px;
+    display: none;
+  }
+
+  .logout-float-btn.show { display: flex; }
+
+  .logout-float-btn:hover {
+    transform: scale(1.1);
+    border-color: var(--clay-danger);
+    box-shadow: 0 0 20px rgba(181, 122, 122, 0.5), var(--clay-shadow);
+  }
+
+  .logout-float-btn:active { transform: scale(0.9); box-shadow: var(--clay-inset); }
+
+  .container.tool-active .top-controls { display: none; }
+
+  .menu-toggle-wrapper {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    background: var(--clay-card);
+    border: 1px solid var(--clay-border);
+    border-radius: var(--clay-radius-sm);
+    padding: 6px 12px;
+    box-shadow: var(--clay-shadow);
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+
+  .menu-toggle-wrapper:hover { transform: scale(1.05); }
+  .menu-toggle-wrapper:active { transform: scale(0.95); box-shadow: var(--clay-inset); }
+  .menu-toggle-wrapper .menu-icon { font-size: 18px; line-height: 1; }
+  .menu-toggle-wrapper .menu-label { font-size: 8px; font-weight: 700; color: var(--clay-text-soft); }
+  .menu-toggle-wrapper.active { box-shadow: var(--clay-inset); border-color: var(--clay-accent); }
+
+  .top-header {
+    position: fixed;
+    top: 8px;
+    right: 10px;
+    display: none;
+    align-items: center;
+    gap: 7px;
+    z-index: 120;
+    direction: rtl;
+  }
+  .top-header.show { display: flex; }
+  .top-header .menu-toggle-wrapper { position: static; padding: 4px 8px; min-width: 38px; border-radius: 10px; gap: 1px; }
+  .top-header .menu-toggle-wrapper .menu-icon { font-size: 14px; }
+  .top-header .menu-toggle-wrapper .menu-label { font-size: 6px; }
+
+  .compact-header {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 80;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    direction: rtl;
+  }
+  .compact-header.visible { display: flex; }
+  .compact-menu-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--clay-border);
+    border-radius: 10px;
+    background: var(--clay-card);
+    color: var(--clay-text);
+    box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.25s ease;
+  }
+  [data-theme="dark"] .compact-menu-btn { box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943; }
+  .compact-menu-btn:active { transform: scale(0.92); box-shadow: var(--clay-inset); }
+  .container.tool-active .menu-toggle-wrapper { display: none; }
+
+  /* ==========================================
+     SIDE MENU
+     ========================================== */
+  .side-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(3px);
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  .side-menu-overlay.active { opacity: 1; visibility: visible; }
+
+  .side-menu {
+    position: fixed;
+    top: 0;
+    right: calc(-1 * var(--menu-width));
+    width: var(--menu-width);
+    height: 100vh;
+    background: var(--clay-card);
+    box-shadow: var(--clay-shadow);
+    border-left: 1px solid var(--clay-border);
+    z-index: 60;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    padding: 14px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .side-menu.open { right: 0; }
+
+  .menu-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--clay-border);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .menu-header .menu-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--clay-accent);
+    box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
+    margin-bottom: 4px;
+  }
+  [data-theme="dark"] .menu-header .menu-logo { box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943; }
+  .menu-header h4 { color: var(--clay-text); font-size: 13px; }
+  .menu-header p { color: var(--clay-text-soft); font-size: 9px; }
+
+  .menu-user-info {
+    background: var(--clay-bg);
+    border-radius: var(--clay-radius-sm);
+    padding: 8px 10px;
+    box-shadow: var(--clay-inset);
+    border: 1px solid var(--clay-border);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .menu-user-info .user-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--clay-accent);
+  }
+  .menu-user-info .user-role {
+    font-size: 9px;
+    color: var(--clay-text-soft);
+    margin-top: 2px;
+  }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: var(--clay-radius-sm);
+    background: var(--clay-card);
+    border: 1px solid var(--clay-border);
+    box-shadow: 2px 2px 6px #cbc3b8, -2px -2px 6px #fffff2;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: var(--clay-danger);
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  [data-theme="dark"] .logout-btn {
+    box-shadow: 2px 2px 6px #1e1b19, -2px -2px 6px #4e4943;
+  }
+
+  .logout-btn:hover {
+    transform: scale(1.03);
+    border-color: var(--clay-danger);
+    box-shadow: 0 0 15px rgba(181, 122, 122, 0.4), 2px 2px 6px #cbc3b8;
+  }
+
+  .logout-btn:active {
+    transform: scale(0.96);
+    box-shadow: var(--clay-inset);
+  }
+
+  .logout-btn .logout-icon {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .logout-btn:hover .logout-icon {
+    transform: translateX(-5px);
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--clay-radius-sm);
+    background: var(--clay-card);
+    border: 1px solid var(--clay-border);
+    box-shadow: 2px 2px 6px #cbc3b8, -2px -2px 6px #fffff2;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: var(--clay-text-soft);
+    font-weight: 500;
+    font-size: 12px;
+  }
+  [data-theme="dark"] .menu-item { box-shadow: 2px 2px 6px #1e1b19, -2px -2px 6px #4e4943; }
+  .menu-item:hover { transform: translateX(-3px) scale(1.02); color: var(--clay-text); }
+  .menu-item:active { transform: translateX(-2px) scale(0.97); box-shadow: var(--clay-inset); }
+  .menu-item.active { color: var(--clay-accent); box-shadow: var(--clay-inset); border-color: var(--clay-accent); }
+  [data-theme="dark"] .menu-item.active { color: var(--clay-success); border-color: var(--clay-success); }
+
+  .menu-item .item-icon {
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--clay-radius-xs);
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    flex-shrink: 0;
+  }
+  .menu-item .item-badge {
+    margin-right: auto;
+    padding: 1px 8px;
+    border-radius: 20px;
+    font-size: 8px;
+    font-weight: 700;
+    background: var(--clay-card);
+    color: var(--clay-text-soft);
+    box-shadow: var(--clay-inset);
+    border: 1px solid var(--clay-border);
+  }
+  .menu-item.active .item-badge { color: var(--clay-accent); }
+  [data-theme="dark"] .menu-item.active .item-badge { color: var(--clay-success); }
+  .menu-divider { height: 1px; background: var(--clay-border); margin: 4px 6px; opacity: 0.4; }
+
+  .main-content { flex: 1; overflow: hidden; width: 100%; height: 100vh; }
+  .tab-content { width: 100%; height: 100%; position: relative; }
+  .tab-pane { display: none; width: 100%; height: 100%; animation: fadeSlideIn 0.35s ease forwards; }
+  .tab-pane.active { display: block; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 70px 20px 20px;
+    overflow-y: auto;
+  }
+  .home-header { margin-bottom: 14px; text-align: center; }
+  .home-header h2 { color: var(--clay-text); font-size: 20px; margin-bottom: 4px; }
+
+  /* ==========================================
+     ✅ UNIFIED CARD STYLE
+     (يستخدم لكل من التطبيقات المتاحة والروابط السريعة)
+     ========================================== */
+  .unified-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .unified-card {
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+    padding: 18px 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+  }
+
+  .unified-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: var(--clay-accent);
+  }
+
+  /* الصورة الكبيرة — تستخدم للصور في الروابط السريعة */
+  .unified-card .card-icon-lg {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .unified-card:hover .card-icon-lg {
+    transform: scale(1.08);
+  }
+
+  /* الإيموجي — تستخدم للتطبيقات المتاحة */
+  .unified-card .preview-icon {
+    font-size: 34px;
+    margin-bottom: 6px;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .unified-card:hover .preview-icon {
+    transform: scale(1.15) rotate(-5deg);
+  }
+
+  .unified-card .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--clay-text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .unified-card .card-title .title-emoji {
+    font-size: 16px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .unified-card:hover .card-title .title-emoji {
+    transform: scale(1.25) rotate(-8deg);
+  }
+
+  .unified-card .card-desc {
+    font-size: 11px;
+    color: var(--clay-text-soft);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    min-height: 30px;
+  }
+
+  .unified-card .card-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--clay-accent);
+    background: var(--clay-card);
+    box-shadow: var(--clay-inset);
+    border: 1px solid var(--clay-border);
+  }
+
+  [data-theme="dark"] .unified-card .card-badge {
+    color: var(--clay-gold);
+  }
+
+  /* ==========================================
+     AUDIT LOG
+     ========================================== */
+  .audit-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 70px 20px 20px;
+    overflow-y: auto;
+  }
+  .audit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .audit-header h2 { color: var(--clay-text); font-size: 20px; }
+  .audit-clear-btn {
+    padding: 8px 16px;
+    border-radius: var(--clay-radius-sm);
+    border: 1px solid var(--clay-border);
+    background: var(--clay-card);
+    box-shadow: var(--clay-shadow);
+    color: var(--clay-danger);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .audit-clear-btn:hover { transform: translateY(-2px); border-color: var(--clay-danger); }
+  .audit-clear-btn:active { transform: scale(0.96); box-shadow: var(--clay-inset); }
+
+  .audit-list { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .audit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius-sm);
+    border: 1px solid var(--clay-border);
+    box-shadow: var(--clay-shadow);
+    transition: all 0.25s ease;
+    animation: fadeSlideIn 0.3s ease forwards;
+  }
+  .audit-item:hover { transform: translateX(-3px); border-color: var(--clay-accent); }
+  .audit-item .audit-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .audit-item .audit-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .audit-item .audit-action { font-size: 13px; font-weight: 700; color: var(--clay-text); }
+  .audit-item .audit-user { font-size: 10px; font-weight: 600; color: var(--clay-accent); margin-top: 2px; }
+  .audit-item .audit-time { font-size: 10px; color: var(--clay-text-soft); direction: ltr; text-align: left; }
+
+  .audit-item.login .audit-icon { background: rgba(125, 155, 122, 0.15); }
+  .audit-item.fail .audit-icon { background: rgba(181, 122, 122, 0.15); }
+  .audit-item.tab .audit-icon { background: rgba(122, 159, 159, 0.15); }
+  .audit-item.theme .audit-icon { background: rgba(155, 122, 181, 0.15); }
+  .audit-item.other .audit-icon { background: rgba(166, 124, 107, 0.15); }
+
+  .audit-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--clay-text-soft);
+    font-size: 14px;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    border: 1px dashed var(--clay-border);
+    box-shadow: var(--clay-inset);
+  }
+
+  /* ==========================================
+     IFRAME
+     ========================================== */
+  .iframe-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
+  .iframe-wrapper iframe { width: 100%; height: 100%; border: none; background: var(--clay-bg); }
+
+  /* ==========================================
+     TOAST
+     ========================================== */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--clay-card);
+    color: var(--clay-text);
+    padding: 10px 18px;
+    border-radius: var(--clay-radius);
+    box-shadow: 10px 10px 20px #cbc3b8, -10px -10px 20px #fffff2;
+    border: 1px solid var(--clay-border);
+    font-size: 12px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 90%;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast .toast-icon { font-size: 16px; }
+
+  /* ==========================================
+     CLOCK
+     ========================================== */
+  .clock-section { display: flex; justify-content: center; align-items: center; width: 100%; margin: 22px 0 6px; }
+  .clock-wrapper {
+    position: relative;
+    padding: 20px 28px 18px;
+    background: var(--clay-card);
+    border-radius: 20px;
+    border: 1px solid var(--clay-border);
+    box-shadow: var(--clay-shadow);
+    overflow: visible;
+    width: 100%;
+    max-width: 450px;
+  }
+  .display { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 64px; font-weight: 800; letter-spacing: 4px; direction: ltr; }
+  .digit-group { display: flex; gap: 4px; }
+  .digit { display: inline-block; text-align: center; color: var(--clay-text); font-weight: 800; }
+  .colon { color: var(--clay-accent); font-weight: 800; margin-bottom: 6px; animation: blink 1s infinite; }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.25; } }
+  .period {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--clay-accent);
+    margin-right: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    animation: periodPulse 2s ease-in-out infinite alternate;
+  }
+  @keyframes periodPulse { from { opacity: 0.65; } to { opacity: 1; } }
+  .progress-bar { position: relative; width: 100%; height: 10px; background: var(--clay-bg); border-radius: 12px; margin-top: 18px; overflow: hidden; box-shadow: var(--clay-inset); }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--clay-accent), var(--clay-gold)); border-radius: 12px; transition: width 0.3s linear; }
+  .dots { display: flex; justify-content: center; gap: 6px; margin-top: 16px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--clay-bg); transition: all 0.3s ease; box-shadow: var(--clay-inset); }
+  .dot.active { background: linear-gradient(135deg, var(--clay-accent), var(--clay-gold)); box-shadow: 0 0 10px rgba(166, 124, 107, 0.7); transform: scale(1.3); }
+  .date-display { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 18px; font-size: 13px; color: var(--clay-text); font-weight: 600; letter-spacing: 2px; flex-wrap: wrap; }
+  .date-chip { padding: 6px 12px; background: var(--clay-bg); border-radius: var(--clay-radius-xs); box-shadow: 2px 2px 5px #cbc3b8, -2px -2px 5px #fffff2; }
+
+  .home-footer {
+    margin-top: 14px;
+    padding: 10px 16px;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius-sm);
+    box-shadow: var(--clay-inset);
+    border: 1px solid var(--clay-border);
+    text-align: center;
+  }
+  .home-footer p { color: var(--clay-text-soft); font-size: 11px; }
+  .home-footer strong { color: var(--clay-accent); }
+
+  /* ==========================================
+     SECTION DIVIDER
+     ========================================== */
+  .section-divider {
+    margin: 24px 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--clay-text-soft);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--clay-border);
+    opacity: 0.5;
+  }
+
+  /* ==========================================
+     RESPONSIVE
+     ========================================== */
+  @media(max-width:768px) {
+    :root { --menu-width: 180px; }
+    .side-menu { width: var(--menu-width); padding: 10px 8px; }
+    .home-container, .audit-container { padding: 65px 14px 14px; }
+    .unified-cards-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .unified-card { padding: 14px 12px; }
+    .unified-card .preview-icon { font-size: 28px; }
+    .unified-card .card-icon-lg { width: 80px; height: 80px; }
+    .unified-card .card-title { font-size: 12px; }
+    .unified-card .card-desc { font-size: 10px; }
+    .home-header h2, .audit-header h2 { font-size: 17px; }
+    .toast { right: 12px; left: 12px; bottom: 12px; justify-content: center; font-size: 11px; padding: 8px 14px; }
+    .clock-wrapper { padding: 18px 20px 16px; max-width: 400px; }
+    .display { font-size: 42px; letter-spacing: 2px; gap: 5px; }
+    .period { font-size: 15px; margin-right: 5px; }
+    .date-display { font-size: 11px; letter-spacing: 1px; gap: 5px; }
+    .date-chip { padding: 4px 8px; border-radius: 8px; }
+  }
+
+  @media(max-width:480px) {
+    :root { --menu-width: 160px; }
+    .side-menu { width: var(--menu-width); padding: 8px 6px; }
+    .home-container, .audit-container { padding: 55px 10px 10px; }
+    .unified-cards-grid { grid-template-columns: 1fr; gap: 8px; }
+    .unified-card { padding: 10px; }
+    .unified-card .preview-icon { font-size: 24px; }
+    .unified-card .card-icon-lg { width: 70px; height: 70px; }
+    .home-header h2, .audit-header h2 { font-size: 15px; }
+    .home-footer p { font-size: 9px; }
+    .menu-item { font-size: 11px; padding: 6px 10px; }
+    .menu-item .item-icon { width: 22px; height: 22px; font-size: 13px; }
+    .clock-wrapper { padding: 14px 14px 12px; max-width: 320px; }
+    .display { font-size: 32px; letter-spacing: 1px; gap: 3px; }
+    .period { font-size: 12px; margin-right: 4px; }
+    .dots { gap: 4px; margin-top: 12px; }
+    .dot { width: 7px; height: 7px; }
+    .progress-bar { height: 8px; margin-top: 12px; }
+    .date-display { font-size: 10px; margin-top: 12px; }
+
+    .top-controls { top: 10px; left: 10px; gap: 6px; }
+    .theme-float-btn, .logout-float-btn { width: 38px; height: 38px; font-size: 17px; }
+    .logout-float-btn { font-size: 16px; }
+  }
+</style>
 </head>
 
 <body>
 
-    <!-- ==========================================
-         LOGIN SCREEN (LAMP WITH PULL CORD)
-         ========================================== -->
-    <div id="login-screen">
-        <div class="darkness-overlay"></div>
+  <!-- ==========================================
+       LOGIN SCREEN (LAMP WITH PULL CORD)
+       ========================================== -->
+  <div id="login-screen">
+    <div class="darkness-overlay"></div>
+    
+    <div class="login-wrapper">
+      
+      <div class="lamp-container" id="lampContainer">
+        <div class="lamp-glow"></div>
         
-        <div class="login-wrapper">
-            
-            <div class="lamp-container" id="lampContainer">
-                <div class="lamp-glow"></div>
-                
-                <div class="lamp-instructions" id="lampInstructions">
-                    <span class="inst-icon">💡</span>
-                    <span class="inst-line">شدّ الحبل <span class="highlight">عشان</span></span>
-                    <span class="inst-line">تنوّر الأباجورة وتدخل</span>
-                </div>
-                
-                <div class="lamp-shade"></div>
-                <div class="lamp-pole"></div>
-                <div class="lamp-base"></div>
-                
-                <div class="lamp-cord" id="lampCord">
-                    <div class="lamp-cord-knob" id="lampCordKnob"></div>
-                </div>
-            </div>
-
-            <div class="login-form-box" id="loginFormBox">
-                <h3>🔓 تسجيل الدخول</h3>
-                <p class="subtitle">اختر اسمك وأدخل كلمة المرور</p>
-                
-                <div class="input-group">
-                    <label>👤 المستخدم</label>
-                    <div class="select-wrapper">
-                        <select class="user-select" id="userSelect">
-                            <option value="" disabled selected>اختر المستخدم...</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>🔑 كلمة المرور</label>
-                    <input type="password" class="password-input" id="passwordInput" 
-                           placeholder="أدخل كلمة المرور (4 خانات على الأقل)" maxlength="20" autocomplete="off">
-                </div>
-
-                <button class="login-submit-btn" id="loginSubmitBtn" onclick="verifyLogin()">
-                    🔓 تسجيل دخول
-                </button>
-
-                <div class="login-status" id="loginStatus"></div>
-            </div>
-
+        <div class="lamp-instructions" id="lampInstructions">
+          <span class="inst-icon">💡</span>
+          <span class="inst-line">شدّ الحبل <span class="highlight">عشان</span></span>
+          <span class="inst-line">تنوّر الأباجورة وتدخل</span>
         </div>
+        
+        <div class="lamp-shade"></div>
+        <div class="lamp-pole"></div>
+        <div class="lamp-base"></div>
+        
+        <div class="lamp-cord" id="lampCord">
+          <div class="lamp-cord-knob" id="lampCordKnob"></div>
+        </div>
+      </div>
+
+      <div class="login-form-box" id="loginFormBox">
+        <h3>🔓 تسجيل الدخول</h3>
+        <p class="subtitle">اختر اسمك وأدخل كلمة المرور</p>
+        
+        <div class="input-group">
+          <label>👤 المستخدم</label>
+          <div class="select-wrapper">
+            <select class="user-select" id="userSelect">
+              <option value="" disabled selected>اختر المستخدم...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>🔑 كلمة المرور</label>
+          <input type="password" class="password-input" id="passwordInput" 
+               placeholder="أدخل كلمة المرور (4 خانات على الأقل)" maxlength="20" autocomplete="off">
+        </div>
+
+        <button class="login-submit-btn" id="loginSubmitBtn" onclick="verifyLogin()">
+          🔓 تسجيل دخول
+        </button>
+
+        <div class="login-status" id="loginStatus"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== COMPACT HEADER ===== -->
+  <div class="compact-header" id="compactHeader">
+    <button class="compact-menu-btn" onclick="toggleMenu()" aria-label="فتح القائمة">✦</button>
+  </div>
+
+  <!-- ===== OVERLAY ===== -->
+  <div class="side-menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+  <!-- ===== SIDE MENU ===== -->
+  <div class="side-menu" id="sideMenu">
+    <div class="menu-header">
+      <img class="menu-logo"
+        src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png"
+        alt="Logo"
+        onerror="this.style.display='none'">
+      <h4>Hussein Gamal</h4>
+      <p>3PL Logistics</p>
     </div>
 
-    <!-- ===== COMPACT HEADER ===== -->
-    <div class="compact-header" id="compactHeader">
-        <button class="compact-menu-btn" onclick="toggleMenu()" aria-label="فتح القائمة">✦</button>
+    <div class="menu-user-info" id="menuUserInfo" style="display: none;">
+      <div class="user-name" id="menuUserName">-</div>
+      <div class="user-role" id="menuUserRole">-</div>
     </div>
 
-    <!-- ===== OVERLAY ===== -->
-    <div class="side-menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
-
-    <!-- ===== SIDE MENU ===== -->
-    <div class="side-menu" id="sideMenu">
-        <div class="menu-header">
-            <img class="menu-logo"
-                src="https://i.ibb.co/67rtz5TD/Chat-GPT-Image-Jul-12-2026-02-36-50-PM.png"
-                alt="Logo"
-                onerror="this.style.display='none'">
-            <h4>Hussein Gamal</h4>
-            <p>3PL Logistics</p>
-        </div>
-
-        <div class="menu-user-info" id="menuUserInfo" style="display: none;">
-            <div class="user-name" id="menuUserName">-</div>
-            <div class="user-role" id="menuUserRole">-</div>
-        </div>
-
-        <div class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">
-            <span class="logout-icon">🚪</span>
-            <span>تسجيل خروج</span>
-        </div>
-
-        <div class="menu-item active" data-tab="home" onclick="switchTab('home')">
-            <span class="item-icon">🏠</span>
-            الرئيسية
-        </div>
-        <div class="menu-item" data-tab="refund" onclick="switchTab('refund')">
-            <span class="item-icon">📋</span>
-            Refund
-            <span class="item-badge">نسخ</span>
-        </div>
-        <div class="menu-item" data-tab="orders" onclick="switchTab('orders')">
-            <span class="item-icon">📦</span>
-            أوردرات
-            <span class="item-badge">WA</span>
-        </div>
-        <div class="menu-item" data-tab="transfers" onclick="switchTab('transfers')">
-            <span class="item-icon">📊</span>
-            Transfers
-            <span class="item-badge">Excel</span>
-        </div>
-        <div class="menu-item" data-tab="discount" onclick="switchTab('discount')">
-            <span class="item-icon">✂️</span>
-            خصم
-            <span class="item-badge">Pending</span>
-        </div>
-
-        <div class="menu-divider"></div>
-
-        <div class="menu-item" data-tab="audit" onclick="switchTab('audit')">
-            <span class="item-icon">📜</span>
-            سجل العمليات
-            <span class="item-badge" id="auditBadge">0</span>
-        </div>
-
-        <div class="menu-divider"></div>
+    <div class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">
+      <span class="logout-icon">🚪</span>
+      <span>تسجيل خروج</span>
     </div>
 
-    <!-- ===== MAIN ===== -->
-    <div class="container" id="mainContainer">
-
-        <div class="top-controls" id="topControls">
-            <div class="theme-float-btn" id="themeFloatBtn" onclick="toggleTheme()" title="تبديل الوضع">
-                <span id="themeFloatIcon">🌙</span>
-            </div>
-            <div class="logout-float-btn" id="logoutFloatBtn" onclick="logout()" title="تسجيل خروج">
-                🚪
-            </div>
-        </div>
-
-        <div class="top-header" id="topHeader">
-            <div class="menu-toggle-wrapper" id="menuToggle" onclick="toggleMenu()">
-                <span class="menu-icon">☰</span>
-                <span class="menu-label">منيو</span>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="tab-home">
-                    <div class="home-container">
-                        <div class="home-header">
-                            <h2>📌 التطبيقات المتاحة</h2>
-                        </div>
-
-                        <div class="tab-preview-grid">
-                            <div class="preview-card" data-tab-card="refund" onclick="switchTab('refund')">
-                                <span class="preview-icon">📋</span>
-                                <div class="preview-title">Refund Formatter</div>
-                                <div class="preview-desc">تنسيق بيانات المرتجعات مع إحصائيات ونسخ</div>
-                                <span class="preview-tag">📋 نسخ</span>
-                            </div>
-                            <div class="preview-card" data-tab-card="orders" onclick="switchTab('orders')">
-                                <span class="preview-icon">📦</span>
-                                <div class="preview-title">تقسيم الأوردرات</div>
-                                <div class="preview-desc">تقسيم الأوردرات إلى رسائل للواتساب</div>
-                                <span class="preview-tag">📱 WhatsApp</span>
-                            </div>
-                            <div class="preview-card" data-tab-card="transfers" onclick="switchTab('transfers')">
-                                <span class="preview-icon">📊</span>
-                                <div class="preview-title">Account Transfers</div>
-                                <div class="preview-desc">إدارة التحويلات مع جدول وتصدير Excel</div>
-                                <span class="preview-tag">📊 Excel</span>
-                            </div>
-                            <div class="preview-card" data-tab-card="discount" onclick="switchTab('discount')">
-                                <span class="preview-icon">✂️</span>
-                                <div class="preview-title">معالج الخصم</div>
-                                <div class="preview-desc">خصم تلقائي من سعر المنتج عند pending</div>
-                                <span class="preview-tag">⏳ Pending</span>
-                            </div>
-                        </div>
-
-                        <div class="clock-section">
-                            <div class="clock-wrapper" id="clockWrapper">
-                                <div class="display">
-                                    <div class="digit-group">
-                                        <span class="digit" id="hours-tens">0</span>
-                                        <span class="digit" id="hours-units">0</span>
-                                    </div>
-                                    <span class="colon">:</span>
-                                    <div class="digit-group">
-                                        <span class="digit" id="minutes-tens">0</span>
-                                        <span class="digit" id="minutes-units">0</span>
-                                    </div>
-                                    <span class="colon">:</span>
-                                    <div class="digit-group">
-                                        <span class="digit" id="seconds-tens">0</span>
-                                        <span class="digit" id="seconds-units">0</span>
-                                    </div>
-                                    <span class="period" id="period">AM</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="progress-fill"></div>
-                                </div>
-                                <div class="dots" id="dots"></div>
-                                <div class="date-display">
-                                    <span class="date-chip" id="day-name">-</span>
-                                    <span class="date-chip" id="day">-</span>
-                                    <span class="date-chip" id="month">-</span>
-                                    <span class="date-chip" id="year">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="home-footer">
-                            <p>تم التطوير بواسطة <strong>Hussein Gamal Sr. Operation & 3PL Logistics</strong></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane" id="tab-audit">
-                    <div class="audit-container">
-                        <div class="audit-header">
-                            <h2>📜 سجل العمليات</h2>
-                            <button class="audit-clear-btn" onclick="clearAuditLog()">🗑️ مسح السجل</button>
-                        </div>
-                        <div class="audit-list" id="auditList"></div>
-                    </div>
-                </div>
-
-                <div class="tab-pane" id="tab-refund">
-                    <div class="iframe-wrapper">
-                        <iframe id="iframe-refund" src="refund-formatter.html"></iframe>
-                    </div>
-                </div>
-                <div class="tab-pane" id="tab-orders">
-                    <div class="iframe-wrapper">
-                        <iframe id="iframe-orders" src="orders-splitter.html"></iframe>
-                    </div>
-                </div>
-                <div class="tab-pane" id="tab-transfers">
-                    <div class="iframe-wrapper">
-                        <iframe id="iframe-transfers" src="account-transfers.html"></iframe>
-                    </div>
-                </div>
-                <div class="tab-pane" id="tab-discount">
-                    <div class="iframe-wrapper">
-                        <iframe id="iframe-discount" src="discount-processor.html"></iframe>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <div class="menu-item active" data-tab="home" onclick="switchTab('home')">
+      <span class="item-icon">🏠</span>
+      الرئيسية
+    </div>
+    <div class="menu-item" data-tab="refund" onclick="switchTab('refund')">
+      <span class="item-icon">📋</span>
+      Refund
+      <span class="item-badge">نسخ</span>
+    </div>
+    <div class="menu-item" data-tab="orders" onclick="switchTab('orders')">
+      <span class="item-icon">📦</span>
+      أوردرات
+      <span class="item-badge">WA</span>
+    </div>
+    <div class="menu-item" data-tab="transfers" onclick="switchTab('transfers')">
+      <span class="item-icon">📊</span>
+      Transfers
+      <span class="item-badge">Excel</span>
+    </div>
+    <div class="menu-item" data-tab="discount" onclick="switchTab('discount')">
+      <span class="item-icon">✂️</span>
+      خصم
+      <span class="item-badge">Pending</span>
     </div>
 
-    <div id="toast" class="toast">
-        <span class="toast-icon">✅</span>
-        <span id="toastMessage">تم التبديل</span>
+    <div class="menu-divider"></div>
+
+    <div class="menu-item" data-tab="audit" onclick="switchTab('audit')">
+      <span class="item-icon">📜</span>
+      سجل العمليات
+      <span class="item-badge" id="auditBadge">0</span>
     </div>
 
-    <script>
-        /* ==========================================
-           USERS + PERMISSIONS
-           ========================================== */
-        const USERS = [
-            {
-                username: 'Hussein',
-                password: '1129+',
-                role: 'Admin',
-                allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
-            },
-            {
-                username: 'Saher',
-                password: '123456',
-                role: 'Customer Service Manager',
-                allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
-            },
-            {
-                username: 'Walaa',
-                password: '11995',
-                role: 'Team Leader CS',
-                // ❌ ممنوعة من: transfers + discount
-                allowedTabs: ['home', 'refund', 'orders', 'audit']
-            },
-            {
-                username: 'Maryaim',
-                password: '271997',
-                role: 'Customer Service',
-                // ❌ ممنوعة من: refund + transfers + discount
-                allowedTabs: ['home', 'orders', 'audit']
-            },
-            {
-                username: 'Mai',
-                password: 'mai2003', // ⚠️ غيّرها لكلمة المرور الفعلية
-                role: 'Customer Service',
-                // ❌ ممنوعة من: refund + transfers + discount
-                allowedTabs: ['home', 'orders', 'audit']
-            }
-        ];
+    <div class="menu-divider"></div>
+  </div>
 
-        const SESSION_DURATION = 8 * 60 * 60 * 1000; // 8 ساعات
-        const INACTIVITY_TIMEOUT = 120 * 60 * 1000; // 120 دقيقة خمول
+  <!-- ===== MAIN ===== -->
+  <div class="container" id="mainContainer">
 
-        let currentUser = null;
-        let inactivityTimer = null;
-        let autoCheckTimer = null;
+    <div class="top-controls" id="topControls">
+      <div class="theme-float-btn" id="themeFloatBtn" onclick="toggleTheme()" title="تبديل الوضع">
+        <span id="themeFloatIcon">🌙</span>
+      </div>
+      <div class="logout-float-btn" id="logoutFloatBtn" onclick="logout()" title="تسجيل خروج">
+        🚪
+      </div>
+    </div>
 
-        /* ==========================================
-           LOGIN SYSTEM
-           ========================================== */
-        const loginScreen = document.getElementById('login-screen');
-        const lampContainer = document.getElementById('lampContainer');
-        const lampCord = document.getElementById('lampCord');
-        const userSelect = document.getElementById('userSelect');
-        const passwordInput = document.getElementById('passwordInput');
-        const loginStatus = document.getElementById('loginStatus');
+    <div class="top-header" id="topHeader">
+      <div class="menu-toggle-wrapper" id="menuToggle" onclick="toggleMenu()">
+        <span class="menu-icon">☰</span>
+        <span class="menu-label">منيو</span>
+      </div>
+    </div>
 
-        function populateUsers() {
-            userSelect.innerHTML = '<option value="" disabled selected>اختر المستخدم...</option>';
-            USERS.forEach((user, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `👤 ${user.username} — ${user.role}`;
-                userSelect.appendChild(option);
-            });
+    <div class="main-content">
+      <div class="tab-content">
+
+        <div class="tab-pane active" id="tab-home">
+          <div class="home-container">
+            <div class="home-header">
+              <h2>📌 Tools T&N</h2>
+            </div>
+
+            <!-- ✅ التطبيقات المتاحة — unified-card -->
+            <div class="unified-cards-grid">
+              <div class="unified-card" data-tab-card="refund" onclick="switchTab('refund')">
+                <span class="preview-icon">📋</span>
+                <div class="card-title">
+                  <span class="title-emoji">📋</span>
+                  Refund Formatter
+                </div>
+                <div class="card-desc">تنسيق بيانات المرتجعات مع إحصائيات ونسخ</div>
+                <span class="card-badge">📋 نسخ</span>
+              </div>
+              <div class="unified-card" data-tab-card="orders" onclick="switchTab('orders')">
+                <span class="preview-icon">📦</span>
+                <div class="card-title">
+                  <span class="title-emoji">📦</span>
+                  تقسيم الأوردرات
+                </div>
+                <div class="card-desc">تقسيم الأوردرات إلى رسائل للواتساب</div>
+                <span class="card-badge">📱 WhatsApp</span>
+              </div>
+              <div class="unified-card" data-tab-card="transfers" onclick="switchTab('transfers')">
+                <span class="preview-icon">📊</span>
+                <div class="card-title">
+                  <span class="title-emoji">📊</span>
+                  Account Transfers
+                </div>
+                <div class="card-desc">إدارة التحويلات مع جدول وتصدير Excel</div>
+                <span class="card-badge">📊 Excel</span>
+              </div>
+              <div class="unified-card" data-tab-card="discount" onclick="switchTab('discount')">
+                <span class="preview-icon">✂️</span>
+                <div class="card-title">
+                  <span class="title-emoji">✂️</span>
+                  معالج الخصم
+                </div>
+                <div class="card-desc">خصم تلقائي من سعر المنتج عند pending</div>
+                <span class="card-badge">⏳ Pending</span>
+              </div>
+            </div>
+
+            <!-- ====== فاصل ====== -->
+            <div class="section-divider"><h2>🔗 Hyperlinks</h2></div>
+
+            <!-- ✅ الروابط السريعة — unified-card (نفس الستايل بالظبط) -->
+            <div class="unified-cards-grid">
+              <a href="https://business.bosta.co/overview" target="_blank" class="unified-card">
+                <img src="https://i.imgur.com/IvfT0uC.png" alt="Bosta" class="card-icon-lg">
+                <div class="card-title">
+                  <span class="title-emoji">🚚</span>
+                  Bosta 3PL Company
+                </div>
+                <div class="card-desc">شركة بوسطه للشحن والتوصيل</div>
+                <span class="card-badge">Bosta 🚚</span>
+              </a>
+
+              <a href="https://chatgpt.com/" target="_blank" class="unified-card">
+                <img src="https://i.imgur.com/22tQ0fy.png" alt="ChatGPT" class="card-icon-lg">
+                <div class="card-title">
+                  <span class="title-emoji">🤖</span>
+                  ChatGPT
+                </div>
+                <div class="card-desc">مساعدك الذكي للكتابة والإجابة</div>
+                <span class="card-badge">ChatGPT 🤖</span>
+              </a>
+
+              <a href="https://www.youtube.com/" target="_blank" class="unified-card">
+                <img src="https://i.imgur.com/Znbnbff.png" alt="YouTube" class="card-icon-lg">
+                <div class="card-title">
+                  <span class="title-emoji">▶️</span>
+                  YouTube
+                </div>
+                <div class="card-desc">شاهد أحدث الفيديوهات</div>
+                <span class="card-badge">YouTube ▶️</span>
+              </a>
+
+              <a href="https://open.spotify.com/" target="_blank" class="unified-card">
+                <img src="https://i.imgur.com/r9vvBsp.png" alt="Spotify" class="card-icon-lg">
+                <div class="card-title">
+                  <span class="title-emoji">🎵</span>
+                  Spotify
+                </div>
+                <div class="card-desc">اسمع الموسيقى والبودكاست</div>
+                <span class="card-badge">Spotify 🎵</span>
+              </a>
+
+              <a href="https://mb-logistics.logestechs.com/home/dashboard" target="_blank" class="unified-card">
+                <img src="https://i.imgur.com/hfmlVKU.png" alt="MB Logistics" class="card-icon-lg">
+                <div class="card-title">
+                  <span class="title-emoji">📦</span>
+                  MB Logistics
+                </div>
+                <div class="card-desc">لوحة تحكم الشحن واللوجستيات</div>
+                <span class="card-badge">MB 📦</span>
+              </a>
+            </div>
+
+            <div class="clock-section">
+              <div class="clock-wrapper" id="clockWrapper">
+                <div class="display">
+                  <div class="digit-group">
+                    <span class="digit" id="hours-tens">0</span>
+                    <span class="digit" id="hours-units">0</span>
+                  </div>
+                  <span class="colon">:</span>
+                  <div class="digit-group">
+                    <span class="digit" id="minutes-tens">0</span>
+                    <span class="digit" id="minutes-units">0</span>
+                  </div>
+                  <span class="colon">:</span>
+                  <div class="digit-group">
+                    <span class="digit" id="seconds-tens">0</span>
+                    <span class="digit" id="seconds-units">0</span>
+                  </div>
+                  <span class="period" id="period">AM</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="dots" id="dots"></div>
+                <div class="date-display">
+                  <span class="date-chip" id="day-name">-</span>
+                  <span class="date-chip" id="day">-</span>
+                  <span class="date-chip" id="month">-</span>
+                  <span class="date-chip" id="year">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="home-footer">
+              <p>تم التطوير بواسطة <strong>Hussein Gamal Sr. Operation & 3PL Logistics</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-audit">
+          <div class="audit-container">
+            <div class="audit-header">
+              <h2>📜 سجل العمليات</h2>
+              <button class="audit-clear-btn" onclick="clearAuditLog()">🗑️ مسح السجل</button>
+            </div>
+            <div class="audit-list" id="auditList"></div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-refund">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-refund" src="refund-formatter.html"></iframe>
+          </div>
+        </div>
+        <div class="tab-pane" id="tab-orders">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-orders" src="orders-splitter.html"></iframe>
+          </div>
+        </div>
+        <div class="tab-pane" id="tab-transfers">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-transfers" src="account-transfers.html"></iframe>
+          </div>
+        </div>
+        <div class="tab-pane" id="tab-discount">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-discount" src="discount-processor.html"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">
+    <span class="toast-icon">✅</span>
+    <span id="toastMessage">تم التبديل</span>
+  </div>
+
+  <script>
+    /* ==========================================
+       USERS + PERMISSIONS
+       ========================================== */
+    const USERS = [
+      {
+        username: 'Hussein',
+        password: '1129+',
+        role: 'Admin',
+        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
+      },
+      {
+        username: 'Saher',
+        password: '123456',
+        role: 'Customer Service Manager',
+        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'audit']
+      },
+      {
+        username: 'Walaa',
+        password: '11995',
+        role: 'Team Leader CS',
+        allowedTabs: ['home', 'refund', 'orders', 'audit']
+      },
+      {
+        username: 'Maryaim',
+        password: '271997',
+        role: 'Customer Service',
+        allowedTabs: ['home', 'orders', 'audit']
+      },
+      {
+        username: 'Mai',
+        password: 'mai2003',
+        role: 'Customer Service',
+        allowedTabs: ['home', 'orders', 'audit']
+      }
+    ];
+
+    const SESSION_DURATION = 8 * 60 * 60 * 1000;
+    const INACTIVITY_TIMEOUT = 120 * 60 * 1000;
+
+    let currentUser = null;
+    let inactivityTimer = null;
+    let autoCheckTimer = null;
+
+    /* ==========================================
+       LOGIN SYSTEM
+       ========================================== */
+    const loginScreen = document.getElementById('login-screen');
+    const lampContainer = document.getElementById('lampContainer');
+    const lampCord = document.getElementById('lampCord');
+    const userSelect = document.getElementById('userSelect');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginStatus = document.getElementById('loginStatus');
+
+    function populateUsers() {
+      userSelect.innerHTML = '<option value="" disabled selected>اختر المستخدم...</option>';
+      USERS.forEach((user, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `👤 ${user.username} — ${user.role}`;
+        userSelect.appendChild(option);
+      });
+    }
+
+    /* ==========================================
+       LAMP CORD — DRAG TO PULL
+       ========================================== */
+    const CORD_BASE_HEIGHT = 60;
+    const CORD_MIN_HEIGHT = 45;
+    const CORD_MAX_HEIGHT = 120;
+    const CORD_TRIGGER = 100;
+
+    let isDragging = false;
+    let dragStartY = 0;
+    let dragStartHeight = CORD_BASE_HEIGHT;
+    let hasToggledThisDrag = false;
+
+    function getClientY(e) {
+      if (e.touches && e.touches.length) return e.touches[0].clientY;
+      if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientY;
+      return e.clientY;
+    }
+
+    function onDragStart(e) {
+      if (isDragging) return;
+      isDragging = true;
+      hasToggledThisDrag = false;
+      dragStartY = getClientY(e);
+      dragStartHeight = parseFloat(getComputedStyle(lampCord).height) || CORD_BASE_HEIGHT;
+
+      lampCord.classList.add('dragging');
+      lampCord.classList.remove('releasing', 'shaking');
+
+      e.preventDefault();
+    }
+
+    function onDragMove(e) {
+      if (!isDragging) return;
+
+      const currentY = getClientY(e);
+      const deltaY = currentY - dragStartY;
+      let newHeight = dragStartHeight + deltaY;
+
+      if (newHeight < CORD_MIN_HEIGHT) newHeight = CORD_MIN_HEIGHT;
+      if (newHeight > CORD_MAX_HEIGHT) newHeight = CORD_MAX_HEIGHT;
+
+      lampCord.style.height = newHeight + 'px';
+
+      if (newHeight >= CORD_TRIGGER && !hasToggledThisDrag) {
+        hasToggledThisDrag = true;
+        triggerLampToggle();
+      }
+
+      e.preventDefault();
+    }
+
+    function onDragEnd(e) {
+      if (!isDragging) return;
+      isDragging = false;
+
+      lampCord.classList.remove('dragging');
+      lampCord.classList.add('releasing', 'shaking');
+
+      requestAnimationFrame(() => {
+        lampCord.style.height = CORD_BASE_HEIGHT + 'px';
+      });
+
+      setTimeout(() => {
+        lampCord.classList.remove('releasing', 'shaking');
+      }, 500);
+    }
+
+    lampCord.addEventListener('mousedown', onDragStart);
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragEnd);
+
+    lampCord.addEventListener('touchstart', onDragStart, { passive: false });
+    document.addEventListener('touchmove', onDragMove, { passive: false });
+    document.addEventListener('touchend', onDragEnd);
+    document.addEventListener('touchcancel', onDragEnd);
+
+    function triggerLampToggle() {
+      loginScreen.classList.toggle('lamp-on');
+
+      if (loginScreen.classList.contains('lamp-on')) {
+        setTimeout(() => passwordInput.focus(), 800);
+      } else {
+        passwordInput.value = '';
+        loginStatus.textContent = '';
+        loginStatus.className = 'login-status';
+        passwordInput.classList.remove('error');
+        passwordInput.disabled = false;
+        passwordInput.style.borderColor = '';
+        passwordInput.style.color = '';
+        userSelect.value = '';
+        clearTimeout(autoCheckTimer);
+        document.getElementById('loginSubmitBtn').disabled = false;
+      }
+    }
+
+    /* ==========================================
+       VERIFY LOGIN
+       ========================================== */
+    function verifyLogin() {
+      const selectedIndex = userSelect.value;
+      const password = passwordInput.value.trim();
+
+      if (selectedIndex === '') {
+        loginStatus.textContent = '⚠️ اختر المستخدم أولاً';
+        loginStatus.className = 'login-status error';
+        return;
+      }
+
+      if (password.length < 4) {
+        loginStatus.textContent = '⚠️ كلمة المرور قصيرة جداً (4 خانات على الأقل)';
+        loginStatus.className = 'login-status error';
+        passwordInput.classList.add('error');
+        setTimeout(() => passwordInput.classList.remove('error'), 500);
+        return;
+      }
+
+      const user = USERS[parseInt(selectedIndex)];
+
+      if (user && user.password === password) {
+        loginStatus.textContent = `✅ أهلاً ${user.username}! جاري الدخول...`;
+        loginStatus.className = 'login-status success';
+        passwordInput.style.borderColor = 'var(--clay-success)';
+        passwordInput.style.color = 'var(--clay-success)';
+        passwordInput.disabled = true;
+        document.getElementById('loginSubmitBtn').disabled = true;
+
+        currentUser = user;
+        saveSession(user);
+        applyPermissions(user);
+        addAuditLog('login', '✅', `تسجيل دخول ناجح`, user.username);
+        sessionStorage.setItem('hussein_current_user', JSON.stringify(user));
+
+        setTimeout(() => {
+          loginScreen.classList.add('hidden');
+          updateUserInfo();
+          startInactivityTimer();
+          setTimeout(() => showToast(`🏠 أهلاً ${user.username}!`), 500);
+        }, 900);
+      } else {
+        loginStatus.textContent = '❌ كلمة المرور غلط، اسأل حسين 😂';
+        loginStatus.className = 'login-status error';
+        passwordInput.classList.add('error');
+        passwordInput.style.borderColor = '';
+        passwordInput.style.color = '';
+
+        addAuditLog('fail', '❌', `محاولة دخول فاشلة`, user ? user.username : 'Unknown');
+
+        setTimeout(() => {
+          passwordInput.value = '';
+          passwordInput.classList.remove('error');
+          passwordInput.focus();
+        }, 900);
+      }
+    }
+
+    passwordInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9a-zA-Z@#$%!_\-.+=?&*^()\[\]{}<>|~`]/g, '');
+      
+      loginStatus.textContent = '';
+      loginStatus.className = 'login-status';
+      passwordInput.classList.remove('error');
+      passwordInput.style.borderColor = '';
+      passwordInput.style.color = '';
+
+      clearTimeout(autoCheckTimer);
+      const len = e.target.value.length;
+
+      if (len >= 20) {
+        verifyLogin();
+        return;
+      }
+
+      if (len >= 4) {
+        autoCheckTimer = setTimeout(() => {
+          const currentLen = passwordInput.value.length;
+          if (currentLen >= 4 && currentLen < 20) {
+            verifyLogin();
+          }
+        }, 1500);
+      }
+    });
+
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(autoCheckTimer);
+        verifyLogin();
+      }
+    });
+
+    userSelect.addEventListener('change', () => {
+      clearTimeout(autoCheckTimer);
+      passwordInput.value = '';
+      passwordInput.disabled = false;
+      passwordInput.focus();
+      loginStatus.textContent = '';
+      loginStatus.className = 'login-status';
+      document.getElementById('loginSubmitBtn').disabled = false;
+    });
+
+    /* ==========================================
+       PERMISSIONS
+       ========================================== */
+    function applyPermissions(user) {
+      const allowed = (user && user.allowedTabs) ? user.allowedTabs : 
+                      ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
+
+      document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
+        const tab = item.dataset.tab;
+        item.style.display = allowed.includes(tab) ? '' : 'none';
+      });
+
+      // ✅ محدث عشان يستخدم unified-card
+      document.querySelectorAll('.unified-card[data-tab-card]').forEach(card => {
+        const tab = card.dataset.tabCard;
+        card.style.display = allowed.includes(tab) ? '' : 'none';
+      });
+
+      const activePane = document.querySelector('.tab-pane.active');
+      if (activePane) {
+        const currentTab = activePane.id.replace('tab-', '');
+        if (currentTab !== 'home' && !allowed.includes(currentTab)) {
+          switchTab('home');
         }
+      }
+    }
 
-        /* ==========================================
-           LAMP CORD — DRAG TO PULL (NEW!)
-           ========================================== */
-        const CORD_BASE_HEIGHT = 60;      // الطول الأصلي
-        const CORD_MIN_HEIGHT = 45;       // أقصى ضغط لفوق
-        const CORD_MAX_HEIGHT = 120;      // أقصى سحب لتحت
-        const CORD_TRIGGER = 100;         // لما يوصل الطول ده → يشتغل
+    function isTabAllowed(tabId) {
+      if (!currentUser) return false;
+      const allowed = currentUser.allowedTabs || 
+                      ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
+      return allowed.includes(tabId);
+    }
 
-        let isDragging = false;
-        let dragStartY = 0;
-        let dragStartHeight = CORD_BASE_HEIGHT;
-        let hasToggledThisDrag = false;
+    /* ==========================================
+       SESSION
+       ========================================== */
+    function saveSession(user) {
+      const sessionData = {
+        loggedIn: true,
+        username: user.username,
+        role: user.role,
+        allowedTabs: user.allowedTabs || [],
+        loginTime: Date.now(),
+        expiry: Date.now() + SESSION_DURATION
+      };
+      sessionStorage.setItem('hussein_suite_session', JSON.stringify(sessionData));
+      sessionStorage.setItem('hussein_current_user', JSON.stringify(user));
+    }
 
-        function getClientY(e) {
-            if (e.touches && e.touches.length) return e.touches[0].clientY;
-            if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientY;
-            return e.clientY;
+    function checkSession() {
+      const sessionStr = sessionStorage.getItem('hussein_suite_session');
+      if (!sessionStr) return null;
+      
+      try {
+        const session = JSON.parse(sessionStr);
+        if (session.loggedIn && Date.now() < session.expiry) {
+          return session;
+        } else {
+          sessionStorage.removeItem('hussein_suite_session');
+          return null;
         }
+      } catch (e) {
+        sessionStorage.removeItem('hussein_suite_session');
+        return null;
+      }
+    }
 
-        function onDragStart(e) {
-            if (isDragging) return;
-            isDragging = true;
-            hasToggledThisDrag = false;
-            dragStartY = getClientY(e);
-            dragStartHeight = parseFloat(getComputedStyle(lampCord).height) || CORD_BASE_HEIGHT;
+    function updateUserInfo() {
+      const userData = sessionStorage.getItem('hussein_current_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        document.getElementById('menuUserName').textContent = `👤 ${user.username}`;
+        document.getElementById('menuUserRole').textContent = user.role;
+        document.getElementById('menuUserInfo').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'flex';
+        document.getElementById('logoutFloatBtn').classList.add('show');
+      }
+    }
 
-            lampCord.classList.add('dragging');
-            lampCord.classList.remove('releasing', 'shaking');
+    /* ==========================================
+       LOGOUT
+       ========================================== */
+    function logout(isAuto = false) {
+      if (!isAuto) {
+        if (!confirm('🚪 هل أنت متأكد من تسجيل الخروج؟')) return;
+      }
 
+      const userData = sessionStorage.getItem('hussein_current_user');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          const msg = isAuto ? 'تسجيل خروج تلقائي (خمول 120 دقيقة)' : 'تسجيل خروج يدوي';
+          addAuditLog('other', '🚪', msg, user.username);
+        } catch(e) {}
+      }
+
+      sessionStorage.removeItem('hussein_suite_session');
+      sessionStorage.removeItem('hussein_current_user');
+      currentUser = null;
+
+      stopInactivityTimer();
+      clearTimeout(autoCheckTimer);
+
+      document.getElementById('menuUserInfo').style.display = 'none';
+      document.getElementById('logoutBtn').style.display = 'none';
+      document.getElementById('logoutFloatBtn').classList.remove('show');
+      document.getElementById('loginSubmitBtn').disabled = false;
+
+      closeMenu();
+
+      document.querySelectorAll('.menu-item[data-tab]').forEach(i => i.style.display = '');
+      document.querySelectorAll('.unified-card[data-tab-card]').forEach(c => c.style.display = '');
+
+      lampCord.style.height = CORD_BASE_HEIGHT + 'px';
+
+      loginScreen.classList.remove('lamp-on');
+      loginScreen.classList.remove('hidden');
+
+      passwordInput.value = '';
+      passwordInput.disabled = false;
+      passwordInput.classList.remove('error', 'success');
+      passwordInput.style.borderColor = '';
+      passwordInput.style.color = '';
+      userSelect.value = '';
+      loginStatus.textContent = '';
+      loginStatus.className = 'login-status';
+
+      setTimeout(() => {
+        const msg = isAuto ? '⏰ تم تسجيل خروجك تلقائياً بعد 120 دقيقة خمول' : '🚪 تم تسجيل الخروج بنجاح';
+        showToast(msg, isAuto ? '⏰' : '✅');
+      }, 300);
+    }
+
+    /* ==========================================
+       INACTIVITY TIMER
+       ========================================== */
+    function startInactivityTimer() {
+      stopInactivityTimer();
+      inactivityTimer = setTimeout(() => {
+        if (currentUser) {
+          logout(true);
+        }
+      }, INACTIVITY_TIMEOUT);
+    }
+
+    function stopInactivityTimer() {
+      if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = null;
+      }
+    }
+
+    function resetInactivityTimer() {
+      if (currentUser) {
+        startInactivityTimer();
+      }
+    }
+
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(event => {
+      document.addEventListener(event, resetInactivityTimer, { passive: true });
+    });
+
+    /* ==========================================
+       AUDIT LOG
+       ========================================== */
+    const AUDIT_KEY = 'hussein_suite_audit';
+    const MAX_AUDIT_ENTRIES = 100;
+
+    function getAuditLog() {
+      try {
+        const data = localStorage.getItem(AUDIT_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch (e) { return []; }
+    }
+
+    function saveAuditLog(log) {
+      try {
+        if (log.length > MAX_AUDIT_ENTRIES) log = log.slice(-MAX_AUDIT_ENTRIES);
+        localStorage.setItem(AUDIT_KEY, JSON.stringify(log));
+      } catch (e) { console.error(e); }
+    }
+
+    function addAuditLog(type, icon, action, username = null) {
+      const log = getAuditLog();
+      const now = new Date();
+      
+      let user = username;
+      if (!user) {
+        const session = sessionStorage.getItem('hussein_current_user');
+        if (session) {
+          try { user = JSON.parse(session).username; } catch(e) {}
+        }
+      }
+
+      log.push({
+        id: Date.now(),
+        type: type,
+        icon: icon,
+        action: action,
+        username: user || 'غير معروف',
+        timestamp: now.getTime(),
+        timeString: now.toLocaleString('ar-EG', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: true
+        })
+      });
+      
+      saveAuditLog(log);
+      updateAuditBadge();
+      renderAuditLog();
+    }
+
+    function renderAuditLog() {
+      const auditList = document.getElementById('auditList');
+      if (!auditList) return;
+      const log = getAuditLog();
+      
+      if (log.length === 0) {
+        auditList.innerHTML = `<div class="audit-empty">📭 لا توجد سجلات حتى الآن</div>`;
+        return;
+      }
+
+      const sortedLog = [...log].sort((a, b) => b.timestamp - a.timestamp);
+      
+      auditList.innerHTML = sortedLog.map(entry => `
+        <div class="audit-item ${entry.type}">
+          <div class="audit-icon">${entry.icon}</div>
+          <div class="audit-content">
+            <div class="audit-action">${entry.action}</div>
+            <div class="audit-user">👤 ${entry.username}</div>
+            <div class="audit-time">${entry.timeString}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function clearAuditLog() {
+      if (confirm('هل أنت متأكد من مسح كل السجلات؟')) {
+        localStorage.removeItem(AUDIT_KEY);
+        renderAuditLog();
+        updateAuditBadge();
+        showToast('🗑️ تم مسح السجل', '✅');
+        addAuditLog('other', '🗑️', 'تم مسح سجل العمليات');
+      }
+    }
+
+    function updateAuditBadge() {
+      const log = getAuditLog();
+      const badge = document.getElementById('auditBadge');
+      if (badge) badge.textContent = log.length > 99 ? '99+' : log.length;
+    }
+
+    /* ==========================================
+       INIT
+       ========================================== */
+    window.addEventListener('load', () => {
+      populateUsers();
+      updateAuditBadge();
+
+      const session = checkSession();
+      if (session) {
+        loginScreen.classList.add('hidden');
+        
+        const userData = sessionStorage.getItem('hussein_current_user');
+        if (userData) {
+          try { currentUser = JSON.parse(userData); } catch(e) {}
+        }
+        
+        updateUserInfo();
+        applyPermissions(currentUser);
+        startInactivityTimer();
+        setTimeout(() => showToast(`🏠 أهلاً بعودتك ${session.username}!`, '✅'), 500);
+        addAuditLog('login', '🔄', 'دخول تلقائي (جلسة محفوظة)', session.username);
+      }
+    });
+
+    /* ==========================================
+       THEME
+       ========================================== */
+    const themeFloatIcon = document.getElementById('themeFloatIcon');
+
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (themeFloatIcon) themeFloatIcon.textContent = '☀️';
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        if (themeFloatIcon) themeFloatIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+        showToast('Light mode', '☀️');
+        addAuditLog('theme', '☀️', 'تبديل إلى الوضع النهاري');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        if (themeFloatIcon) themeFloatIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+        showToast('Night mode', '🌙');
+        addAuditLog('theme', '🌙', 'تبديل إلى الوضع الليلي');
+      }
+    }
+
+    /* ==========================================
+       MENU
+       ========================================== */
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuToggle = document.getElementById('menuToggle');
+    const topHeader = document.getElementById('topHeader');
+
+    function toggleMenu() {
+      sideMenu.classList.toggle('open');
+      menuOverlay.classList.toggle('active');
+      menuToggle.classList.toggle('active');
+      document.body.style.overflow = sideMenu.classList.contains('open') ? 'hidden' : '';
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('active');
+      menuToggle.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    /* ==========================================
+       TAB SWITCHING
+       ========================================== */
+    function switchTab(tabId) {
+      if (tabId !== 'home' && !isTabAllowed(tabId)) {
+        showToast('⛔ لا تملك صلاحية الوصول لهذا القسم', '🚫');
+        addAuditLog('fail', '⛔', `محاولة وصول مرفوضة: ${getTabName(tabId)}`);
+        return;
+      }
+
+      closeMenu();
+
+      const compactHeader = document.getElementById('compactHeader');
+      const container = document.querySelector('.container');
+      const isTool = ['refund', 'orders', 'transfers', 'discount', 'audit'].includes(tabId);
+
+      compactHeader.classList.toggle('visible', isTool);
+      container.classList.toggle('tool-active', isTool);
+
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
+        item.classList.toggle('active', item.dataset.tab === tabId);
+      });
+
+      topHeader.classList.toggle('show', tabId !== 'home');
+
+      if (tabId === 'audit') renderAuditLog();
+
+      showToast('📂 ' + getTabName(tabId));
+      addAuditLog('tab', '📂', 'فتح تبويب: ' + getTabName(tabId));
+    }
+
+    function getTabName(tabId) {
+      const names = {
+        'home': 'الرئيسية',
+        'refund': 'Refund Formatter',
+        'orders': 'تقسيم الأوردرات',
+        'transfers': 'Account Transfers',
+        'discount': 'معالج الخصم',
+        'audit': 'سجل العمليات'
+      };
+      return names[tabId] || tabId;
+    }
+
+    /* ==========================================
+       TOAST
+       ========================================== */
+    let toastTimeout;
+
+    function showToast(message, icon = '✅') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.querySelector('.toast-icon').textContent = icon;
+      toast.classList.add('show');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    /* ==========================================
+       CLOCK
+       ========================================== */
+    const hoursTens = document.getElementById('hours-tens');
+    const hoursUnits = document.getElementById('hours-units');
+    const minutesTens = document.getElementById('minutes-tens');
+    const minutesUnits = document.getElementById('minutes-units');
+    const secondsTens = document.getElementById('seconds-tens');
+    const secondsUnits = document.getElementById('seconds-units');
+    const periodEl = document.getElementById('period');
+
+    const dayNameEl = document.getElementById('day-name');
+    const dayEl = document.getElementById('day');
+    const monthEl = document.getElementById('month');
+    const yearEl = document.getElementById('year');
+
+    const progressFill = document.getElementById('progress-fill');
+    const dotsContainer = document.getElementById('dots');
+
+    const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const arabicMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+    for (let i = 0; i < 12; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dotsContainer.appendChild(dot);
+    }
+    const dots = document.querySelectorAll('.dot');
+
+    function updateClock() {
+      const now = new Date();
+      const rawHours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      let hours = rawHours % 12;
+      hours = hours === 0 ? 12 : hours;
+
+      hoursTens.textContent = Math.floor(hours / 10);
+      hoursUnits.textContent = hours % 10;
+      minutesTens.textContent = Math.floor(minutes / 10);
+      minutesUnits.textContent = minutes % 10;
+      secondsTens.textContent = Math.floor(seconds / 10);
+      secondsUnits.textContent = seconds % 10;
+
+      periodEl.textContent = rawHours >= 12 ? 'PM' : 'AM';
+
+      dayNameEl.textContent = arabicDays[now.getDay()];
+      dayEl.textContent = now.getDate();
+      monthEl.textContent = arabicMonths[now.getMonth()];
+      yearEl.textContent = now.getFullYear();
+
+      progressFill.style.width = ((seconds / 59) * 100) + '%';
+
+      const activeDot = hours % 12;
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === activeDot));
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /* ==========================================
+       KEYBOARD
+       ========================================== */
+    document.addEventListener('keydown', function(e) {
+      if (loginScreen.classList.contains('hidden')) {
+        if (e.ctrlKey && !e.shiftKey) {
+          const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'audit' };
+          const tabId = tabMap[e.key];
+          if (tabId) {
             e.preventDefault();
+            switchTab(tabId);
+          }
         }
-
-        function onDragMove(e) {
-            if (!isDragging) return;
-
-            const currentY = getClientY(e);
-            const deltaY = currentY - dragStartY;             // موجب = لتحت
-            let newHeight = dragStartHeight + deltaY;
-
-            // حدود
-            if (newHeight < CORD_MIN_HEIGHT) newHeight = CORD_MIN_HEIGHT;
-            if (newHeight > CORD_MAX_HEIGHT) newHeight = CORD_MAX_HEIGHT;
-
-            lampCord.style.height = newHeight + 'px';
-
-            // لو وصل للحد → شغّل/اطفي الأباجورة مرة واحدة بس في السحبة دي
-            if (newHeight >= CORD_TRIGGER && !hasToggledThisDrag) {
-                hasToggledThisDrag = true;
-                triggerLampToggle();
-            }
-
-            e.preventDefault();
+        if (e.key === 'Escape' && sideMenu.classList.contains('open')) closeMenu();
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'm') {
+          e.preventDefault();
+          toggleMenu();
         }
-
-        function onDragEnd(e) {
-            if (!isDragging) return;
-            isDragging = false;
-
-            lampCord.classList.remove('dragging');
-            lampCord.classList.add('releasing', 'shaking');
-
-            // رجّع الحبل لطوله الأصلي
-            requestAnimationFrame(() => {
-                lampCord.style.height = CORD_BASE_HEIGHT + 'px';
-            });
-
-            setTimeout(() => {
-                lampCord.classList.remove('releasing', 'shaking');
-            }, 500);
-        }
-
-        // Mouse
-        lampCord.addEventListener('mousedown', onDragStart);
-        document.addEventListener('mousemove', onDragMove);
-        document.addEventListener('mouseup', onDragEnd);
-
-        // Touch
-        lampCord.addEventListener('touchstart', onDragStart, { passive: false });
-        document.addEventListener('touchmove', onDragMove, { passive: false });
-        document.addEventListener('touchend', onDragEnd);
-        document.addEventListener('touchcancel', onDragEnd);
-
-        /* ==========================================
-           LAMP TOGGLE ACTION
-           ========================================== */
-        function triggerLampToggle() {
-            loginScreen.classList.toggle('lamp-on');
-
-            if (loginScreen.classList.contains('lamp-on')) {
-                // نورت → ركّز على الباسورد
-                setTimeout(() => passwordInput.focus(), 800);
-            } else {
-                // طفت → صفّر الفورم
-                passwordInput.value = '';
-                loginStatus.textContent = '';
-                loginStatus.className = 'login-status';
-                passwordInput.classList.remove('error');
-                passwordInput.disabled = false;
-                passwordInput.style.borderColor = '';
-                passwordInput.style.color = '';
-                userSelect.value = '';
-                clearTimeout(autoCheckTimer);
-                document.getElementById('loginSubmitBtn').disabled = false;
-            }
-        }
-
-        /* ==========================================
-           VERIFY LOGIN
-           ========================================== */
-        function verifyLogin() {
-            const selectedIndex = userSelect.value;
-            const password = passwordInput.value.trim();
-
-            if (selectedIndex === '') {
-                loginStatus.textContent = '⚠️ اختر المستخدم أولاً';
-                loginStatus.className = 'login-status error';
-                return;
-            }
-
-            if (password.length < 4) {
-                loginStatus.textContent = '⚠️ كلمة المرور قصيرة جداً (4 خانات على الأقل)';
-                loginStatus.className = 'login-status error';
-                passwordInput.classList.add('error');
-                setTimeout(() => passwordInput.classList.remove('error'), 500);
-                return;
-            }
-
-            const user = USERS[parseInt(selectedIndex)];
-
-            if (user && user.password === password) {
-                loginStatus.textContent = `✅ أهلاً ${user.username}! جاري الدخول...`;
-                loginStatus.className = 'login-status success';
-                passwordInput.style.borderColor = 'var(--clay-success)';
-                passwordInput.style.color = 'var(--clay-success)';
-                passwordInput.disabled = true;
-                document.getElementById('loginSubmitBtn').disabled = true;
-
-                currentUser = user;
-                saveSession(user);
-                applyPermissions(user);
-                addAuditLog('login', '✅', `تسجيل دخول ناجح`, user.username);
-                sessionStorage.setItem('hussein_current_user', JSON.stringify(user));
-
-                setTimeout(() => {
-                    loginScreen.classList.add('hidden');
-                    updateUserInfo();
-                    startInactivityTimer();
-                    setTimeout(() => showToast(`🏠 أهلاً ${user.username}!`), 500);
-                }, 900);
-            } else {
-                loginStatus.textContent = '❌ كلمة المرور غلط، اسأل حسين 😂';
-                loginStatus.className = 'login-status error';
-                passwordInput.classList.add('error');
-                passwordInput.style.borderColor = '';
-                passwordInput.style.color = '';
-
-                addAuditLog('fail', '❌', `محاولة دخول فاشلة`, user ? user.username : 'Unknown');
-
-                setTimeout(() => {
-                    passwordInput.value = '';
-                    passwordInput.classList.remove('error');
-                    passwordInput.focus();
-                }, 900);
-            }
-        }
-
-        passwordInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9a-zA-Z@#$%!_\-.+=?&*^()\[\]{}<>|~`]/g, '');
-            
-            loginStatus.textContent = '';
-            loginStatus.className = 'login-status';
-            passwordInput.classList.remove('error');
-            passwordInput.style.borderColor = '';
-            passwordInput.style.color = '';
-
-            clearTimeout(autoCheckTimer);
-            const len = e.target.value.length;
-
-            if (len >= 20) {
-                verifyLogin();
-                return;
-            }
-
-            if (len >= 4) {
-                autoCheckTimer = setTimeout(() => {
-                    const currentLen = passwordInput.value.length;
-                    if (currentLen >= 4 && currentLen < 20) {
-                        verifyLogin();
-                    }
-                }, 1500);
-            }
-        });
-
-        passwordInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                clearTimeout(autoCheckTimer);
-                verifyLogin();
-            }
-        });
-
-        userSelect.addEventListener('change', () => {
-            clearTimeout(autoCheckTimer);
-            passwordInput.value = '';
-            passwordInput.disabled = false;
-            passwordInput.focus();
-            loginStatus.textContent = '';
-            loginStatus.className = 'login-status';
-            document.getElementById('loginSubmitBtn').disabled = false;
-        });
-
-        /* ==========================================
-           PERMISSIONS
-           ========================================== */
-        function applyPermissions(user) {
-            const allowed = (user && user.allowedTabs) ? user.allowedTabs : 
-                            ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
-
-            // 1) عناصر المنيو الجانبي
-            document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
-                const tab = item.dataset.tab;
-                item.style.display = allowed.includes(tab) ? '' : 'none';
-            });
-
-            // 2) كروت الصفحة الرئيسية
-            document.querySelectorAll('.preview-card[data-tab-card]').forEach(card => {
-                const tab = card.dataset.tabCard;
-                card.style.display = allowed.includes(tab) ? '' : 'none';
-            });
-
-            // 3) لو واقف على تاب مش مسموح، رجّعه للرئيسية
-            const activePane = document.querySelector('.tab-pane.active');
-            if (activePane) {
-                const currentTab = activePane.id.replace('tab-', '');
-                if (currentTab !== 'home' && !allowed.includes(currentTab)) {
-                    switchTab('home');
-                }
-            }
-        }
-
-        function isTabAllowed(tabId) {
-            if (!currentUser) return false;
-            const allowed = currentUser.allowedTabs || 
-                            ['home', 'refund', 'orders', 'transfers', 'discount', 'audit'];
-            return allowed.includes(tabId);
-        }
-
-        /* ==========================================
-           SESSION
-           ========================================== */
-        function saveSession(user) {
-            const sessionData = {
-                loggedIn: true,
-                username: user.username,
-                role: user.role,
-                allowedTabs: user.allowedTabs || [],
-                loginTime: Date.now(),
-                expiry: Date.now() + SESSION_DURATION
-            };
-            sessionStorage.setItem('hussein_suite_session', JSON.stringify(sessionData));
-            sessionStorage.setItem('hussein_current_user', JSON.stringify(user));
-        }
-
-        function checkSession() {
-            const sessionStr = sessionStorage.getItem('hussein_suite_session');
-            if (!sessionStr) return null;
-            
-            try {
-                const session = JSON.parse(sessionStr);
-                if (session.loggedIn && Date.now() < session.expiry) {
-                    return session;
-                } else {
-                    sessionStorage.removeItem('hussein_suite_session');
-                    return null;
-                }
-            } catch (e) {
-                sessionStorage.removeItem('hussein_suite_session');
-                return null;
-            }
-        }
-
-        function updateUserInfo() {
-            const userData = sessionStorage.getItem('hussein_current_user');
-            if (userData) {
-                const user = JSON.parse(userData);
-                document.getElementById('menuUserName').textContent = `👤 ${user.username}`;
-                document.getElementById('menuUserRole').textContent = user.role;
-                document.getElementById('menuUserInfo').style.display = 'block';
-                document.getElementById('logoutBtn').style.display = 'flex';
-                document.getElementById('logoutFloatBtn').classList.add('show');
-            }
-        }
-
-        /* ==========================================
-           LOGOUT
-           ========================================== */
-        function logout(isAuto = false) {
-            if (!isAuto) {
-                if (!confirm('🚪 هل أنت متأكد من تسجيل الخروج؟')) return;
-            }
-
-            const userData = sessionStorage.getItem('hussein_current_user');
-            if (userData) {
-                try {
-                    const user = JSON.parse(userData);
-                    const msg = isAuto ? 'تسجيل خروج تلقائي (خمول 120 دقيقة)' : 'تسجيل خروج يدوي';
-                    addAuditLog('other', '🚪', msg, user.username);
-                } catch(e) {}
-            }
-
-            sessionStorage.removeItem('hussein_suite_session');
-            sessionStorage.removeItem('hussein_current_user');
-            currentUser = null;
-
-            stopInactivityTimer();
-            clearTimeout(autoCheckTimer);
-
-            document.getElementById('menuUserInfo').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('logoutFloatBtn').classList.remove('show');
-            document.getElementById('loginSubmitBtn').disabled = false;
-
-            closeMenu();
-
-            // إعادة إظهار كل المنيو والكروت (مخفية عشان الصلاحيات)
-            document.querySelectorAll('.menu-item[data-tab]').forEach(i => i.style.display = '');
-            document.querySelectorAll('.preview-card[data-tab-card]').forEach(c => c.style.display = '');
-
-            // إعادة تصفير الحبل
-            lampCord.style.height = CORD_BASE_HEIGHT + 'px';
-
-            loginScreen.classList.remove('lamp-on');
-            loginScreen.classList.remove('hidden');
-
-            passwordInput.value = '';
-            passwordInput.disabled = false;
-            passwordInput.classList.remove('error', 'success');
-            passwordInput.style.borderColor = '';
-            passwordInput.style.color = '';
-            userSelect.value = '';
-            loginStatus.textContent = '';
-            loginStatus.className = 'login-status';
-
-            setTimeout(() => {
-                const msg = isAuto ? '⏰ تم تسجيل خروجك تلقائياً بعد 120 دقيقة خمول' : '🚪 تم تسجيل الخروج بنجاح';
-                showToast(msg, isAuto ? '⏰' : '✅');
-            }, 300);
-        }
-
-        /* ==========================================
-           INACTIVITY TIMER (120 MINUTES)
-           ========================================== */
-        function startInactivityTimer() {
-            stopInactivityTimer();
-            inactivityTimer = setTimeout(() => {
-                if (currentUser) {
-                    logout(true);
-                }
-            }, INACTIVITY_TIMEOUT);
-        }
-
-        function stopInactivityTimer() {
-            if (inactivityTimer) {
-                clearTimeout(inactivityTimer);
-                inactivityTimer = null;
-            }
-        }
-
-        function resetInactivityTimer() {
-            if (currentUser) {
-                startInactivityTimer();
-            }
-        }
-
-        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(event => {
-            document.addEventListener(event, resetInactivityTimer, { passive: true });
-        });
-
-        /* ==========================================
-           AUDIT LOG
-           ========================================== */
-        const AUDIT_KEY = 'hussein_suite_audit';
-        const MAX_AUDIT_ENTRIES = 100;
-
-        function getAuditLog() {
-            try {
-                const data = localStorage.getItem(AUDIT_KEY);
-                return data ? JSON.parse(data) : [];
-            } catch (e) { return []; }
-        }
-
-        function saveAuditLog(log) {
-            try {
-                if (log.length > MAX_AUDIT_ENTRIES) log = log.slice(-MAX_AUDIT_ENTRIES);
-                localStorage.setItem(AUDIT_KEY, JSON.stringify(log));
-            } catch (e) { console.error(e); }
-        }
-
-        function addAuditLog(type, icon, action, username = null) {
-            const log = getAuditLog();
-            const now = new Date();
-            
-            let user = username;
-            if (!user) {
-                const session = sessionStorage.getItem('hussein_current_user');
-                if (session) {
-                    try { user = JSON.parse(session).username; } catch(e) {}
-                }
-            }
-
-            log.push({
-                id: Date.now(),
-                type: type,
-                icon: icon,
-                action: action,
-                username: user || 'غير معروف',
-                timestamp: now.getTime(),
-                timeString: now.toLocaleString('ar-EG', {
-                    year: 'numeric', month: '2-digit', day: '2-digit',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit',
-                    hour12: true
-                })
-            });
-            
-            saveAuditLog(log);
-            updateAuditBadge();
-            renderAuditLog();
-        }
-
-        function renderAuditLog() {
-            const auditList = document.getElementById('auditList');
-            if (!auditList) return;
-            const log = getAuditLog();
-            
-            if (log.length === 0) {
-                auditList.innerHTML = `<div class="audit-empty">📭 لا توجد سجلات حتى الآن</div>`;
-                return;
-            }
-
-            const sortedLog = [...log].sort((a, b) => b.timestamp - a.timestamp);
-            
-            auditList.innerHTML = sortedLog.map(entry => `
-                <div class="audit-item ${entry.type}">
-                    <div class="audit-icon">${entry.icon}</div>
-                    <div class="audit-content">
-                        <div class="audit-action">${entry.action}</div>
-                        <div class="audit-user">👤 ${entry.username}</div>
-                        <div class="audit-time">${entry.timeString}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function clearAuditLog() {
-            if (confirm('هل أنت متأكد من مسح كل السجلات؟')) {
-                localStorage.removeItem(AUDIT_KEY);
-                renderAuditLog();
-                updateAuditBadge();
-                showToast('🗑️ تم مسح السجل', '✅');
-                addAuditLog('other', '🗑️', 'تم مسح سجل العمليات');
-            }
-        }
-
-        function updateAuditBadge() {
-            const log = getAuditLog();
-            const badge = document.getElementById('auditBadge');
-            if (badge) badge.textContent = log.length > 99 ? '99+' : log.length;
-        }
-
-        /* ==========================================
-           INIT
-           ========================================== */
-        window.addEventListener('load', () => {
-            populateUsers();
-            updateAuditBadge();
-
-            const session = checkSession();
-            if (session) {
-                loginScreen.classList.add('hidden');
-                
-                const userData = sessionStorage.getItem('hussein_current_user');
-                if (userData) {
-                    try { currentUser = JSON.parse(userData); } catch(e) {}
-                }
-                
-                updateUserInfo();
-                applyPermissions(currentUser);
-                startInactivityTimer();
-                setTimeout(() => showToast(`🏠 أهلاً بعودتك ${session.username}!`, '✅'), 500);
-                addAuditLog('login', '🔄', 'دخول تلقائي (جلسة محفوظة)', session.username);
-            }
-        });
-
-        /* ==========================================
-           THEME
-           ========================================== */
-        const themeFloatIcon = document.getElementById('themeFloatIcon');
-
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            if (themeFloatIcon) themeFloatIcon.textContent = '☀️';
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.getAttribute('data-theme') === 'dark') {
-                html.removeAttribute('data-theme');
-                if (themeFloatIcon) themeFloatIcon.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-                showToast('Light mode', '☀️');
-                addAuditLog('theme', '☀️', 'تبديل إلى الوضع النهاري');
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                if (themeFloatIcon) themeFloatIcon.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-                showToast('Night mode', '🌙');
-                addAuditLog('theme', '🌙', 'تبديل إلى الوضع الليلي');
-            }
-        }
-
-        /* ==========================================
-           MENU
-           ========================================== */
-        const sideMenu = document.getElementById('sideMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        const menuToggle = document.getElementById('menuToggle');
-        const topHeader = document.getElementById('topHeader');
-
-        function toggleMenu() {
-            sideMenu.classList.toggle('open');
-            menuOverlay.classList.toggle('active');
-            menuToggle.classList.toggle('active');
-            document.body.style.overflow = sideMenu.classList.contains('open') ? 'hidden' : '';
-        }
-
-        function closeMenu() {
-            sideMenu.classList.remove('open');
-            menuOverlay.classList.remove('active');
-            menuToggle.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        /* ==========================================
-           TAB SWITCHING (WITH PERMISSIONS)
-           ========================================== */
-        function switchTab(tabId) {
-            // 🔒 حماية الصلاحيات
-            if (tabId !== 'home' && !isTabAllowed(tabId)) {
-                showToast('⛔ لا تملك صلاحية الوصول لهذا القسم', '🚫');
-                addAuditLog('fail', '⛔', `محاولة وصول مرفوضة: ${getTabName(tabId)}`);
-                return;
-            }
-
-            closeMenu();
-
-            const compactHeader = document.getElementById('compactHeader');
-            const container = document.querySelector('.container');
-            const isTool = ['refund', 'orders', 'transfers', 'discount', 'audit'].includes(tabId);
-
-            compactHeader.classList.toggle('visible', isTool);
-            container.classList.toggle('tool-active', isTool);
-
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-
-            document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
-                item.classList.toggle('active', item.dataset.tab === tabId);
-            });
-
-            topHeader.classList.toggle('show', tabId !== 'home');
-
-            if (tabId === 'audit') renderAuditLog();
-
-            showToast('📂 ' + getTabName(tabId));
-            addAuditLog('tab', '📂', 'فتح تبويب: ' + getTabName(tabId));
-        }
-
-        function getTabName(tabId) {
-            const names = {
-                'home': 'الرئيسية',
-                'refund': 'Refund Formatter',
-                'orders': 'تقسيم الأوردرات',
-                'transfers': 'Account Transfers',
-                'discount': 'معالج الخصم',
-                'audit': 'سجل العمليات'
-            };
-            return names[tabId] || tabId;
-        }
-
-        /* ==========================================
-           TOAST
-           ========================================== */
-        let toastTimeout;
-
-        function showToast(message, icon = '✅') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').textContent = message;
-            toast.querySelector('.toast-icon').textContent = icon;
-            toast.classList.add('show');
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        /* ==========================================
-           CLOCK
-           ========================================== */
-        const hoursTens = document.getElementById('hours-tens');
-        const hoursUnits = document.getElementById('hours-units');
-        const minutesTens = document.getElementById('minutes-tens');
-        const minutesUnits = document.getElementById('minutes-units');
-        const secondsTens = document.getElementById('seconds-tens');
-        const secondsUnits = document.getElementById('seconds-units');
-        const periodEl = document.getElementById('period');
-
-        const dayNameEl = document.getElementById('day-name');
-        const dayEl = document.getElementById('day');
-        const monthEl = document.getElementById('month');
-        const yearEl = document.getElementById('year');
-
-        const progressFill = document.getElementById('progress-fill');
-        const dotsContainer = document.getElementById('dots');
-
-        const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-        const arabicMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-
-        for (let i = 0; i < 12; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            dotsContainer.appendChild(dot);
-        }
-        const dots = document.querySelectorAll('.dot');
-
-        function updateClock() {
-            const now = new Date();
-            const rawHours = now.getHours();
-            const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
-
-            let hours = rawHours % 12;
-            hours = hours === 0 ? 12 : hours;
-
-            hoursTens.textContent = Math.floor(hours / 10);
-            hoursUnits.textContent = hours % 10;
-            minutesTens.textContent = Math.floor(minutes / 10);
-            minutesUnits.textContent = minutes % 10;
-            secondsTens.textContent = Math.floor(seconds / 10);
-            secondsUnits.textContent = seconds % 10;
-
-            periodEl.textContent = rawHours >= 12 ? 'PM' : 'AM';
-
-            dayNameEl.textContent = arabicDays[now.getDay()];
-            dayEl.textContent = now.getDate();
-            monthEl.textContent = arabicMonths[now.getMonth()];
-            yearEl.textContent = now.getFullYear();
-
-            progressFill.style.width = ((seconds / 59) * 100) + '%';
-
-            const activeDot = hours % 12;
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === activeDot));
-        }
-
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        /* ==========================================
-           KEYBOARD
-           ========================================== */
-        document.addEventListener('keydown', function(e) {
-            if (loginScreen.classList.contains('hidden')) {
-                if (e.ctrlKey && !e.shiftKey) {
-                    const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'audit' };
-                    const tabId = tabMap[e.key];
-                    if (tabId) {
-                        e.preventDefault();
-                        switchTab(tabId);
-                    }
-                }
-                if (e.key === 'Escape' && sideMenu.classList.contains('open')) closeMenu();
-                if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'm') {
-                    e.preventDefault();
-                    toggleMenu();
-                }
-            }
-        });
-
-        console.log('🏠 Hussein Gamal Suite - Lamp Login Edition 💡');
-        console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
-        console.log('  ⚡ Auto-Check: 1.5s after typing, or Enter/Button');
-        console.log('  🔒 Permissions system enabled');
-        console.log('  🪢 Cord drag system enabled');
-    </script>
+      }
+    });
+
+    console.log('🏠 Hussein Gamal Suite - Unified Card Style 💡');
+    console.log('  ✅ All cards now share the same style');
+    console.log('  🖼️ Large images preserved in quick links');
+    console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
+    console.log('  🔒 Permissions system enabled');
+  </script>
 
 </body>
 </html>
