@@ -185,7 +185,6 @@
             transition: background 0.6s ease;
         }
 
-        /* ===== الحبل (Pull Cord) - Toggle Button ===== */
         .lamp-cord {
             position: absolute;
             top: 75px;
@@ -200,15 +199,9 @@
             transform-origin: top center;
         }
 
-        .lamp-cord:hover {
-            height: 70px;
-        }
+        .lamp-cord:hover { height: 70px; }
+        .lamp-cord:active { height: 50px; }
 
-        .lamp-cord:active {
-            height: 50px;
-        }
-
-        /* الكورة اللي في آخر الحبل */
         .lamp-cord-knob {
             position: absolute;
             bottom: -12px;
@@ -233,18 +226,15 @@
             transform: translateX(-50%) scale(0.95);
         }
 
-        /* اهتزاز الحبل */
         @keyframes cordShake {
             0%, 100% { transform: translateX(-50%) rotate(0deg); }
             25% { transform: translateX(-50%) rotate(-8deg); }
             75% { transform: translateX(-50%) rotate(8deg); }
         }
 
-        .lamp-cord.shaking {
-            animation: cordShake 0.4s ease;
-        }
+        .lamp-cord.shaking { animation: cordShake 0.4s ease; }
 
-        /* ===== الإرشادات الجانبية (جنب الأباجورة) ===== */
+        /* ===== الإرشادات الجانبية ===== */
         .lamp-instructions {
             position: absolute;
             top: 50%;
@@ -268,7 +258,6 @@
             direction: rtl;
         }
 
-        /* سهم الإرشادات */
         .lamp-instructions::after {
             content: '';
             position: absolute;
@@ -310,7 +299,6 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* اختفاء الإرشادات لما النور ينور */
         .lamp-on .lamp-instructions {
             opacity: 0;
             transform: translateY(-50%) translateX(20px);
@@ -370,9 +358,7 @@
             padding-right: 4px;
         }
 
-        .select-wrapper {
-            position: relative;
-        }
+        .select-wrapper { position: relative; }
 
         .select-wrapper::after {
             content: '▼';
@@ -424,12 +410,12 @@
             background: var(--clay-bg);
             box-shadow: var(--clay-inset);
             color: var(--clay-text);
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             outline: none;
             transition: all 0.3s ease;
             text-align: center;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             direction: ltr;
             font-family: inherit;
         }
@@ -438,7 +424,8 @@
             letter-spacing: 0;
             font-weight: 400;
             color: var(--clay-text-soft);
-            font-size: 13px;
+            font-size: 12px;
+            direction: rtl;
         }
 
         .password-input:focus {
@@ -458,6 +445,44 @@
             75% { transform: translateX(6px); }
         }
 
+        /* ===== زر تسجيل الدخول ===== */
+        .login-submit-btn {
+            width: 100%;
+            padding: 13px 16px;
+            margin-top: 8px;
+            border-radius: var(--clay-radius-sm);
+            border: 1px solid var(--clay-border);
+            background: var(--clay-card);
+            box-shadow: var(--clay-shadow);
+            color: var(--clay-accent);
+            font-weight: 800;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-submit-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--clay-accent);
+            box-shadow: 0 0 20px rgba(166, 124, 107, 0.35), var(--clay-shadow);
+        }
+
+        .login-submit-btn:active {
+            transform: scale(0.97);
+            box-shadow: var(--clay-inset);
+        }
+
+        .login-submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .login-status {
             font-size: 13px;
             font-weight: 700;
@@ -471,7 +496,6 @@
         .login-status.error { color: var(--clay-danger); }
         .login-status.success { color: var(--clay-success); }
 
-        /* ===== Responsive ===== */
         @media(max-width: 900px) {
             .lamp-instructions {
                 right: auto;
@@ -496,30 +520,14 @@
         }
 
         @media(max-width: 768px) {
-            .login-wrapper {
-                flex-direction: column;
-                gap: 30px;
-            }
-            .lamp-container {
-                height: 280px;
-                transform: scale(0.9);
-            }
+            .login-wrapper { flex-direction: column; gap: 30px; }
+            .lamp-container { height: 280px; transform: scale(0.9); }
         }
 
         @media(max-width: 480px) {
-            .lamp-container {
-                transform: scale(0.8);
-                height: 250px;
-            }
-            .login-form-box {
-                padding: 22px 18px;
-                max-width: 300px;
-            }
-            .lamp-instructions {
-                font-size: 11px;
-                padding: 10px 14px;
-                bottom: -80px;
-            }
+            .lamp-container { transform: scale(0.8); height: 250px; }
+            .login-form-box { padding: 22px 18px; max-width: 300px; }
+            .lamp-instructions { font-size: 11px; padding: 10px 14px; bottom: -80px; }
         }
 
         /* ==========================================
@@ -533,10 +541,17 @@
             position: relative;
         }
 
-        .theme-float-btn {
+        .top-controls {
             position: fixed;
             top: 15px;
             left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .theme-float-btn, .logout-float-btn {
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -549,13 +564,29 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            z-index: 100;
             user-select: none;
         }
 
         .theme-float-btn:hover { transform: rotate(30deg) scale(1.1); }
         .theme-float-btn:active { transform: scale(0.9); box-shadow: var(--clay-inset); }
-        .container.tool-active .theme-float-btn { display: none; }
+
+        .logout-float-btn {
+            color: var(--clay-danger);
+            font-size: 18px;
+            display: none;
+        }
+
+        .logout-float-btn.show { display: flex; }
+
+        .logout-float-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--clay-danger);
+            box-shadow: 0 0 20px rgba(181, 122, 122, 0.5), var(--clay-shadow);
+        }
+
+        .logout-float-btn:active { transform: scale(0.9); box-shadow: var(--clay-inset); }
+
+        .container.tool-active .top-controls { display: none; }
 
         .menu-toggle-wrapper {
             position: fixed;
@@ -626,6 +657,9 @@
         .compact-menu-btn:active { transform: scale(0.92); box-shadow: var(--clay-inset); }
         .container.tool-active .menu-toggle-wrapper { display: none; }
 
+        /* ==========================================
+           SIDE MENU
+           ========================================== */
         .side-menu-overlay {
             position: fixed;
             inset: 0;
@@ -694,6 +728,48 @@
             font-size: 9px;
             color: var(--clay-text-soft);
             margin-top: 2px;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: var(--clay-radius-sm);
+            background: var(--clay-card);
+            border: 1px solid var(--clay-border);
+            box-shadow: 2px 2px 6px #cbc3b8, -2px -2px 6px #fffff2;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--clay-danger);
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        [data-theme="dark"] .logout-btn {
+            box-shadow: 2px 2px 6px #1e1b19, -2px -2px 6px #4e4943;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.03);
+            border-color: var(--clay-danger);
+            box-shadow: 0 0 15px rgba(181, 122, 122, 0.4), 2px 2px 6px #cbc3b8;
+        }
+
+        .logout-btn:active {
+            transform: scale(0.96);
+            box-shadow: var(--clay-inset);
+        }
+
+        .logout-btn .logout-icon {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .logout-btn:hover .logout-icon {
+            transform: translateX(-5px);
         }
 
         .menu-item {
@@ -994,7 +1070,10 @@
             .dot { width: 7px; height: 7px; }
             .progress-bar { height: 8px; margin-top: 12px; }
             .date-display { font-size: 10px; margin-top: 12px; }
-            .theme-float-btn { width: 38px; height: 38px; font-size: 17px; top: 12px; left: 12px; }
+
+            .top-controls { top: 10px; left: 10px; gap: 6px; }
+            .theme-float-btn, .logout-float-btn { width: 38px; height: 38px; font-size: 17px; }
+            .logout-float-btn { font-size: 16px; }
         }
     </style>
 </head>
@@ -1009,29 +1088,24 @@
         
         <div class="login-wrapper">
             
-            <!-- ===== الأباجورة + الإرشادات الجانبية ===== -->
             <div class="lamp-container" id="lampContainer">
                 <div class="lamp-glow"></div>
                 
-                <!-- الإرشادات الجانبية (جنب الأباجورة) -->
                 <div class="lamp-instructions" id="lampInstructions">
                     <span class="inst-icon">💡</span>
                     <span class="inst-line">شدّ الحبل <span class="highlight">عشان</span></span>
                     <span class="inst-line">تنوّر الأباجورة وتدخل</span>
                 </div>
                 
-                <!-- جسم الأباجورة -->
                 <div class="lamp-shade"></div>
                 <div class="lamp-pole"></div>
                 <div class="lamp-base"></div>
                 
-                <!-- الحبل (Toggle) -->
                 <div class="lamp-cord" id="lampCord">
                     <div class="lamp-cord-knob" id="lampCordKnob"></div>
                 </div>
             </div>
 
-            <!-- ===== فورم الدخول (مخفي لحد ما النور ينور) ===== -->
             <div class="login-form-box" id="loginFormBox">
                 <h3>🔓 تسجيل الدخول</h3>
                 <p class="subtitle">اختر اسمك وأدخل كلمة المرور</p>
@@ -1048,8 +1122,12 @@
                 <div class="input-group">
                     <label>🔑 كلمة المرور</label>
                     <input type="password" class="password-input" id="passwordInput" 
-                           placeholder="أدخل كلمة المرور" inputmode="numeric" maxlength="6">
+                           placeholder="أدخل كلمة المرور (4 خانات على الأقل)" maxlength="20" autocomplete="off">
                 </div>
+
+                <button class="login-submit-btn" id="loginSubmitBtn" onclick="verifyLogin()">
+                    🔓 تسجيل دخول
+                </button>
 
                 <div class="login-status" id="loginStatus"></div>
             </div>
@@ -1079,6 +1157,11 @@
         <div class="menu-user-info" id="menuUserInfo" style="display: none;">
             <div class="user-name" id="menuUserName">-</div>
             <div class="user-role" id="menuUserRole">-</div>
+        </div>
+
+        <div class="logout-btn" id="logoutBtn" onclick="logout()" style="display: none;">
+            <span class="logout-icon">🚪</span>
+            <span>تسجيل خروج</span>
         </div>
 
         <div class="menu-item active" data-tab="home" onclick="switchTab('home')">
@@ -1120,8 +1203,13 @@
     <!-- ===== MAIN ===== -->
     <div class="container" id="mainContainer">
 
-        <div class="theme-float-btn" id="themeFloatBtn" onclick="toggleTheme()" title="تبديل الوضع">
-            <span id="themeFloatIcon">🌙</span>
+        <div class="top-controls" id="topControls">
+            <div class="theme-float-btn" id="themeFloatBtn" onclick="toggleTheme()" title="تبديل الوضع">
+                <span id="themeFloatIcon">🌙</span>
+            </div>
+            <div class="logout-float-btn" id="logoutFloatBtn" onclick="logout()" title="تسجيل خروج">
+                🚪
+            </div>
         </div>
 
         <div class="top-header" id="topHeader">
@@ -1250,15 +1338,18 @@
            USERS
            ========================================== */
         const USERS = [
-            { username: 'Hussein', password: '204815', role: 'Admin' },
-            { username: 'Ahmed', password: '123456', role: 'Refund Agent' },
-            { username: 'Mahmoud', password: '555555', role: 'Operations' },
-            { username: 'Sara', password: '061947', role: 'Customer Service' }
+            { username: 'Hussein', password: '1129+', role: 'Admin' },
+            { username: 'Saher', password: '123456', role: 'Customer Service Manager' },
+            { username: 'Walaa', password: '11995', role: 'Team Leader CS' },
+            { username: 'Maryaim', password: '271997', role: 'Customer Service' }
         ];
 
-        const SESSION_DURATION = 8 * 60 * 60 * 1000;
+        const SESSION_DURATION = 8 * 60 * 60 * 1000; // 8 ساعات
+        const INACTIVITY_TIMEOUT = 120 * 60 * 1000; // 120 دقيقة خمول
 
         let currentUser = null;
+        let inactivityTimer = null;
+        let autoCheckTimer = null;
 
         /* ==========================================
            LOGIN SYSTEM
@@ -1270,7 +1361,6 @@
         const passwordInput = document.getElementById('passwordInput');
         const loginStatus = document.getElementById('loginStatus');
 
-        // تعبئة قائمة المستخدمين
         function populateUsers() {
             userSelect.innerHTML = '<option value="" disabled selected>اختر المستخدم...</option>';
             USERS.forEach((user, index) => {
@@ -1281,20 +1371,16 @@
             });
         }
 
-        // تبديل الحبل (فتح/قفل)
         function toggleLamp() {
             lampCord.classList.add('shaking');
             setTimeout(() => lampCord.classList.remove('shaking'), 400);
 
-            // تبديل الحالة
             setTimeout(() => {
                 loginScreen.classList.toggle('lamp-on');
                 
                 if (loginScreen.classList.contains('lamp-on')) {
-                    // فتح: ركز على الباسورد بعد ظهور الفورم
                     setTimeout(() => passwordInput.focus(), 800);
                 } else {
-                    // قفل: مسح البيانات
                     passwordInput.value = '';
                     loginStatus.textContent = '';
                     loginStatus.className = 'login-status';
@@ -1303,19 +1389,33 @@
                     passwordInput.style.borderColor = '';
                     passwordInput.style.color = '';
                     userSelect.value = '';
+                    clearTimeout(autoCheckTimer);
+                    document.getElementById('loginSubmitBtn').disabled = false;
                 }
             }, 200);
         }
 
-        // ربط الحدث بالحبل
         lampCord.addEventListener('click', toggleLamp);
 
-        // التحقق التلقائي
         function verifyLogin() {
             const selectedIndex = userSelect.value;
             const password = passwordInput.value.trim();
 
-            if (selectedIndex === '' || !password) return;
+            // لو مفيش مستخدم مختار
+            if (selectedIndex === '') {
+                loginStatus.textContent = '⚠️ اختر المستخدم أولاً';
+                loginStatus.className = 'login-status error';
+                return;
+            }
+
+            // لو الباسورد أقل من 4 خانات
+            if (password.length < 4) {
+                loginStatus.textContent = '⚠️ كلمة المرور قصيرة جداً (4 خانات على الأقل)';
+                loginStatus.className = 'login-status error';
+                passwordInput.classList.add('error');
+                setTimeout(() => passwordInput.classList.remove('error'), 500);
+                return;
+            }
 
             const user = USERS[parseInt(selectedIndex)];
 
@@ -1326,6 +1426,7 @@
                 passwordInput.style.borderColor = 'var(--clay-success)';
                 passwordInput.style.color = 'var(--clay-success)';
                 passwordInput.disabled = true;
+                document.getElementById('loginSubmitBtn').disabled = true;
 
                 currentUser = user;
                 saveSession(user);
@@ -1335,6 +1436,7 @@
                 setTimeout(() => {
                     loginScreen.classList.add('hidden');
                     updateUserInfo();
+                    startInactivityTimer();
                     setTimeout(() => showToast(`🏠 أهلاً ${user.username}!`), 500);
                 }, 900);
             } else {
@@ -1355,30 +1457,54 @@
             }
         }
 
-        // ربط التحقق التلقائي
         passwordInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9a-zA-Z]/g, '');
+            // السماح بالأرقام، الحروف، والرموز
+            e.target.value = e.target.value.replace(/[^0-9a-zA-Z@#$%!_\-.+=?&*^()\[\]{}<>|~`]/g, '');
+            
             loginStatus.textContent = '';
             loginStatus.className = 'login-status';
             passwordInput.classList.remove('error');
             passwordInput.style.borderColor = '';
             passwordInput.style.color = '';
 
-            if (e.target.value.length >= 6) {
+            // إلغاء أي تحقق تلقائي قديم
+            clearTimeout(autoCheckTimer);
+
+            const len = e.target.value.length;
+
+            // ✅ لو المستخدم وصل للحد الأقصى (20 خانة)، تحقق فوراً
+            if (len >= 20) {
                 verifyLogin();
+                return;
+            }
+
+            // ⏱️ لو المستخدم وصل للحد الأدنى (4 خانات)، استنى 1.5 ثانية من آخر ضغطة
+            if (len >= 4) {
+                autoCheckTimer = setTimeout(() => {
+                    // تأكد إن المستخدم مكملش كتابة
+                    const currentLen = passwordInput.value.length;
+                    if (currentLen >= 4 && currentLen < 20) {
+                        verifyLogin();
+                    }
+                }, 1500);
             }
         });
 
         passwordInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') verifyLogin();
+            if (e.key === 'Enter') {
+                clearTimeout(autoCheckTimer);
+                verifyLogin();
+            }
         });
 
         userSelect.addEventListener('change', () => {
+            clearTimeout(autoCheckTimer);
             passwordInput.value = '';
             passwordInput.disabled = false;
             passwordInput.focus();
             loginStatus.textContent = '';
             loginStatus.className = 'login-status';
+            document.getElementById('loginSubmitBtn').disabled = false;
         });
 
         /* ==========================================
@@ -1421,8 +1547,88 @@
                 document.getElementById('menuUserName').textContent = `👤 ${user.username}`;
                 document.getElementById('menuUserRole').textContent = user.role;
                 document.getElementById('menuUserInfo').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'flex';
+                document.getElementById('logoutFloatBtn').classList.add('show');
             }
         }
+
+        /* ==========================================
+           LOGOUT
+           ========================================== */
+        function logout(isAuto = false) {
+            if (!isAuto) {
+                if (!confirm('🚪 هل أنت متأكد من تسجيل الخروج؟')) return;
+            }
+
+            const userData = sessionStorage.getItem('hussein_current_user');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    const msg = isAuto ? 'تسجيل خروج تلقائي (خمول 120 دقيقة)' : 'تسجيل خروج يدوي';
+                    addAuditLog('other', '🚪', msg, user.username);
+                } catch(e) {}
+            }
+
+            sessionStorage.removeItem('hussein_suite_session');
+            sessionStorage.removeItem('hussein_current_user');
+            currentUser = null;
+
+            stopInactivityTimer();
+            clearTimeout(autoCheckTimer);
+
+            document.getElementById('menuUserInfo').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('logoutFloatBtn').classList.remove('show');
+            document.getElementById('loginSubmitBtn').disabled = false;
+
+            closeMenu();
+
+            loginScreen.classList.remove('lamp-on');
+            loginScreen.classList.remove('hidden');
+
+            passwordInput.value = '';
+            passwordInput.disabled = false;
+            passwordInput.classList.remove('error', 'success');
+            passwordInput.style.borderColor = '';
+            passwordInput.style.color = '';
+            userSelect.value = '';
+            loginStatus.textContent = '';
+            loginStatus.className = 'login-status';
+
+            setTimeout(() => {
+                const msg = isAuto ? '⏰ تم تسجيل خروجك تلقائياً بعد 120 دقيقة خمول' : '🚪 تم تسجيل الخروج بنجاح';
+                showToast(msg, isAuto ? '⏰' : '✅');
+            }, 300);
+        }
+
+        /* ==========================================
+           INACTIVITY TIMER (120 MINUTES)
+           ========================================== */
+        function startInactivityTimer() {
+            stopInactivityTimer();
+            inactivityTimer = setTimeout(() => {
+                if (currentUser) {
+                    logout(true);
+                }
+            }, INACTIVITY_TIMEOUT);
+        }
+
+        function stopInactivityTimer() {
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = null;
+            }
+        }
+
+        function resetInactivityTimer() {
+            if (currentUser) {
+                startInactivityTimer();
+            }
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, { passive: true });
+        });
 
         /* ==========================================
            AUDIT LOG
@@ -1525,7 +1731,14 @@
             const session = checkSession();
             if (session) {
                 loginScreen.classList.add('hidden');
+                
+                const userData = sessionStorage.getItem('hussein_current_user');
+                if (userData) {
+                    try { currentUser = JSON.parse(userData); } catch(e) {}
+                }
+                
                 updateUserInfo();
+                startInactivityTimer();
                 setTimeout(() => showToast(`🏠 أهلاً بعودتك ${session.username}!`, '✅'), 500);
                 addAuditLog('login', '🔄', 'دخول تلقائي (جلسة محفوظة)', session.username);
             }
@@ -1632,7 +1845,7 @@
             toast.classList.add('show');
 
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         /* ==========================================
@@ -1718,6 +1931,8 @@
         });
 
         console.log('🏠 Hussein Gamal Suite - Lamp Login Edition 💡');
+        console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
+        console.log('  ⚡ Auto-Check: 1.5s after typing, or Enter/Button');
     </script>
 
 </body>
