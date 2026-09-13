@@ -871,7 +871,6 @@
 
   /* ==========================================
      ✅ UNIFIED CARD STYLE
-     (يستخدم لكل من التطبيقات المتاحة والروابط السريعة)
      ========================================== */
   .unified-cards-grid {
     display: grid;
@@ -899,7 +898,6 @@
     border-color: var(--clay-accent);
   }
 
-  /* الصورة الكبيرة — تستخدم للصور في الروابط السريعة */
   .unified-card .card-icon-lg {
     width: 110px;
     height: 110px;
@@ -913,7 +911,6 @@
     transform: scale(1.08);
   }
 
-  /* الإيموجي — تستخدم للتطبيقات المتاحة */
   .unified-card .preview-icon {
     font-size: 34px;
     margin-bottom: 6px;
@@ -1320,6 +1317,11 @@
       Stock-Edara
       <span class="item-badge">Stock</span>
     </div>
+    <div class="menu-item" data-tab="abandoned" onclick="switchTab('abandoned')">
+      <span class="item-icon">🛒</span>
+      Abandoned Checkouts
+      <span class="item-badge">تحليل</span>
+    </div>
 
     <div class="menu-divider"></div>
 
@@ -1406,6 +1408,15 @@
                 </div>
                 <div class="card-desc">إدارة المخزون والكميات والجرد</div>
                 <span class="card-badge">📦 Stock</span>
+              </div>
+              <div class="unified-card" data-tab-card="abandoned" onclick="switchTab('abandoned')">
+                <span class="preview-icon">🛒</span>
+                <div class="card-title">
+                  <span class="title-emoji">🛒</span>
+                  Abandoned Checkouts
+                </div>
+                <div class="card-desc">تحليل الأوردرات المتروكة ومقارنتها بالمخزون</div>
+                <span class="card-badge">🛒 تحليل</span>
               </div>
             </div>
 
@@ -1537,6 +1548,11 @@
             <iframe id="iframe-stock" src="stock-edara.html"></iframe>
           </div>
         </div>
+        <div class="tab-pane" id="tab-abandoned">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-abandoned" src="abandoned-checkouts.html"></iframe>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -1556,37 +1572,37 @@
         username: 'Hussein',
         password: '1129+',
         role: 'Admin',
-        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit']
+        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Saher',
         password: '123456',
         role: 'Customer Service Manager',
-        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit']
+        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Walaa',
         password: '11995',
         role: 'Team Leader CS',
-        allowedTabs: ['home', 'refund', 'orders', 'stock', 'audit']
+        allowedTabs: ['home', 'refund', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Maryaim',
         password: '271997',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'stock', 'audit']
+        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Nehad',
         password: '1482000',
         role: 'Agent Confirmation',
-        allowedTabs: ['home', 'orders', 'stock', 'audit']
+        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Mai',
         password: 'mai2003',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'stock', 'audit']
+        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
       }
     ];
 
@@ -1822,14 +1838,13 @@
        ========================================== */
     function applyPermissions(user) {
       const allowed = (user && user.allowedTabs) ? user.allowedTabs : 
-                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit'];
+                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
 
       document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
         const tab = item.dataset.tab;
         item.style.display = allowed.includes(tab) ? '' : 'none';
       });
 
-      // ✅ محدث عشان يستخدم unified-card
       document.querySelectorAll('.unified-card[data-tab-card]').forEach(card => {
         const tab = card.dataset.tabCard;
         card.style.display = allowed.includes(tab) ? '' : 'none';
@@ -1847,7 +1862,7 @@
     function isTabAllowed(tabId) {
       if (!currentUser) return false;
       const allowed = currentUser.allowedTabs || 
-                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'audit'];
+                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
       return allowed.includes(tabId);
     }
 
@@ -2158,7 +2173,7 @@
 
       const compactHeader = document.getElementById('compactHeader');
       const container = document.querySelector('.container');
-      const isTool = ['refund', 'orders', 'transfers', 'discount', 'stock', 'audit'].includes(tabId);
+      const isTool = ['refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'].includes(tabId);
 
       compactHeader.classList.toggle('visible', isTool);
       container.classList.toggle('tool-active', isTool);
@@ -2186,6 +2201,7 @@
         'transfers': 'Account Transfers',
         'discount': 'معالج الخصم',
         'stock': 'Stock-Edara',
+        'abandoned': 'Abandoned Checkouts',
         'audit': 'سجل العمليات'
       };
       return names[tabId] || tabId;
@@ -2273,7 +2289,7 @@
     document.addEventListener('keydown', function(e) {
       if (loginScreen.classList.contains('hidden')) {
         if (e.ctrlKey && !e.shiftKey) {
-          const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'stock', '7': 'audit' };
+          const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'stock', '7': 'abandoned', '8': 'audit' };
           const tabId = tabMap[e.key];
           if (tabId) {
             e.preventDefault();
@@ -2292,6 +2308,7 @@
     console.log('  ✅ All cards now share the same style');
     console.log('  🖼️ Large images preserved in quick links');
     console.log('  📦 Stock-Edara added successfully');
+    console.log('  🛒 Abandoned Checkouts added successfully');
     console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
     console.log('  🔒 Permissions system enabled');
   </script>
