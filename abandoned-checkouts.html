@@ -32,6 +32,9 @@
     --clay-blue: #7a8fa6;
     --clay-warning: #d4a373;
     --clay-purple: #9b7aa6;
+    --clay-orange: #ff9030;
+    --clay-orange-soft: rgba(255, 144, 48, 0.18);
+    --clay-orange-soft-hover: rgba(255, 144, 48, 0.30);
     --clay-radius: 24px;
     --clay-radius-sm: 14px;
   }
@@ -52,6 +55,9 @@
     --clay-blue: #8aa3ba;
     --clay-warning: #e0b88a;
     --clay-purple: #b59ac0;
+    --clay-orange: #ffa852;
+    --clay-orange-soft: rgba(255, 168, 82, 0.22);
+    --clay-orange-soft-hover: rgba(255, 168, 82, 0.36);
   }
 
   .container { max-width: 1800px; margin: 0 auto; }
@@ -175,6 +181,79 @@
 
   .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; }
 
+  /* PROGRESS BAR */
+  .progress-wrap {
+    display: none;
+    max-width: 700px;
+    margin: 0 auto 25px;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    padding: 20px 24px;
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+  }
+  .progress-wrap.show { display: block; animation: fadeIn 0.4s ease; }
+  .progress-label {
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--clay-text); font-weight: 700; font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .progress-label .progress-percent { color: var(--clay-orange); font-size: 16px; }
+  .progress-bar-bg {
+    width: 100%; height: 14px; border-radius: 20px;
+    background: var(--clay-bg);
+    box-shadow: inset 2px 2px 6px #cbc3b8, inset -2px -2px 6px #fffff2;
+    overflow: hidden;
+  }
+  [data-theme="dark"] .progress-bar-bg {
+    box-shadow: inset 2px 2px 6px #1e1b19, inset -2px -2px 6px #4e4943;
+  }
+  .progress-bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--clay-orange) 0%, var(--clay-gold) 100%);
+    border-radius: 20px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 144, 48, 0.5);
+  }
+  .progress-sub {
+    font-size: 11px; color: var(--clay-text-soft); margin-top: 8px;
+    text-align: center; font-weight: 600;
+  }
+
+  /* SKELETON LOADING */
+  .skeleton {
+    background: linear-gradient(90deg,
+      var(--clay-card) 25%,
+      var(--clay-bg) 50%,
+      var(--clay-card) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.4s ease-in-out infinite;
+    border-radius: 8px;
+  }
+  @keyframes skeleton-loading {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .skeleton-table {
+    display: none;
+    background: var(--clay-card);
+    border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow);
+    border: 1px solid var(--clay-border);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .skeleton-table.show { display: block; }
+  .skeleton-row {
+    display: flex; gap: 12px; margin-bottom: 12px;
+    align-items: center;
+  }
+  .skeleton-cell {
+    height: 22px; border-radius: 6px; flex: 1;
+  }
+  .skeleton-cell.short { flex: 0.5; }
+  .skeleton-cell.med { flex: 0.8; }
+
   /* STATS */
   .stats { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; margin-bottom: 25px; }
   @media (max-width: 1300px) { .stats { grid-template-columns: repeat(4, 1fr); } }
@@ -185,6 +264,7 @@
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
     padding: 18px 14px; text-align: center; transition: all 0.3s ease;
+    animation: slideUp 0.5s ease backwards;
   }
   .stat-card:hover { transform: translateY(-4px); }
   .stat-card .num { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
@@ -197,22 +277,35 @@
   .stat-card.notinbranch .num { color: #c48a8a; }
   .stat-card.seller .num { color: var(--clay-purple); }
 
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   /* KPI ROW */
-  .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-  @media (max-width: 900px) { .kpi-row { grid-template-columns: 1fr; } }
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+  @media (max-width: 1200px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) { .kpi-row { grid-template-columns: 1fr; } }
 
   .kpi-card {
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
     padding: 20px; transition: all 0.3s ease;
     border-right: 5px solid var(--clay-accent);
+    animation: slideUp 0.5s ease backwards;
   }
   .kpi-card.money { border-right-color: var(--clay-gold); }
+  .kpi-card.avg { border-right-color: var(--clay-orange); }
   .kpi-card.gov { border-right-color: var(--clay-blue); }
   .kpi-card:hover { transform: translateY(-4px); }
   .kpi-card .kpi-title { font-size: 13px; color: var(--clay-text-soft); font-weight: 600; margin-bottom: 8px; }
   .kpi-card .kpi-value { font-size: 26px; font-weight: 700; color: var(--clay-gold); }
   .kpi-card.money .kpi-value { color: var(--clay-gold); }
+  .kpi-card.avg .kpi-value { color: var(--clay-orange); }
   .kpi-card.gov .kpi-value { color: var(--clay-blue); font-size: 18px; }
   .kpi-card .kpi-sub { font-size: 11px; color: var(--clay-text-soft); margin-top: 6px; }
 
@@ -225,6 +318,67 @@
   }
   [data-theme="dark"] .gov-chip { box-shadow: inset 1px 1px 3px #1e1b19, inset -1px -1px 3px #4e4943; }
   .gov-chip strong { color: var(--clay-accent); }
+
+  /* TOP PRODUCTS */
+  .top-products-row { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 25px; }
+  .top-products-card {
+    background: var(--clay-card); border-radius: var(--clay-radius);
+    box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
+    padding: 22px; border-right: 5px solid var(--clay-orange);
+    animation: slideUp 0.5s ease backwards;
+  }
+  .top-products-title {
+    font-size: 15px; font-weight: 700; color: var(--clay-text);
+    margin-bottom: 15px; display: flex; align-items: center; gap: 8px;
+  }
+  .top-products-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .top-product-item {
+    background: var(--clay-bg);
+    border-radius: var(--clay-radius-sm);
+    padding: 12px 16px;
+    border: 1px solid var(--clay-border);
+    box-shadow: inset 2px 2px 6px #cbc3b8, inset -2px -2px 6px #fffff2;
+    display: flex; align-items: center; gap: 12px;
+    transition: all 0.3s ease;
+    animation: slideUp 0.4s ease backwards;
+  }
+  [data-theme="dark"] .top-product-item {
+    box-shadow: inset 2px 2px 6px #1e1b19, inset -2px -2px 6px #4e4943;
+  }
+  .top-product-item:hover {
+    transform: translateX(-4px);
+    border-color: var(--clay-orange);
+  }
+  .top-product-rank {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--clay-orange);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(255, 144, 48, 0.4);
+  }
+  .top-product-rank.rank-1 { background: linear-gradient(135deg, #ff9030 0%, #ffb347 100%); }
+  .top-product-rank.rank-2 { background: linear-gradient(135deg, #b8956e 0%, #d4ae84 100%); }
+  .top-product-rank.rank-3 { background: linear-gradient(135deg, #a67c6b 0%, #c99a86 100%); }
+  .top-product-rank.rank-4,
+  .top-product-rank.rank-5 { background: linear-gradient(135deg, #7a8fa6 0%, #9ab0c7 100%); }
+  .top-product-info { flex: 1; min-width: 0; }
+  .top-product-name {
+    font-size: 12px; font-weight: 700; color: var(--clay-text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+  .top-product-meta {
+    display: flex; gap: 12px; font-size: 11px; color: var(--clay-text-soft);
+    font-weight: 600;
+  }
+  .top-product-meta strong { color: var(--clay-orange); }
 
   /* EXPORT ROW */
   .export-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
@@ -275,13 +429,22 @@
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
   tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
 
-  /* HIGHLIGHT ROW FOR HARAM STOCK */
+  /* ROW ENTRY ANIMATION */
+  tbody tr.row-enter {
+    animation: rowFadeIn 0.35s ease backwards;
+  }
+  @keyframes rowFadeIn {
+    from { opacity: 0; transform: translateX(-15px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* HIGHLIGHT ROW FOR HARAM STOCK - ORANGE #ff9030 */
   tbody tr.haram-highlight {
-    background: rgba(125, 155, 122, 0.13) !important;
-    border-right: 4px solid var(--clay-success);
+    background: var(--clay-orange-soft) !important;
+    border-right: 4px solid var(--clay-orange);
   }
   tbody tr.haram-highlight:hover {
-    background: rgba(125, 155, 122, 0.22) !important;
+    background: var(--clay-orange-soft-hover) !important;
   }
 
   .badge {
@@ -382,6 +545,7 @@
     .stat-card .num { font-size: 22px; }
     .kpi-card .kpi-value { font-size: 20px; }
     .toast { right: 15px; left: 15px; bottom: 15px; justify-content: center; }
+    .top-products-list { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -444,37 +608,48 @@
 
   <!-- ACTIONS -->
   <div class="actions">
-    <button class="btn btn-primary" id="compareBtn" disabled>🔍 ابدأ التحليل</button>
     <button class="btn btn-danger-outline" id="clearAllBtn">🗑️ مسح الكل</button>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label">
+      <span id="progressText">جاري التحليل...</span>
+      <span class="progress-percent" id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-sub" id="progressSub">بيتم مطابقة الأوردرات مع المخزون</div>
   </div>
 
   <!-- STATS -->
   <div class="stats" id="stats" style="display:none;">
-    <div class="stat-card total">
+    <div class="stat-card total" style="animation-delay:0.05s">
       <div class="num" id="statTotal">0</div>
       <div class="lbl">إجمالي الأوردرات المتروكة</div>
     </div>
-    <div class="stat-card available">
+    <div class="stat-card available" style="animation-delay:0.10s">
       <div class="num" id="statAvailable">0</div>
       <div class="lbl">متوفر في المخزون</div>
     </div>
-    <div class="stat-card notinbranch">
+    <div class="stat-card notinbranch" style="animation-delay:0.15s">
       <div class="num" id="statNotInBranch">0</div>
       <div class="lbl">غير متوفر في الهرم</div>
     </div>
-    <div class="stat-card seller">
+    <div class="stat-card seller" style="animation-delay:0.20s">
       <div class="num" id="statSeller">0</div>
       <div class="lbl">موردين خارجيين</div>
     </div>
-    <div class="stat-card oos">
+    <div class="stat-card oos" style="animation-delay:0.25s">
       <div class="num" id="statOos">0</div>
       <div class="lbl">Out of Stock</div>
     </div>
-    <div class="stat-card nosku">
+    <div class="stat-card nosku" style="animation-delay:0.30s">
       <div class="num" id="statNosku">0</div>
       <div class="lbl">ملهوش كود على Shopify</div>
     </div>
-    <div class="stat-card pricemismatch">
+    <div class="stat-card pricemismatch" style="animation-delay:0.35s">
       <div class="num" id="statPriceMismatch">0</div>
       <div class="lbl">سعر غير مطابق</div>
     </div>
@@ -482,32 +657,89 @@
 
   <!-- KPI ROW -->
   <div class="kpi-row" id="kpiRow" style="display:none;">
-    <div class="kpi-card money">
+    <div class="kpi-card money" style="animation-delay:0.05s">
       <div class="kpi-title">💰 إجمالي القيمة المفقودة</div>
       <div class="kpi-value" id="kpiMoney">0 EGP</div>
       <div class="kpi-sub" id="kpiMoneySub">مجموع أسعار الأوردرات المتروكة</div>
     </div>
-    <div class="kpi-card gov">
+    <div class="kpi-card avg" style="animation-delay:0.10s">
+      <div class="kpi-title">📊 متوسط قيمة الأوردر الواحد</div>
+      <div class="kpi-value" id="kpiAvg">0 EGP</div>
+      <div class="kpi-sub" id="kpiAvgSub">متوسط السعر × الكمية لكل أوردر</div>
+    </div>
+    <div class="kpi-card gov" style="animation-delay:0.15s">
       <div class="kpi-title">🌍 أعلى المحافظات في الأوردرات المتروكة</div>
       <div class="kpi-value" id="kpiTopGov">—</div>
       <div class="gov-list" id="kpiGovList"></div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card" style="animation-delay:0.20s">
       <div class="kpi-title">📅 نطاق التواريخ</div>
       <div class="kpi-value" id="kpiDateRange" style="font-size:16px;color:var(--clay-accent);">—</div>
       <div class="kpi-sub" id="kpiDateSub">أقدم وأحدث أوردر متروك</div>
     </div>
   </div>
 
+  <!-- TOP 5 PRODUCTS -->
+  <div class="top-products-row" id="topProductsRow" style="display:none;">
+    <div class="top-products-card">
+      <div class="top-products-title">🏆 أعلى 5 منتجات مطلوبة في الأوردرات المتروكة</div>
+      <div class="top-products-list" id="topProductsList"></div>
+    </div>
+  </div>
+
   <!-- EXPORT ROW -->
   <div class="export-row" id="exportRow" style="display:none;">
-    <button class="btn btn-export" onclick="exportCSV('all')">⬇️ تحميل الكل CSV</button>
+    <button class="btn btn-export" onclick="exportAllExcel()">⬇️ تحميل الكل (Excel بهايلايت)</button>
     <button class="btn btn-export" onclick="exportCSV('seller')">⬇️ تحميل موردين خارجيين CSV</button>
     <button class="btn btn-export" onclick="exportCSV('oos')">⬇️ تحميل Out of Stock CSV</button>
     <button class="btn btn-export" onclick="exportCSV('nosku')">⬇️ تحميل ملهوش كود CSV</button>
     <button class="btn btn-export" onclick="exportCSV('pricemismatch')">⬇️ تحميل سعر غير مطابق CSV</button>
     <button class="btn btn-export" onclick="exportCSV('notinbranch')">⬇️ تحميل غير متوفر في الهرم CSV</button>
-    <button class="btn btn-export" onclick="exportCSV('followup')">📞 تحميل قائمة الفولو أب CSV</button>
+    <button class="btn btn-export" onclick="exportFollowupExcel()">📞 تحميل قائمة الفولو أب (Excel)</button>
+  </div>
+
+  <!-- SKELETON -->
+  <div class="skeleton-table" id="skeletonTable">
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell med"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell med"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell short"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell short"></div>
+    </div>
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell med"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell short"></div>
+      <div class="skeleton skeleton-cell"></div>
+      <div class="skeleton skeleton-cell med"></div>
+    </div>
   </div>
 
   <!-- TABLE -->
@@ -709,6 +941,29 @@ function toggleTheme() {
   }
 }
 
+// ================== Progress Bar ==================
+function showProgress(percent, text, sub) {
+  const wrap = document.getElementById('progressWrap');
+  wrap.classList.add('show');
+  document.getElementById('progressFill').style.width = percent + '%';
+  document.getElementById('progressPercent').textContent = Math.round(percent) + '%';
+  if (text) document.getElementById('progressText').textContent = text;
+  if (sub) document.getElementById('progressSub').textContent = sub;
+}
+function hideProgress() {
+  const wrap = document.getElementById('progressWrap');
+  wrap.classList.remove('show');
+  document.getElementById('progressFill').style.width = '0%';
+}
+
+// ================== Skeleton Loading ==================
+function showSkeleton() {
+  document.getElementById('skeletonTable').classList.add('show');
+}
+function hideSkeleton() {
+  document.getElementById('skeletonTable').classList.remove('show');
+}
+
 // ================== File Upload ==================
 function setupDrop(dropId, inputId, nameId, onLoad) {
   const drop = document.getElementById(dropId);
@@ -902,6 +1157,8 @@ function loadStock(json) {
 }
 
 // ================== Load Orders ==================
+// ملاحظة: Auto Fill للمحافظة فقط - بشرط إن رقم الأوردر صح (يبدأ بـ #)
+// باقي الحقول (الإيميل، الموبايل، التاريخ، اسم العميل) بتتسجل زي ما هي (حتى لو فاضية)
 function loadOrders(json) {
   ordersRows = [];
   if (!json.length) { alert('شيت الأوردرات المتروكة فاضي!'); return; }
@@ -923,31 +1180,17 @@ function loadOrders(json) {
     return;
   }
 
+  // متغيرات لتخزين المحافظة فقط (Auto Fill)
   let lastOrder = '';
-  let lastEmail = '';
-  let lastCreated = '';
-  let lastShipName = '';
-  let lastShipPhone = '';
   let lastShipProv = '';
 
   json.forEach(row => {
-    let orderVal = normalizeKey(row[colOrder]);
+    const orderVal = normalizeKey(row[colOrder]);
+
+    // لو رقم الأوردر صح (يبدأ بـ #) => نحدّث المحافظة
+    // بشرط إن المحافظة نفسها موجودة في السطر (مش فاضية)
     if (orderVal && orderVal.startsWith('#')) {
-      // بداية أوردر جديد — بس منحدّثش القيم لو القيمة الجديدة فاضية
-      // (علشان الأوردرات اللي فيها أكثر من منتج والسطور التانية بتكون فاضية)
       lastOrder = orderVal;
-
-      const newEmail = normalizeKey(row[colEmail]);
-      if (newEmail) lastEmail = newEmail;
-
-      const newCreated = normalizeKey(row[colCreated]);
-      if (newCreated) lastCreated = newCreated;
-
-      const newShipName = normalizeKey(row[colShipName]);
-      if (newShipName) lastShipName = newShipName;
-
-      const newShipPhone = normalizeKey(row[colShipPhone]);
-      if (newShipPhone) lastShipPhone = newShipPhone;
 
       const newShipProv = normalizeKey(row[colShipProv]);
       if (newShipProv) lastShipProv = newShipProv;
@@ -959,21 +1202,20 @@ function loadOrders(json) {
     const price = toNumber(row[colPrice]);
 
     if (!name && !sku) return;
-
-    // Skip orders whose province is not in the allowed list
     if (!isAllowedProvince(lastShipProv)) return;
 
+    // باقي الحقول بتتسجل زي ما هي (مفيش Auto Fill)
     ordersRows.push({
       order: lastOrder,
-      email: lastEmail,
-      createdAt: lastCreated,
+      email: normalizeKey(row[colEmail]),       // ← زي ما هو من السطر
+      createdAt: normalizeKey(row[colCreated]), // ← زي ما هو من السطر
       sku: sku,
       name: name,
       qty: qty || 1,
       price: price,
-      shippingName: lastShipName,
-      shippingPhone: cleanPhone(lastShipPhone),
-      shippingProvince: normalizeProvince(lastShipProv),
+      shippingName: normalizeKey(row[colShipName]),   // ← زي ما هو من السطر
+      shippingPhone: cleanPhone(normalizeKey(row[colShipPhone])), // ← زي ما هو من السطر
+      shippingProvince: normalizeProvince(lastShipProv),  // ← Auto Fill للمحافظة فقط
     });
   });
 
@@ -985,117 +1227,151 @@ function loadOrders(json) {
   console.log('Orders loaded:', ordersRows.length, 'line items');
 }
 
-// ================== Compare ==================
+// ================== Compare (with Progress + Skeleton) ==================
 function compare() {
-  results = [];
-
-  ordersRows.forEach(item => {
-    const sku = item.sku;
-
-    if (!sku) {
-      results.push({
-        order: item.order, email: item.email, createdAt: item.createdAt,
-        name: item.name, sku: '—', model: '—',
-        qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
-        priceDiff: '—', priceDiffStatus: 'same',
-        shippingName: item.shippingName, shippingPhone: item.shippingPhone,
-        shippingProvince: item.shippingProvince,
-        status: 'nosku', seller: null, priceMismatch: false,
-        haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
-        total: '-', held: '-', transfer: '-',
-        haramHighlight: false
-      });
-      return;
-    }
-
-    const stock = stockMap[sku];
-
-    if (!stock) {
-      const seller = getSellerName(sku);
-      results.push({
-        order: item.order, email: item.email, createdAt: item.createdAt,
-        name: item.name, sku: sku, model: '—',
-        qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
-        priceDiff: '—', priceDiffStatus: 'same',
-        shippingName: item.shippingName, shippingPhone: item.shippingPhone,
-        shippingProvince: item.shippingProvince,
-        status: seller ? 'seller' : 'oos',
-        seller: seller || null,
-        priceMismatch: false,
-        haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
-        total: '-', held: '-', transfer: '-',
-        haramHighlight: false
-      });
-      return;
-    }
-
-    const priceMismatch = (item.price > 0 && stock.price > 0 && item.price !== stock.price);
-    const totalAvailable = stock.haram + stock.bahary + stock.suez + stock.nasr + stock.online;
-    const pd = getPriceDiff(item.price, stock.price);
-    const haramHighlight = stock.haram > 0;   // highlight if this SKU has stock in Haram
-
-    if (totalAvailable <= 0 && stock.total <= 0) {
-      results.push({
-        order: item.order, email: item.email, createdAt: item.createdAt,
-        name: item.name, sku: sku, model: stock.model,
-        qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
-        priceDiff: pd.diff, priceDiffStatus: pd.status,
-        shippingName: item.shippingName, shippingPhone: item.shippingPhone,
-        shippingProvince: item.shippingProvince,
-        status: 'oos', seller: null, priceMismatch: priceMismatch,
-        haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
-        nasr: stock.nasr, online: stock.online,
-        total: stock.total, held: stock.held, transfer: stock.transfer,
-        haramHighlight: false
-      });
-      return;
-    }
-
-    if (stock.haram <= 0) {
-      results.push({
-        order: item.order, email: item.email, createdAt: item.createdAt,
-        name: item.name, sku: sku, model: stock.model,
-        qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
-        priceDiff: pd.diff, priceDiffStatus: pd.status,
-        shippingName: item.shippingName, shippingPhone: item.shippingPhone,
-        shippingProvince: item.shippingProvince,
-        status: 'notinbranch', seller: null, priceMismatch: priceMismatch,
-        haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
-        nasr: stock.nasr, online: stock.online,
-        total: stock.total, held: stock.held, transfer: stock.transfer,
-        haramHighlight: false
-      });
-      return;
-    }
-
-    // default: available
-    results.push({
-      order: item.order, email: item.email, createdAt: item.createdAt,
-      name: item.name, sku: sku, model: stock.model,
-      qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
-      priceDiff: pd.diff, priceDiffStatus: pd.status,
-      shippingName: item.shippingName, shippingPhone: item.shippingPhone,
-      shippingProvince: item.shippingProvince,
-      status: priceMismatch ? 'pricemismatch' : 'available',
-      seller: null,
-      priceMismatch: priceMismatch,
-      haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
-      nasr: stock.nasr, online: stock.online,
-      total: stock.total, held: stock.held, transfer: stock.transfer,
-      haramHighlight: haramHighlight
-    });
-  });
-
-  renderStats();
-  renderKPIs();
-  buildTableHeader();
-  renderTable();
-  document.getElementById('stats').style.display = 'grid';
-  document.getElementById('kpiRow').style.display = 'grid';
-  document.getElementById('tableWrap').style.display = 'block';
-  document.getElementById('exportRow').style.display = 'flex';
+  showSkeleton();
+  showProgress(0, 'جاري بدء التحليل...', 'بيتم تحضير البيانات');
+  document.getElementById('stats').style.display = 'none';
+  document.getElementById('kpiRow').style.display = 'none';
+  document.getElementById('topProductsRow').style.display = 'none';
+  document.getElementById('tableWrap').style.display = 'none';
+  document.getElementById('exportRow').style.display = 'none';
   document.getElementById('emptyState').style.display = 'none';
-  showToast('تم التحليل بنجاح', '🔍');
+
+  setTimeout(() => {
+    showProgress(15, 'جاري قراءة الأوردرات...', 'بيتم تجهيز ' + ordersRows.length + ' سطر');
+  }, 100);
+
+  setTimeout(() => {
+    showProgress(45, 'جاري مطابقة المخزون...', 'بيتم التحقق من الأكواد في شيت المخزون');
+
+    results = [];
+
+    ordersRows.forEach(item => {
+      const sku = item.sku;
+
+      if (!sku) {
+        results.push({
+          order: item.order, email: item.email, createdAt: item.createdAt,
+          name: item.name, sku: '—', model: '—',
+          qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
+          priceDiff: '—', priceDiffStatus: 'same',
+          shippingName: item.shippingName, shippingPhone: item.shippingPhone,
+          shippingProvince: item.shippingProvince,
+          status: 'nosku', seller: null, priceMismatch: false,
+          haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
+          total: '-', held: '-', transfer: '-',
+          haramHighlight: false
+        });
+        return;
+      }
+
+      const stock = stockMap[sku];
+
+      if (!stock) {
+        const seller = getSellerName(sku);
+        results.push({
+          order: item.order, email: item.email, createdAt: item.createdAt,
+          name: item.name, sku: sku, model: '—',
+          qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
+          priceDiff: '—', priceDiffStatus: 'same',
+          shippingName: item.shippingName, shippingPhone: item.shippingPhone,
+          shippingProvince: item.shippingProvince,
+          status: seller ? 'seller' : 'oos',
+          seller: seller || null,
+          priceMismatch: false,
+          haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
+          total: '-', held: '-', transfer: '-',
+          haramHighlight: false
+        });
+        return;
+      }
+
+      const priceMismatch = (item.price > 0 && stock.price > 0 && item.price !== stock.price);
+      const totalAvailable = stock.haram + stock.bahary + stock.suez + stock.nasr + stock.online;
+      const pd = getPriceDiff(item.price, stock.price);
+      const haramHighlight = stock.haram > 0;
+
+      if (totalAvailable <= 0 && stock.total <= 0) {
+        results.push({
+          order: item.order, email: item.email, createdAt: item.createdAt,
+          name: item.name, sku: sku, model: stock.model,
+          qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
+          priceDiff: pd.diff, priceDiffStatus: pd.status,
+          shippingName: item.shippingName, shippingPhone: item.shippingPhone,
+          shippingProvince: item.shippingProvince,
+          status: 'oos', seller: null, priceMismatch: priceMismatch,
+          haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
+          nasr: stock.nasr, online: stock.online,
+          total: stock.total, held: stock.held, transfer: stock.transfer,
+          haramHighlight: false
+        });
+        return;
+      }
+
+      if (stock.haram <= 0) {
+        results.push({
+          order: item.order, email: item.email, createdAt: item.createdAt,
+          name: item.name, sku: sku, model: stock.model,
+          qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
+          priceDiff: pd.diff, priceDiffStatus: pd.status,
+          shippingName: item.shippingName, shippingPhone: item.shippingPhone,
+          shippingProvince: item.shippingProvince,
+          status: 'notinbranch', seller: null, priceMismatch: priceMismatch,
+          haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
+          nasr: stock.nasr, online: stock.online,
+          total: stock.total, held: stock.held, transfer: stock.transfer,
+          haramHighlight: false
+        });
+        return;
+      }
+
+      results.push({
+        order: item.order, email: item.email, createdAt: item.createdAt,
+        name: item.name, sku: sku, model: stock.model,
+        qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
+        priceDiff: pd.diff, priceDiffStatus: pd.status,
+        shippingName: item.shippingName, shippingPhone: item.shippingPhone,
+        shippingProvince: item.shippingProvince,
+        status: priceMismatch ? 'pricemismatch' : 'available',
+        seller: null,
+        priceMismatch: priceMismatch,
+        haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
+        nasr: stock.nasr, online: stock.online,
+        total: stock.total, held: stock.held, transfer: stock.transfer,
+        haramHighlight: haramHighlight
+      });
+    });
+  }, 350);
+
+  setTimeout(() => {
+    showProgress(75, 'جاري حساب الإحصائيات...', 'بيتم تجهيز الـ KPIs وأعلى المنتجات');
+    renderStats();
+    renderKPIs();
+    renderTopProducts();
+  }, 700);
+
+  setTimeout(() => {
+    showProgress(95, 'جاري بناء الجدول...', 'بيتم عرض ' + results.length + ' صف');
+    buildTableHeader();
+    renderTable();
+  }, 1000);
+
+  setTimeout(() => {
+    showProgress(100, 'تم التحليل بنجاح ✅', 'بيتم عرض النتائج');
+  }, 1300);
+
+  setTimeout(() => {
+    hideProgress();
+    hideSkeleton();
+    document.getElementById('stats').style.display = 'grid';
+    document.getElementById('kpiRow').style.display = 'grid';
+    document.getElementById('topProductsRow').style.display = 'block';
+    document.getElementById('tableWrap').style.display = 'block';
+    document.getElementById('exportRow').style.display = 'flex';
+    document.getElementById('emptyState').style.display = 'none';
+    showToast('تم التحليل بنجاح', '🔍');
+  }, 1600);
 }
 
 function tryAutoCompare() {
@@ -1129,9 +1405,20 @@ function renderKPIs() {
     return sum + (p * q);
   }, 0);
   document.getElementById('kpiMoney').textContent = totalMoney.toLocaleString('en-US') + ' EGP';
-  document.getElementById('kpiMoneySub').textContent =
-    results.length + ' أوردر متروك — متوسط ' +
-    (results.length ? Math.round(totalMoney / results.length).toLocaleString('en-US') : 0) + ' EGP للأوردر';
+  document.getElementById('kpiMoneySub').textContent = results.length + ' أوردر متروك';
+
+  const ordersMap = {};
+  results.forEach(r => {
+    const key = r.order || '—';
+    if (!ordersMap[key]) ordersMap[key] = 0;
+    const p = typeof r.shopifyPrice === 'number' ? r.shopifyPrice : 0;
+    const q = typeof r.qty === 'number' ? r.qty : 0;
+    ordersMap[key] += (p * q);
+  });
+  const uniqueOrders = Object.keys(ordersMap).length;
+  const avgOrder = uniqueOrders ? Math.round(totalMoney / uniqueOrders) : 0;
+  document.getElementById('kpiAvg').textContent = avgOrder.toLocaleString('en-US') + ' EGP';
+  document.getElementById('kpiAvgSub').textContent = 'محسوب على ' + uniqueOrders + ' أوردر فريد';
 
   const govCount = {};
   results.forEach(r => {
@@ -1164,6 +1451,48 @@ function renderKPIs() {
     document.getElementById('kpiDateRange').textContent = '—';
     document.getElementById('kpiDateSub').textContent = '';
   }
+}
+
+// ================== Top 5 Products ==================
+function renderTopProducts() {
+  const productMap = {};
+  results.forEach(r => {
+    const key = r.sku && r.sku !== '—' ? r.sku : ('NAME:' + (r.name || '—'));
+    if (!productMap[key]) {
+      productMap[key] = {
+        sku: r.sku,
+        name: r.name || '—',
+        orders: 0,
+        qty: 0
+      };
+    }
+    productMap[key].orders += 1;
+    productMap[key].qty += (typeof r.qty === 'number' ? r.qty : 0);
+  });
+
+  const sorted = Object.values(productMap)
+    .sort((a, b) => b.qty - a.qty || b.orders - a.orders)
+    .slice(0, 5);
+
+  const container = document.getElementById('topProductsList');
+  if (!sorted.length) {
+    container.innerHTML = '<div style="color:var(--clay-text-soft);text-align:center;padding:15px;">مفيش بيانات</div>';
+    return;
+  }
+
+  container.innerHTML = sorted.map((p, i) => `
+    <div class="top-product-item" style="animation-delay:${i * 0.08}s">
+      <div class="top-product-rank rank-${i + 1}">${i + 1}</div>
+      <div class="top-product-info">
+        <div class="top-product-name" title="${p.name.replace(/"/g, '&quot;')}">${p.name}</div>
+        <div class="top-product-meta">
+          <span>SKU: <strong>${p.sku}</strong></span>
+          <span>عدد القطع: <strong>${p.qty}</strong></span>
+          <span>عدد الأوردرات: <strong>${p.orders}</strong></span>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ================== Table Header ==================
@@ -1270,7 +1599,6 @@ function renderTable() {
     else if (r.status === 'oos') badge = '<span class="badge badge-oos">Out of Stock</span>';
     else badge = '<span class="badge badge-nosku">ملهوش كود</span>';
 
-    // Price diff badge
     let diffBadge = '<span class="stock-zero">—</span>';
     if (r.priceDiff !== '—' && r.priceDiff !== undefined) {
       if (r.priceDiffStatus === 'edara') {
@@ -1305,9 +1633,10 @@ function renderTable() {
       ? `<span class="phone-link" onclick="copyToClipboard('${r.shippingPhone}','الموبايل')" title="اضغط للنسخ">📱 ${r.shippingPhone}</span>`
       : '<span class="stock-zero">—</span>';
 
-    const rowClass = r.haramHighlight ? ' class="haram-highlight"' : '';
+    const rowClass = r.haramHighlight ? ' haram-highlight' : '';
+    const animDelay = Math.min(i * 0.008, 0.5);
 
-    html += `<tr${rowClass}>
+    html += `<tr class="row-enter${rowClass}" style="animation-delay:${animDelay}s">
       <td>${i + 1}</td>
       <td><span class="order-link">${r.order || '—'}</span></td>
       <td>${emailCell}</td>
@@ -1363,10 +1692,7 @@ function exportCSV(type = 'all') {
   if (type === 'all') { filtered = results; fileName = 'الأوردرات_المتروكة_الكامل'; }
   else if (type === 'pricemismatch') { filtered = results.filter(r => r.priceMismatch); fileName = 'سعر_غير_مطابق'; }
   else if (type === 'seller') { filtered = results.filter(r => r.status === 'seller'); fileName = 'موردين_خارجيين'; }
-  else if (type === 'followup') {
-    filtered = results;
-    fileName = 'قائمة_الفولو_أب';
-  }
+  else if (type === 'followup') { filtered = results; fileName = 'قائمة_الفولو_أب'; }
   else {
     filtered = results.filter(r => r.status === type);
     const names = { oos: 'Out_of_Stock', nosku: 'ملهوش_كود', notinbranch: 'غير_متوفر_في_الهرم' };
@@ -1397,6 +1723,87 @@ function exportCSV(type = 'all') {
   link.download = `${fileName}_${dateStr}.csv`;
   link.click();
   showToast(`تم تحميل ${fileName} (${filtered.length} صف)`, '⬇️');
+}
+
+// ================== Export Excel with Highlight ==================
+function buildExcelSheet(filteredResults, fileName) {
+  const headers = ['الأوردر','الإيميل','تاريخ الإنشاء','الكمية','المنتج','كود الصنف',
+    'اسم العميل','الموبايل','المحافظة',
+    'سعر Shopify','سعر Edara','فرق السعر','حالة الفرق','الحالة',
+    'الهرم','البحر الأعظم','السويس','مدينة نصر','Online',
+    'الإجمالي','المحتجز','رهن التحويل'];
+
+  const statusAr = {
+    available: 'متوفر', notinbranch: 'غير متوفر في الهرم',
+    oos: 'Out of Stock', nosku: 'ملهوش كود على Shopify', pricemismatch: 'سعر غير مطابق'
+  };
+  const diffStatusAr = { edara: 'إدارة أغلى', shopify: 'Shopify أغلى', same: 'نفس السعر' };
+
+  const aoa = [headers];
+  filteredResults.forEach(r => {
+    aoa.push([
+      r.order, r.email, formatDate(r.createdAt), r.qty, r.name, r.sku,
+      r.shippingName, r.shippingPhone, r.shippingProvince,
+      r.shopifyPrice, r.stockPrice,
+      r.priceDiff,
+      (r.priceDiff === '—' ? '—' : diffStatusAr[r.priceDiffStatus]),
+      (r.status === 'seller' ? r.seller : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
+      r.haram, r.bahary, r.suez, r.nasr, r.online,
+      r.total, r.held, r.transfer
+    ]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = headers.map(() => ({ wch: 18 }));
+
+  const range = XLSX.utils.decode_range(ws['!ref']);
+
+  for (let R = 1; R <= range.e.r; R++) {
+    const resRow = filteredResults[R - 1];
+    if (resRow && resRow.haramHighlight) {
+      for (let C = range.s.c; C <= range.e.c; C++) {
+        const cellAddr = XLSX.utils.encode_cell({ r: R, c: C });
+        if (!ws[cellAddr]) ws[cellAddr] = { t: 's', v: '' };
+        ws[cellAddr].s = {
+          fill: { fgColor: { rgb: 'FF9030' } },
+          font: { color: { rgb: '000000' }, bold: true },
+          alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+          border: {
+            top: { style: 'thin', color: { rgb: 'CCCCCC' } },
+            bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
+            left: { style: 'thin', color: { rgb: 'CCCCCC' } },
+            right: { style: 'thin', color: { rgb: 'CCCCCC' } }
+          }
+        };
+      }
+    }
+  }
+
+  for (let C = range.s.c; C <= range.e.c; C++) {
+    const cellAddr = XLSX.utils.encode_cell({ r: 0, c: C });
+    if (!ws[cellAddr]) ws[cellAddr] = { t: 's', v: headers[C] };
+    ws[cellAddr].s = {
+      fill: { fgColor: { rgb: '3D3A36' } },
+      font: { color: { rgb: 'FFFFFF' }, bold: true },
+      alignment: { horizontal: 'center', vertical: 'center' }
+    };
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Data');
+  const dateStr = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `${fileName}_${dateStr}.xlsx`, { bookType: 'xlsx', cellStyles: true });
+  showToast(`تم تحميل ${fileName} (${filteredResults.length} صف)`, '⬇️');
+}
+
+function exportAllExcel() {
+  if (!results.length) { showToast('مفيش بيانات للتحميل', '⚠️'); return; }
+  buildExcelSheet(results, 'الأوردرات_المتروكة_الكامل');
+}
+
+function exportFollowupExcel() {
+  if (!results.length) { showToast('مفيش بيانات للتحميل', '⚠️'); return; }
+  buildExcelSheet(results, 'قائمة_الفولو_أب');
 }
 
 // ================== Clear ==================
@@ -1434,9 +1841,12 @@ function clearAll() {
   };
   document.getElementById('stats').style.display = 'none';
   document.getElementById('kpiRow').style.display = 'none';
+  document.getElementById('topProductsRow').style.display = 'none';
   document.getElementById('tableWrap').style.display = 'none';
   document.getElementById('exportRow').style.display = 'none';
   document.getElementById('emptyState').style.display = 'block';
+  hideProgress();
+  hideSkeleton();
   showToast('تم مسح كل البيانات', '🗑️');
 }
 
@@ -1445,9 +1855,12 @@ function resetResultsIfNoData() {
     results = [];
     document.getElementById('stats').style.display = 'none';
     document.getElementById('kpiRow').style.display = 'none';
+    document.getElementById('topProductsRow').style.display = 'none';
     document.getElementById('tableWrap').style.display = 'none';
     document.getElementById('exportRow').style.display = 'none';
     document.getElementById('emptyState').style.display = 'block';
+    hideProgress();
+    hideSkeleton();
   }
 }
 
