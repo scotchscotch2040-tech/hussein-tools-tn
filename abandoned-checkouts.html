@@ -933,13 +933,26 @@ function loadOrders(json) {
   json.forEach(row => {
     let orderVal = normalizeKey(row[colOrder]);
     if (orderVal && orderVal.startsWith('#')) {
+      // بداية أوردر جديد — بس منحدّثش القيم لو القيمة الجديدة فاضية
+      // (علشان الأوردرات اللي فيها أكثر من منتج والسطور التانية بتكون فاضية)
       lastOrder = orderVal;
-      lastEmail = normalizeKey(row[colEmail]);
-      lastCreated = normalizeKey(row[colCreated]);
-      lastShipName = normalizeKey(row[colShipName]);
-      lastShipPhone = normalizeKey(row[colShipPhone]);
-      lastShipProv = normalizeKey(row[colShipProv]);
+
+      const newEmail = normalizeKey(row[colEmail]);
+      if (newEmail) lastEmail = newEmail;
+
+      const newCreated = normalizeKey(row[colCreated]);
+      if (newCreated) lastCreated = newCreated;
+
+      const newShipName = normalizeKey(row[colShipName]);
+      if (newShipName) lastShipName = newShipName;
+
+      const newShipPhone = normalizeKey(row[colShipPhone]);
+      if (newShipPhone) lastShipPhone = newShipPhone;
+
+      const newShipProv = normalizeKey(row[colShipProv]);
+      if (newShipProv) lastShipProv = newShipProv;
     }
+
     const sku = normalizeKey(row[colSku]);
     const name = normalizeKey(row[colName]);
     const qty = toNumber(row[colQty]);
