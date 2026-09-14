@@ -275,6 +275,15 @@
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
   tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
 
+  /* HIGHLIGHT ROW FOR HARAM STOCK */
+  tbody tr.haram-highlight {
+    background: rgba(125, 155, 122, 0.13) !important;
+    border-right: 4px solid var(--clay-success);
+  }
+  tbody tr.haram-highlight:hover {
+    background: rgba(125, 155, 122, 0.22) !important;
+  }
+
   .badge {
     display: inline-block; padding: 4px 12px; border-radius: 20px;
     font-size: 10px; font-weight: 700;
@@ -546,6 +555,27 @@ let columnFilters = {
   shopifyPrice: '', stockPrice: '', priceDiff: '', status: 'all',
   haram: '', bahary: '', suez: '', nasr: '', online: '', total: '', held: '', transfer: ''
 };
+
+// ================== Province Normalization ==================
+const PROVINCE_MAP = {
+  'cairo': 'Cairo',
+  'giza': 'Giza',
+  '6th of october': 'Giza',
+  'helwan': 'Cairo'
+};
+
+const ALLOWED_PROVINCES = Object.keys(PROVINCE_MAP);
+
+function normalizeProvince(raw) {
+  if (!raw) return 'غير محدد';
+  const key = String(raw).trim().toLowerCase();
+  return PROVINCE_MAP[key] || 'غير محدد';
+}
+
+function isAllowedProvince(raw) {
+  if (!raw) return false;
+  return ALLOWED_PROVINCES.includes(String(raw).trim().toLowerCase());
+}
 
 // ================== Helpers ==================
 function normalizeKey(v) {
@@ -917,6 +947,9 @@ function loadOrders(json) {
 
     if (!name && !sku) return;
 
+    // Skip orders whose province is not in the allowed list
+    if (!isAllowedProvince(lastShipProv)) return;
+
     ordersRows.push({
       order: lastOrder,
       email: lastEmail,
@@ -927,11 +960,14 @@ function loadOrders(json) {
       price: price,
       shippingName: lastShipName,
       shippingPhone: cleanPhone(lastShipPhone),
-      shippingProvince: lastShipProv,
+      shippingProvince: normalizeProvince(lastShipProv),
     });
   });
 
   ordersLoaded = ordersRows.length > 0;
+  if (!ordersLoaded && json.length) {
+    showToast('⚠️ مفيش أوردرات في المحافظات المطلوبة', '⚠️');
+  }
   updateCompareButton();
   console.log('Orders loaded:', ordersRows.length, 'line items');
 }
@@ -954,6 +990,7 @@ function compare() {
         status: 'nosku', seller: null, priceMismatch: false,
         haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
         total: '-', held: '-', transfer: '-',
+        haramHighlight: false
       });
       return;
     }
@@ -974,6 +1011,7 @@ function compare() {
         priceMismatch: false,
         haram: '-', bahary: '-', suez: '-', nasr: '-', online: '-',
         total: '-', held: '-', transfer: '-',
+        haramHighlight: false
       });
       return;
     }
@@ -981,6 +1019,7 @@ function compare() {
     const priceMismatch = (item.price > 0 && stock.price > 0 && item.price !== stock.price);
     const totalAvailable = stock.haram + stock.bahary + stock.suez + stock.nasr + stock.online;
     const pd = getPriceDiff(item.price, stock.price);
+    const haramHighlight = stock.haram > 0;   // highlight if this SKU has stock in Haram
 
     if (totalAvailable <= 0 && stock.total <= 0) {
       results.push({
@@ -994,6 +1033,7 @@ function compare() {
         haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
         nasr: stock.nasr, online: stock.online,
         total: stock.total, held: stock.held, transfer: stock.transfer,
+        haramHighlight: false
       });
       return;
     }
@@ -1010,10 +1050,12 @@ function compare() {
         haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
         nasr: stock.nasr, online: stock.online,
         total: stock.total, held: stock.held, transfer: stock.transfer,
+        haramHighlight: false
       });
       return;
     }
 
+    // default: available
     results.push({
       order: item.order, email: item.email, createdAt: item.createdAt,
       name: item.name, sku: sku, model: stock.model,
@@ -1027,6 +1069,7 @@ function compare() {
       haram: stock.haram, bahary: stock.bahary, suez: stock.suez,
       nasr: stock.nasr, online: stock.online,
       total: stock.total, held: stock.held, transfer: stock.transfer,
+      haramHighlight: haramHighlight
     });
   });
 
@@ -1249,7 +1292,9 @@ function renderTable() {
       ? `<span class="phone-link" onclick="copyToClipboard('${r.shippingPhone}','الموبايل')" title="اضغط للنسخ">📱 ${r.shippingPhone}</span>`
       : '<span class="stock-zero">—</span>';
 
-    html += `<tr>
+    const rowClass = r.haramHighlight ? ' class="haram-highlight"' : '';
+
+    html += `<tr${rowClass}>
       <td>${i + 1}</td>
       <td><span class="order-link">${r.order || '—'}</span></td>
       <td>${emailCell}</td>
