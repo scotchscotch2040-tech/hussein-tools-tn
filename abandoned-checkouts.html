@@ -175,11 +175,21 @@
   .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); box-shadow: 6px 6px 16px #cbc3b8, -6px -6px 16px #fffff2; }
   [data-theme="dark"] .btn:hover:not(:disabled) { box-shadow: 6px 6px 16px #1e1b19, -6px -6px 16px #4e4943; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-primary { color: var(--clay-success); font-weight: 700; }
   .btn-export { color: var(--clay-gold); font-weight: 700; }
   .btn-danger-outline { color: var(--clay-danger); font-weight: 700; }
 
   .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; }
+
+  /* AUTO-BADGE */
+  .auto-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 20px;
+    background: var(--clay-orange-soft);
+    color: var(--clay-orange);
+    font-size: 12px; font-weight: 700;
+    border: 1px solid var(--clay-orange);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+  }
 
   /* PROGRESS BAR */
   .progress-wrap {
@@ -429,7 +439,6 @@
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
   tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
 
-  /* ROW ENTRY ANIMATION */
   tbody tr.row-enter {
     animation: rowFadeIn 0.35s ease backwards;
   }
@@ -438,7 +447,6 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  /* HIGHLIGHT ROW FOR HARAM STOCK - ORANGE #ff9030 */
   tbody tr.haram-highlight {
     background: var(--clay-orange-soft) !important;
     border-right: 4px solid var(--clay-orange);
@@ -459,7 +467,6 @@
   .badge-notinbranch { background: rgba(196, 138, 138, 0.22); color: #c48a8a; }
   .badge-seller { background: rgba(155, 122, 166, 0.22); color: var(--clay-purple); }
 
-  /* Price diff badge */
   .badge-diff-edara { background: rgba(125, 155, 122, 0.22); color: var(--clay-success); }
   .badge-diff-shopify { background: rgba(181, 122, 122, 0.22); color: var(--clay-danger); }
   .badge-diff-same { background: rgba(122, 143, 166, 0.22); color: var(--clay-blue); }
@@ -606,8 +613,9 @@
     </div>
   </div>
 
-  <!-- ACTIONS -->
+  <!-- ACTIONS (status + clear only) -->
   <div class="actions">
+    <div class="auto-badge" id="autoBadge">⚡ التحليل تلقائي — ارفع الشيتين وهيبدأ فورًا</div>
     <button class="btn btn-danger-outline" id="clearAllBtn">🗑️ مسح الكل</button>
   </div>
 
@@ -756,7 +764,7 @@
 
   <div class="empty-state" id="emptyState">
     <div class="icon">📤</div>
-    <div>ارفع الشيتين أو الصق البيانات عشان تبدأ التحليل</div>
+    <div>ارفع الشيتين أو الصق البيانات — التحليل هيبدأ تلقائي</div>
   </div>
 
 </div>
@@ -780,6 +788,7 @@ let ordersRows = [];
 let results = [];
 let stockLoaded = false;
 let ordersLoaded = false;
+let isComparing = false;
 
 let columnFilters = {
   order: '', email: '', createdAt: '', qty: '', product: '', sku: '',
@@ -894,6 +903,7 @@ function getPriceDiff(shopifyPrice, edaraPrice) {
 let toastTimeout;
 function showToast(message, icon = '✅') {
   const toast = document.getElementById('toast');
+  if (!toast) return;
   const toastMessage = document.getElementById('toastMessage');
   toast.querySelector('.toast-icon').textContent = icon;
   toastMessage.textContent = message;
@@ -905,6 +915,7 @@ function showToast(message, icon = '✅') {
 let copyToastTimeout;
 function showCopyToast(message) {
   const el = document.getElementById('copyToast');
+  if (!el) return;
   document.getElementById('copyToastMessage').textContent = message;
   el.classList.add('show');
   clearTimeout(copyToastTimeout);
@@ -932,11 +943,11 @@ function toggleTheme() {
   const btn = document.querySelector('.theme-toggle');
   if (html.getAttribute('data-theme') === 'dark') {
     html.removeAttribute('data-theme');
-    btn.textContent = '🌙';
+    if (btn) btn.textContent = '🌙';
     localStorage.setItem('theme', 'light');
   } else {
     html.setAttribute('data-theme', 'dark');
-    btn.textContent = '☀️';
+    if (btn) btn.textContent = '☀️';
     localStorage.setItem('theme', 'dark');
   }
 }
@@ -944,6 +955,7 @@ function toggleTheme() {
 // ================== Progress Bar ==================
 function showProgress(percent, text, sub) {
   const wrap = document.getElementById('progressWrap');
+  if (!wrap) return;
   wrap.classList.add('show');
   document.getElementById('progressFill').style.width = percent + '%';
   document.getElementById('progressPercent').textContent = Math.round(percent) + '%';
@@ -952,16 +964,19 @@ function showProgress(percent, text, sub) {
 }
 function hideProgress() {
   const wrap = document.getElementById('progressWrap');
+  if (!wrap) return;
   wrap.classList.remove('show');
   document.getElementById('progressFill').style.width = '0%';
 }
 
 // ================== Skeleton Loading ==================
 function showSkeleton() {
-  document.getElementById('skeletonTable').classList.add('show');
+  const el = document.getElementById('skeletonTable');
+  if (el) el.classList.add('show');
 }
 function hideSkeleton() {
-  document.getElementById('skeletonTable').classList.remove('show');
+  const el = document.getElementById('skeletonTable');
+  if (el) el.classList.remove('show');
 }
 
 // ================== File Upload ==================
@@ -969,6 +984,7 @@ function setupDrop(dropId, inputId, nameId, onLoad) {
   const drop = document.getElementById(dropId);
   const input = document.getElementById(inputId);
   const nameEl = document.getElementById(nameId);
+  if (!drop || !input || !nameEl) return;
 
   input.addEventListener('change', e => {
     if (e.target.files.length) handleFile(e.target.files[0], drop, nameEl, onLoad);
@@ -1152,13 +1168,12 @@ function loadStock(json) {
   });
 
   stockLoaded = Object.keys(stockMap).length > 0;
-  updateCompareButton();
   console.log('Stock loaded:', Object.keys(stockMap).length, 'products');
 }
 
 // ================== Load Orders ==================
-// ملاحظة: Auto Fill للمحافظة فقط - بشرط إن رقم الأوردر صح (يبدأ بـ #)
-// باقي الحقول (الإيميل، الموبايل، التاريخ، اسم العميل) بتتسجل زي ما هي (حتى لو فاضية)
+// Auto Fill للمحافظة فقط - بشرط إن رقم الأوردر صح (يبدأ بـ #)
+// باقي الحقول بتتسجل زي ما هي (حتى لو فاضية)
 function loadOrders(json) {
   ordersRows = [];
   if (!json.length) { alert('شيت الأوردرات المتروكة فاضي!'); return; }
@@ -1180,18 +1195,14 @@ function loadOrders(json) {
     return;
   }
 
-  // متغيرات لتخزين المحافظة فقط (Auto Fill)
   let lastOrder = '';
   let lastShipProv = '';
 
   json.forEach(row => {
     const orderVal = normalizeKey(row[colOrder]);
 
-    // لو رقم الأوردر صح (يبدأ بـ #) => نحدّث المحافظة
-    // بشرط إن المحافظة نفسها موجودة في السطر (مش فاضية)
     if (orderVal && orderVal.startsWith('#')) {
       lastOrder = orderVal;
-
       const newShipProv = normalizeKey(row[colShipProv]);
       if (newShipProv) lastShipProv = newShipProv;
     }
@@ -1204,18 +1215,17 @@ function loadOrders(json) {
     if (!name && !sku) return;
     if (!isAllowedProvince(lastShipProv)) return;
 
-    // باقي الحقول بتتسجل زي ما هي (مفيش Auto Fill)
     ordersRows.push({
       order: lastOrder,
-      email: normalizeKey(row[colEmail]),       // ← زي ما هو من السطر
-      createdAt: normalizeKey(row[colCreated]), // ← زي ما هو من السطر
+      email: normalizeKey(row[colEmail]),
+      createdAt: normalizeKey(row[colCreated]),
       sku: sku,
       name: name,
       qty: qty || 1,
       price: price,
-      shippingName: normalizeKey(row[colShipName]),   // ← زي ما هو من السطر
-      shippingPhone: cleanPhone(normalizeKey(row[colShipPhone])), // ← زي ما هو من السطر
-      shippingProvince: normalizeProvince(lastShipProv),  // ← Auto Fill للمحافظة فقط
+      shippingName: normalizeKey(row[colShipName]),
+      shippingPhone: cleanPhone(normalizeKey(row[colShipPhone])),
+      shippingProvince: normalizeProvince(lastShipProv),
     });
   });
 
@@ -1223,12 +1233,21 @@ function loadOrders(json) {
   if (!ordersLoaded && json.length) {
     showToast('⚠️ مفيش أوردرات في المحافظات المطلوبة', '⚠️');
   }
-  updateCompareButton();
   console.log('Orders loaded:', ordersRows.length, 'line items');
 }
 
-// ================== Compare (with Progress + Skeleton) ==================
+// ================== Auto Compare ==================
+function tryAutoCompare() {
+  if (!stockLoaded || !ordersLoaded) return;
+  if (isComparing) return;   // منع التشغيل المزدوج
+  compare();
+}
+
+// ================== Compare ==================
 function compare() {
+  if (isComparing) return;
+  isComparing = true;
+
   showSkeleton();
   showProgress(0, 'جاري بدء التحليل...', 'بيتم تحضير البيانات');
   document.getElementById('stats').style.display = 'none';
@@ -1370,12 +1389,9 @@ function compare() {
     document.getElementById('tableWrap').style.display = 'block';
     document.getElementById('exportRow').style.display = 'flex';
     document.getElementById('emptyState').style.display = 'none';
-    showToast('تم التحليل بنجاح', '🔍');
+    showToast('تم التحليل تلقائيًا بنجاح', '⚡');
+    isComparing = false;
   }, 1600);
-}
-
-function tryAutoCompare() {
-  if (stockLoaded && ordersLoaded) compare();
 }
 
 // ================== Stats ==================
@@ -1813,7 +1829,6 @@ function clearStock() {
   document.getElementById('stockFile').value = '';
   document.getElementById('stockName').textContent = '';
   document.getElementById('stockDrop').classList.remove('has-file');
-  updateCompareButton();
   resetResultsIfNoData();
   showToast('تم إزالة شيت المخزون', '🗑️');
 }
@@ -1824,15 +1839,25 @@ function clearOrders() {
   document.getElementById('ordersFile').value = '';
   document.getElementById('ordersName').textContent = '';
   document.getElementById('ordersDrop').classList.remove('has-file');
-  updateCompareButton();
   resetResultsIfNoData();
   showToast('تم إزالة شيت الأوردرات المتروكة', '🗑️');
 }
 
 function clearAll() {
-  clearStock();
-  clearOrders();
+  stockMap = {}; stockLoaded = false;
+  ordersRows = []; ordersLoaded = false;
   results = [];
+
+  document.getElementById('stockPaste').value = '';
+  document.getElementById('stockFile').value = '';
+  document.getElementById('stockName').textContent = '';
+  document.getElementById('stockDrop').classList.remove('has-file');
+
+  document.getElementById('ordersPaste').value = '';
+  document.getElementById('ordersFile').value = '';
+  document.getElementById('ordersName').textContent = '';
+  document.getElementById('ordersDrop').classList.remove('has-file');
+
   columnFilters = {
     order: '', email: '', createdAt: '', qty: '', product: '', sku: '',
     shippingName: '', shippingPhone: '', shippingProvince: '',
@@ -1847,6 +1872,7 @@ function clearAll() {
   document.getElementById('emptyState').style.display = 'block';
   hideProgress();
   hideSkeleton();
+  isComparing = false;
   showToast('تم مسح كل البيانات', '🗑️');
 }
 
@@ -1861,22 +1887,18 @@ function resetResultsIfNoData() {
     document.getElementById('emptyState').style.display = 'block';
     hideProgress();
     hideSkeleton();
+    isComparing = false;
   }
 }
 
 // ================== UI Wiring ==================
-function updateCompareButton() {
-  const btn = document.getElementById('compareBtn');
-  btn.disabled = !(stockLoaded && ordersLoaded);
-}
-
 setupDrop('stockDrop', 'stockFile', 'stockName', loadStock);
 setupDrop('ordersDrop', 'ordersFile', 'ordersName', loadOrders);
 
 // STOCK PASTE
 document.getElementById('stockPaste').addEventListener('input', e => {
   const val = e.target.value.trim();
-  if (!val) { stockLoaded = false; updateCompareButton(); resetResultsIfNoData(); return; }
+  if (!val) { stockLoaded = false; resetResultsIfNoData(); return; }
   const parsed = parsePastedText(val);
   let jsonRows;
   if (parsed.hasHeader) {
@@ -1893,12 +1915,11 @@ document.getElementById('stockPaste').addEventListener('input', e => {
 // ORDERS PASTE
 document.getElementById('ordersPaste').addEventListener('input', e => {
   const val = e.target.value.trim();
-  if (!val) { ordersLoaded = false; updateCompareButton(); resetResultsIfNoData(); return; }
+  if (!val) { ordersLoaded = false; resetResultsIfNoData(); return; }
   const parsed = parsePastedText(val);
   if (!parsed.hasHeader) {
     showToast('⚠️ شيت الأوردرات المتروكة لازم يتلزق مع الهيدر', '⚠️');
     ordersLoaded = false;
-    updateCompareButton();
     resetResultsIfNoData();
     return;
   }
@@ -1908,13 +1929,13 @@ document.getElementById('ordersPaste').addEventListener('input', e => {
   }
 });
 
-document.getElementById('compareBtn').addEventListener('click', compare);
 document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 
 window.addEventListener('load', function() {
   if (localStorage.getItem('theme') === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
-    document.querySelector('.theme-toggle').textContent = '☀️';
+    const btn = document.querySelector('.theme-toggle');
+    if (btn) btn.textContent = '☀️';
   }
 });
 </script>
