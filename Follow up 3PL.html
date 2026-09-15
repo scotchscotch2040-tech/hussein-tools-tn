@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3PL Performance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <style>
+    /* ================= الألوان ================= */
+    :root {
+      --bg-main: #0B1120;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2332;
+      --bg-border: #1F2937;
+      --bg-elevated: #151d2e;
+      --accent: #ff9030;
+      --accent-soft: rgba(255, 144, 48, 0.12);
+      --accent-glow: rgba(255, 144, 48, 0.35);
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --text-dim: #6B7280;
+      --green: #10B981;
+      --green-soft: rgba(16, 185, 129, 0.12);
+      --red: #EF4444;
+      --red-soft: rgba(239, 68, 68, 0.12);
+      --yellow: #F59E0B;
+      --yellow-soft: rgba(245, 158, 11, 0.12);
+      --blue: #3B82F6;
+      --blue-soft: rgba(59, 130, 246, 0.12);
+      --purple: #8B5CF6;
+      --purple-soft: rgba(139, 92, 246, 0.12);
+      --cyan: #06B6D4;
+      --cyan-soft: rgba(6, 182, 212, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+    body {
+      background:
+        radial-gradient(ellipse at top right, rgba(255, 144, 48, 0.06), transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(59, 130, 246, 0.05), transparent 50%),
+        var(--bg-main);
+      color: var(--text-main);
+      padding: 20px;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .chart-card canvas { will-change: transform; contain: layout style paint; }
+    .table-wrapper { will-change: scroll-position; contain: layout style; }
+
+    @media (max-width: 768px) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.1s !important; }
+    }
+
+    /* ================= الهيدر ================= */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 16px 22px;
+      background: linear-gradient(135deg, rgba(255, 144, 48, 0.08), rgba(59, 130, 246, 0.05));
+      border: 1px solid var(--bg-border);
+      border-radius: 14px;
+      flex-wrap: wrap;
+      gap: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 12px; }
+
+    .header-logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #ff6b00);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .header h1 { font-size: 20px; font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; }
+    .header h1 span { color: var(--accent); }
+    .header-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+    .last-update {
+      font-size: 12px; color: var(--text-muted);
+      background: var(--bg-card); padding: 8px 14px;
+      border-radius: 10px; border: 1px solid var(--bg-border);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ================= الفلاتر ================= */
+    .filters-section {
+      background: var(--bg-card); border: 1px solid var(--bg-border);
+      border-radius: 14px; padding: 16px 20px; margin-bottom: 20px;
+    }
+
+    .filters-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--bg-border);
+    }
+
+    .filters-title {
+      font-size: 13px; font-weight: 700; color: var(--text-main);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .filters-title::before {
+      content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px;
+    }
+
+    .filters-count {
+      font-size: 11px; color: var(--accent); background: var(--accent-soft);
+      padding: 3px 10px; border-radius: 10px; font-weight: 700;
+    }
+
+    .reset-btn {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--bg-border); border-radius: 8px;
+      padding: 6px 14px; font-size: 12px; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+
+    .reset-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-soft); }
+
+    .filters-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;
+    }
+
+    .multi-select { position: relative; }
+
+    .multi-select-trigger {
+      width: 100%; background: var(--bg-elevated);
+      border: 1px solid var(--bg-border); border-radius: 10px;
+      padding: 10px 14px; font-size: 12.5px; color: var(--text-main);
+      cursor: pointer; display: flex; justify-content: space-between;
+      align-items: center; transition: all 0.2s; user-select: none;
+    }
+
+    .multi-select-trigger:hover { border-color: var(--accent); background: var(--bg-card-hover); }
+
+    .multi-select.open .multi-select-trigger {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .multi-select-label {
+      display: flex; align-items: center; gap: 8px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .multi-select-label .label-icon { font-size: 14px; opacity: 0.7; }
+    .multi-select-label .label-text { color: var(--text-muted); font-weight: 500; }
+    .multi-select-label .label-value { color: var(--accent); font-weight: 700; }
+
+    .multi-select-arrow {
+      font-size: 10px; color: var(--text-muted);
+      transition: transform 0.2s; flex-shrink: 0;
+    }
+
+    .multi-select.open .multi-select-arrow { transform: rotate(180deg); }
+
+    .multi-select-dropdown {
+      position: absolute; top: calc(100% + 6px); right: 0; left: 0;
+      background: var(--bg-elevated); border: 1px solid var(--bg-border);
+      border-radius: 10px; padding: 6px; max-height: 240px;
+      overflow-y: auto; z-index: 100; display: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .multi-select.open .multi-select-dropdown {
+      display: block; animation: dropdownFade 0.15s ease;
+    }
+
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .multi-select-dropdown::-webkit-scrollbar { width: 5px; }
+    .multi-select-dropdown::-webkit-scrollbar-thumb { background: var(--bg-border); border-radius: 10px; }
+
+    .multi-select-search {
+      width: 100%; background: var(--bg-main);
+      border: 1px solid var(--bg-border); border-radius: 8px;
+      padding: 8px 12px; font-size: 12px; color: var(--text-main);
+      margin-bottom: 6px; outline: none;
+    }
+
+    .multi-select-search:focus { border-color: var(--accent); }
+
+    .multi-select-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 7px; font-size: 12.5px;
+      cursor: pointer; transition: background 0.15s; user-select: none;
+    }
+
+    .multi-select-option:hover { background: var(--accent-soft); }
+
+    .multi-select-option.selected {
+      background: var(--accent-soft); color: var(--accent); font-weight: 600;
+    }
+
+    .multi-select-option .check {
+      width: 16px; height: 16px; border-radius: 5px;
+      border: 1.5px solid var(--bg-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: transparent; transition: all 0.15s; flex-shrink: 0;
+    }
+
+    .multi-select-option.selected .check {
+      background: var(--accent); border-color: var(--accent); color: #0B1120;
+    }
+
+    .multi-select-option .opt-text {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .active-chips {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--bg-border);
+    }
+
+    .chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--accent-soft); color: var(--accent);
+      padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 600;
+    }
+
+    .chip-remove {
+      cursor: pointer; font-size: 12px; opacity: 0.7; transition: opacity 0.15s;
+    }
+
+    .chip-remove:hover { opacity: 1; color: var(--red); }
+
+    /* ================= الكروت ================= */
+    .kpis {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px; margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card); border: 1px solid var(--bg-border);
+      border-radius: 12px; padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 4px;
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 3px; height: 100%; background: var(--accent);
+      opacity: 0; transition: opacity 0.25s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px); border-color: var(--accent); background: var(--bg-card-hover);
+    }
+
+    .kpi-card:hover::before { opacity: 1; }
+
+    .kpi-label {
+      font-size: 10.5px; color: var(--text-muted); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+
+    .kpi-value { font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1.2; }
+
+    .kpi-delivered .kpi-value { color: var(--green); }
+    .kpi-rto .kpi-value { color: var(--red); }
+    .kpi-ofd .kpi-value { color: var(--blue); }
+    .kpi-rate .kpi-value { color: var(--yellow); }
+
+    /* ================= الشارتس ================= */
+    .charts {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px; margin-bottom: 20px;
+    }
+
+    .chart-card {
+      background: var(--bg-card); border: 1px solid var(--bg-border);
+      border-radius: 12px; padding: 14px 16px; min-height: 260px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .chart-card:hover { border-color: #2a3548; transform: translateY(-2px); }
+
+    .chart-card h3 {
+      font-size: 12.5px; font-weight: 600; color: var(--text-main);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+
+    .chart-card h3 .chart-title-text { display: flex; align-items: center; gap: 7px; }
+
+    .chart-card h3 .chart-title-text::before {
+      content: ''; width: 3px; height: 13px; background: var(--accent); border-radius: 2px;
+    }
+
+    .chart-total {
+      font-size: 11px; color: var(--text-muted);
+      background: var(--bg-elevated); padding: 2px 8px;
+      border-radius: 8px; font-weight: 600;
+    }
+
+    .chart-body { flex: 1; position: relative; min-height: 180px; }
+    .chart-body canvas { max-height: 200px; }
+
+    /* ================= الجداول ================= */
+    .table-section {
+      background: var(--bg-card); border: 1px solid var(--bg-border);
+      border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; overflow: hidden;
+    }
+
+    .table-section h3 {
+      font-size: 13px; font-weight: 600; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .table-section h3::before {
+      content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto; max-height: 400px; overflow-y: auto;
+      border-radius: 8px; border: 1px solid var(--bg-border);
+    }
+
+    .table-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
+    .table-wrapper::-webkit-scrollbar-thumb { background: var(--bg-border); border-radius: 10px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 700px; }
+
+    thead { position: sticky; top: 0; background: var(--bg-card); z-index: 2; }
+
+    th {
+      text-align: right; padding: 10px 12px; color: var(--text-muted);
+      font-weight: 600; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.3px; border-bottom: 1px solid var(--bg-border);
+      background: var(--bg-card); white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 12px; border-bottom: 1px solid var(--bg-border);
+      color: var(--text-main); white-space: nowrap;
+    }
+
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: var(--accent-soft); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-block; padding: 3px 9px; border-radius: 8px;
+      font-size: 10.5px; font-weight: 700;
+    }
+
+    .badge.green { background: var(--green-soft); color: var(--green); }
+    .badge.red { background: var(--red-soft); color: var(--red); }
+    .badge.yellow { background: var(--yellow-soft); color: var(--yellow); }
+    .badge.blue { background: var(--blue-soft); color: var(--blue); }
+    .badge.purple { background: var(--purple-soft); color: var(--purple); }
+    .badge.cyan { background: var(--cyan-soft); color: var(--cyan); }
+
+    .table-info {
+      margin-top: 10px; font-size: 11.5px; color: var(--text-muted); text-align: left;
+    }
+
+    /* ================= الأداء المقارن ================= */
+    .perf-container { display: flex; flex-direction: column; gap: 8px; }
+
+    .perf-row {
+      display: grid; grid-template-columns: 200px 80px 1fr 60px 70px;
+      align-items: center; gap: 12px; padding: 10px 14px;
+      background: var(--bg-main); border-radius: 9px;
+      border-right: 3px solid var(--bg-border); transition: background 0.2s;
+    }
+
+    .perf-row:hover { background: var(--bg-card-hover); }
+
+    .perf-company { display: flex; align-items: center; gap: 9px; }
+
+    .perf-rank {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; background: var(--bg-border);
+      color: var(--text-muted); flex-shrink: 0;
+    }
+
+    .perf-rank.gold { background: #FFD700; color: #0B1120; }
+    .perf-rank.silver { background: #C0C0C0; color: #0B1120; }
+    .perf-rank.bronze { background: #CD7F32; color: #0B1120; }
+
+    .perf-name { font-size: 12.5px; font-weight: 600; }
+    .perf-orders { font-size: 10.5px; color: var(--text-muted); }
+
+    .perf-delta { font-size: 11.5px; font-weight: 700; text-align: center; }
+    .perf-delta.up { color: var(--green); }
+    .perf-delta.down { color: var(--red); }
+
+    .perf-bar-wrap { width: 100%; }
+
+    .perf-bar-bg {
+      width: 100%; height: 7px; background: var(--bg-border);
+      border-radius: 10px; overflow: hidden;
+    }
+
+    .perf-bar-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+
+    .perf-rate { font-size: 13px; font-weight: 700; text-align: center; }
+
+    .perf-prev {
+      font-size: 9.5px; color: var(--text-muted); text-align: center; line-height: 1.3;
+    }
+
+    /* ================= Zone Map ================= */
+    .zone-map {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;
+    }
+
+    .zone-card {
+      padding: 14px; border-radius: 10px; border: 1px solid var(--bg-border);
+      text-align: center; transition: transform 0.2s;
+    }
+
+    .zone-card:hover { transform: translateY(-3px); }
+
+    .zone-name {
+      font-size: 11.5px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600;
+    }
+
+    .zone-count { font-size: 24px; font-weight: 700; margin-bottom: 3px; }
+    .zone-sub { font-size: 10.5px; color: var(--text-muted); }
+
+    /* ================= Funnel ================= */
+    .funnel {
+      display: flex; flex-direction: column; gap: 6px;
+      align-items: center; padding: 10px 0;
+    }
+
+    .funnel-step {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 18px; border-radius: 9px; color: #0B1120;
+      font-weight: 700; font-size: 12.5px; transition: width 0.6s ease; min-width: 200px;
+    }
+
+    .funnel-label { font-size: 12px; }
+    .funnel-num { font-size: 13px; font-weight: 800; }
+
+    /* ================= Delta Cards ================= */
+    .delta-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;
+    }
+
+    .delta-card {
+      background: var(--bg-main); border: 1px solid var(--bg-border);
+      border-radius: 10px; padding: 16px;
+    }
+
+    .delta-title {
+      font-size: 12.5px; font-weight: 700; color: var(--accent); margin-bottom: 10px;
+    }
+
+    .delta-rows { display: flex; flex-direction: column; gap: 7px; }
+
+    .delta-row {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-muted);
+    }
+
+    .delta-val { font-weight: 700; color: var(--text-main); }
+    .delta-val.up { color: var(--green); }
+    .delta-val.down { color: var(--red); }
+
+    .delta-arrow { font-size: 9px; margin-left: 3px; }
+
+    /* ================= Loading ================= */
+    .loading-overlay {
+      position: fixed; inset: 0; background: rgba(11, 17, 32, 0.85);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999; backdrop-filter: blur(4px);
+    }
+
+    .loading-overlay.show { display: flex; }
+
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid var(--bg-border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ================= Load More Btn ================= */
+    .load-more-btn {
+      display: none; margin-top: 10px; width: 100%; padding: 10px;
+      background: var(--bg-elevated); border: 1px solid var(--bg-border);
+      color: var(--text-main); border-radius: 10px; cursor: pointer;
+      font-weight: 600; font-size: 12.5px; transition: all 0.2s;
+    }
+
+    .load-more-btn:hover {
+      border-color: var(--accent); color: var(--accent); background: var(--accent-soft);
+    }
+
+    /* ================= Responsive ================= */
+    @media (max-width: 900px) {
+      .perf-row { grid-template-columns: 150px 70px 1fr 55px; gap: 8px; }
+      .perf-prev { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      .charts { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .perf-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .perf-bar-wrap { grid-column: span 2; }
+    }
+
+    @media (max-width: 480px) {
+      .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- ================= الهيدر ================= -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo">📊</div>
+      <div>
+        <h1>3PL <span>Dashboard</span></h1>
+        <div class="header-sub">متابعة أداء شركات الشحن — Follow up 3PL</div>
+      </div>
+    </div>
+    <div class="last-update">
+      <span class="live-dot"></span>
+      آخر تحديث: <span id="lastUpdate">-</span>
+    </div>
+  </header>
+
+  <!-- ================= الفلاتر ================= -->
+  <section class="filters-section">
+    <div class="filters-header">
+      <div class="filters-title">
+        الفلاتر المتقدمة
+        <span class="filters-count" id="filtersCount">0 محدد</span>
+      </div>
+      <button class="reset-btn" id="resetFilters">⟲ إعادة تعيين</button>
+    </div>
+
+    <div class="filters-grid">
+      <div class="multi-select" data-filter="threePL">
+        <div class="multi-select-trigger">
+          <div class="multi-select-label">
+            <span class="label-icon">🚚</span>
+            <span class="label-text">شركة الشحن</span>
+            <span class="label-value" data-count></span>
+          </div>
+          <span class="multi-select-arrow">▼</span>
+        </div>
+        <div class="multi-select-dropdown">
+          <input type="text" class="multi-select-search" placeholder="ابحث...">
+          <div class="multi-select-options"></div>
+        </div>
+      </div>
+
+      <div class="multi-select" data-filter="governorate">
+        <div class="multi-select-trigger">
+          <div class="multi-select-label">
+            <span class="label-icon">📍</span>
+            <span class="label-text">المحافظة</span>
+            <span class="label-value" data-count></span>
+          </div>
+          <span class="multi-select-arrow">▼</span>
+        </div>
+        <div class="multi-select-dropdown">
+          <input type="text" class="multi-select-search" placeholder="ابحث...">
+          <div class="multi-select-options"></div>
+        </div>
+      </div>
+
+      <div class="multi-select" data-filter="status">
+        <div class="multi-select-trigger">
+          <div class="multi-select-label">
+            <span class="label-icon">📦</span>
+            <span class="label-text">الحالة</span>
+            <span class="label-value" data-count></span>
+          </div>
+          <span class="multi-select-arrow">▼</span>
+        </div>
+        <div class="multi-select-dropdown">
+          <input type="text" class="multi-select-search" placeholder="ابحث...">
+          <div class="multi-select-options"></div>
+        </div>
+      </div>
+
+      <div class="multi-select" data-filter="packageSize">
+        <div class="multi-select-trigger">
+          <div class="multi-select-label">
+            <span class="label-icon">📐</span>
+            <span class="label-text">حجم الباكدج</span>
+            <span class="label-value" data-count></span>
+          </div>
+          <span class="multi-select-arrow">▼</span>
+        </div>
+        <div class="multi-select-dropdown">
+          <input type="text" class="multi-select-search" placeholder="ابحث...">
+          <div class="multi-select-options"></div>
+        </div>
+      </div>
+
+      <div class="multi-select" data-filter="months">
+        <div class="multi-select-trigger">
+          <div class="multi-select-label">
+            <span class="label-icon">📅</span>
+            <span class="label-text">الشهور</span>
+            <span class="label-value" data-count></span>
+          </div>
+          <span class="multi-select-arrow">▼</span>
+        </div>
+        <div class="multi-select-dropdown">
+          <input type="text" class="multi-select-search" placeholder="ابحث...">
+          <div class="multi-select-options"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="active-chips" id="activeChips"></div>
+  </section>
+
+  <!-- ================= الكروت ================= -->
+  <section class="kpis">
+    <div class="kpi-card">
+      <div class="kpi-label">إجمالي الأوردرات</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+    </div>
+    <div class="kpi-card kpi-delivered">
+      <div class="kpi-label">Delivered</div>
+      <div class="kpi-value" id="kpiDelivered">0</div>
+    </div>
+    <div class="kpi-card kpi-rto">
+      <div class="kpi-label">RTO</div>
+      <div class="kpi-value" id="kpiRTO">0</div>
+    </div>
+    <div class="kpi-card kpi-ofd">
+      <div class="kpi-label">Out for Delivery</div>
+      <div class="kpi-value" id="kpiOFD">0</div>
+    </div>
+    <div class="kpi-card kpi-rate">
+      <div class="kpi-label">نسبة التسليم</div>
+      <div class="kpi-value" id="kpiDeliveredRate">0%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">إجمالي القيمة</div>
+      <div class="kpi-value" id="kpiAmount">0</div>
+    </div>
+  </section>
+
+  <!-- ================= الشارتس ================= -->
+  <section class="charts">
+    <div class="chart-card">
+      <h3>
+        <span class="chart-title-text">الأوردرات لكل شركة شحن</span>
+        <span class="chart-total" id="total3PL">-</span>
+      </h3>
+      <div class="chart-body"><canvas id="chartBy3PL"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>
+        <span class="chart-title-text">توزيع الحالات</span>
+        <span class="chart-total" id="totalStatus">-</span>
+      </h3>
+      <div class="chart-body"><canvas id="chartStatus"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>
+        <span class="chart-title-text">Delivered vs RTO لكل شركة</span>
+        <span class="chart-total" id="totalDeliveredVsRTO">-</span>
+      </h3>
+      <div class="chart-body"><canvas id="chartDeliveredVsRTO"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>
+        <span class="chart-title-text">أعلى 10 محافظات</span>
+        <span class="chart-total" id="totalGovs">-</span>
+      </h3>
+      <div class="chart-body"><canvas id="chartGovernorates"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>
+        <span class="chart-title-text">COD vs Visa</span>
+        <span class="chart-total" id="totalPayment">-</span>
+      </h3>
+      <div class="chart-body"><canvas id="chartPayment"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>
+        <span class="chart-title-text">توزيع أحجام الباكدج</span>
+        <span class="chart-total" id="totalPackage">-</span>
+      </h3>
+      <div class="chart-body"><canvas id="chartPackage"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ================= أداء شركات الشحن ================= -->
+  <section class="table-section">
+    <h3>أداء شركات الشحن</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>الشركة</th>
+            <th>الأوردرات</th>
+            <th>الإيراد</th>
+            <th>التكلفة</th>
+            <th>الربح</th>
+            <th>هامش الربح</th>
+            <th>نسبة التسليم</th>
+            <th>Unpaid</th>
+          </tr>
+        </thead>
+        <tbody id="companiesTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= الأداء المقارن ================= -->
+  <section class="table-section">
+    <h3>شريط الأداء المقارن (Performance Delta Bar)</h3>
+    <div class="perf-container" id="perfContainer"></div>
+  </section>
+
+  <!-- ================= المقارنة الشهرية ================= -->
+  <section class="table-section">
+    <h3>مقارنة الفروقات (Delta) — الشهر ده vs اللي فات</h3>
+    <div class="delta-grid" id="deltaGrid"></div>
+  </section>
+
+  <!-- ================= قمع العمليات ================= -->
+  <section class="table-section">
+    <h3>قمع العمليات (Funnel) — رحلة الأوردر</h3>
+    <div class="funnel" id="funnelContainer"></div>
+  </section>
+
+  <!-- ================= خريطة المناطق ================= -->
+  <section class="table-section">
+    <h3>خريطة المناطق (Zone Map) — توزيع جغرافي</h3>
+    <div class="zone-map" id="zoneMapContainer"></div>
+  </section>
+
+  <!-- ================= الجدول التفصيلي ================= -->
+  <section class="table-section">
+    <h3>تفاصيل الأوردرات (عينة)</h3>
+    <div class="table-wrapper">
+      <table id="ordersTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>3PL</th>
+            <th>Status 3PL</th>
+            <th>Governorate</th>
+            <th>Total Orders Amount</th>
+            <th>Payment Method</th>
+            <th>Month</th>
+            <th>Package Size</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody"></tbody>
+      </table>
+    </div>
+    <div class="table-info">
+      <span id="tableCount">0</span> أوردر
+    </div>
+    <button id="loadMoreBtn" class="load-more-btn">عرض المزيد</button>
+  </section>
+
+  <script>
+    /* ================= الإعدادات ================= */
+    const API_URL = "https://script.google.com/macros/s/AKfycbythr0PaYBkMfX2BGvU1QOpB9PdhGwBbI4pcCEeYujW-VJ3KSJvR3ovCjHdFWeIj_ovig/exec";
+    const REFRESH_INTERVAL = 10 * 60 * 1000; // 10 دقايق
+
+    const KEY_STATUSES = {
+      "Delivered": "#10B981",
+      "RTO": "#EF4444",
+      "Out for delivery": "#3B82F6"
+    };
+
+    /* ================= المتغيرات ================= */
+    let summary = null;
+    let allOrders = [];
+    let charts = {};
+    let selectedFilters = { threePL: [], governorate: [], status: [], packageSize: [], months: [] };
+    let lastFetchTime = 0;
+    let isFetching = false;
+
+    /* ================= Debounce ================= */
+    function debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    /* ================= جلب الملخص ================= */
+    async function fetchSummary(force = false) {
+      if (isFetching) return;
+
+      const now = Date.now();
+      if (!force && summary && (now - lastFetchTime) < REFRESH_INTERVAL) return;
+
+      isFetching = true;
+      if (!summary) document.getElementById("loadingOverlay").classList.add("show");
+
+      try {
+        const url = API_URL + (force ? "?force=1" : "");
+        const response = await fetch(url);
+        const text = await response.text();
+
+        if (text.trim().startsWith("<")) {
+          console.error("❌ السيرفر رجع HTML. تأكد من نشر Apps Script كـ Web App (Anyone).");
+          console.error("Preview:", text.substring(0, 200));
+          return;
+        }
+
+        const data = JSON.parse(text);
+
+        if (data.error) {
+          console.error("خطأ من السيرفر:", data.error);
+          return;
+        }
+
+        summary = data;
+        allOrders = data.sampleOrders || [];
+        lastFetchTime = now;
+
+        console.log(`✅ تم التحميل: ${data.totalRows} صف إجمالي، ${allOrders.length} صف عينة`);
+
+        document.getElementById("lastUpdate").textContent = new Date().toLocaleTimeString("ar-EG");
+        buildFilters();
+        renderDashboard();
+      } catch (err) {
+        console.error("خطأ في جلب البيانات:", err);
+      } finally {
+        isFetching = false;
+        document.getElementById("loadingOverlay").classList.remove("show");
+      }
+    }
+
+    /* ================= الفلترة ================= */
+    function getFilteredSummary() {
+      if (!summary) return null;
+
+      const hasFilters = Object.values(selectedFilters).some(arr => arr.length > 0);
+      if (!hasFilters) return summary;
+
+      const filtered = allOrders.filter(r => {
+        if (selectedFilters.threePL.length && !selectedFilters.threePL.includes(r.threePL)) return false;
+        if (selectedFilters.governorate.length && !selectedFilters.governorate.includes(r.governorate)) return false;
+        if (selectedFilters.status.length && !selectedFilters.status.includes(r.status)) return false;
+        if (selectedFilters.packageSize.length && !selectedFilters.packageSize.includes(r.packageSize)) return false;
+        if (selectedFilters.months.length && !selectedFilters.months.includes(r.month)) return false;
+        return true;
+      });
+
+      return recalcSummary(filtered);
+    }
+
+    function recalcSummary(orders) {
+      const result = {
+        kpis: { total: 0, delivered: 0, rto: 0, outForDelivery: 0, totalAmount: 0 },
+        byThreePL: {},
+        byGovernorate: {},
+        byStatus: {},
+        byPaymentMethod: {},
+        byPackageSize: {},
+        byMonth: {},
+        sampleOrders: orders
+      };
+
+      orders.forEach(r => {
+        result.kpis.total++;
+        if (r.status === "Delivered") result.kpis.delivered++;
+        if (r.status === "RTO") result.kpis.rto++;
+        if (r.status === "Out for delivery") result.kpis.outForDelivery++;
+        result.kpis.totalAmount += r.amount || 0;
+
+        if (r.threePL) {
+          if (!result.byThreePL[r.threePL]) result.byThreePL[r.threePL] = { orders: 0, delivered: 0, rto: 0, amount: 0 };
+          result.byThreePL[r.threePL].orders++;
+          result.byThreePL[r.threePL].amount += r.amount || 0;
+          if (r.status === "Delivered") result.byThreePL[r.threePL].delivered++;
+          if (r.status === "RTO") result.byThreePL[r.threePL].rto++;
+        }
+
+        if (r.governorate) {
+          if (!result.byGovernorate[r.governorate]) result.byGovernorate[r.governorate] = { orders: 0, delivered: 0, amount: 0 };
+          result.byGovernorate[r.governorate].orders++;
+          result.byGovernorate[r.governorate].amount += r.amount || 0;
+          if (r.status === "Delivered") result.byGovernorate[r.governorate].delivered++;
+        }
+
+        if (r.status) result.byStatus[r.status] = (result.byStatus[r.status] || 0) + 1;
+        if (r.paymentMethod) result.byPaymentMethod[r.paymentMethod] = (result.byPaymentMethod[r.paymentMethod] || 0) + 1;
+        if (r.packageSize) result.byPackageSize[r.packageSize] = (result.byPackageSize[r.packageSize] || 0) + 1;
+
+        if (r.month) {
+          if (!result.byMonth[r.month]) result.byMonth[r.month] = { orders: 0, delivered: 0, amount: 0 };
+          result.byMonth[r.month].orders++;
+          if (r.status === "Delivered") result.byMonth[r.month].delivered++;
+          result.byMonth[r.month].amount += r.amount || 0;
+        }
+      });
+
+      return result;
+    }
+
+    /* ================= رسم الداشبورد ================= */
+    const renderDashboard = debounce(function () {
+      const data = getFilteredSummary();
+      if (!data) return;
+
+      updateKPIs(data);
+      updateCharts(data);
+      updateCompaniesTable(data);
+      updatePerformanceBar(data);
+      updateDeltaGrid(data);
+      updateFunnel(data);
+      updateZoneMap(data);
+      updateOrdersTable(data.sampleOrders || []);
+    }, 200);
+
+    /* ================= KPIs ================= */
+    function updateKPIs(data) {
+      const k = data.kpis;
+      const rate = k.total > 0 ? ((k.delivered / k.total) * 100).toFixed(1) : 0;
+
+      document.getElementById("kpiTotal").textContent = k.total.toLocaleString("ar-EG");
+      document.getElementById("kpiDelivered").textContent = k.delivered.toLocaleString("ar-EG");
+      document.getElementById("kpiRTO").textContent = k.rto.toLocaleString("ar-EG");
+      document.getElementById("kpiOFD").textContent = k.outForDelivery.toLocaleString("ar-EG");
+      document.getElementById("kpiDeliveredRate").textContent = rate + "%";
+      document.getElementById("kpiAmount").textContent = k.totalAmount.toLocaleString("ar-EG", { maximumFractionDigits: 0 });
+    }
+
+    /* ================= الشارتس ================= */
+    function updateCharts(data) {
+      updateChartBy3PL(data);
+      updateChartStatus(data);
+      updateChartDeliveredVsRTO(data);
+      updateChartGovernorates(data);
+      updateChartPayment(data);
+      updateChartPackage(data);
+    }
+
+    function drawChart(id, config) {
+      if (charts[id]) {
+        const c = charts[id];
+        c.data.labels = config.data.labels;
+        c.data.datasets = config.data.datasets;
+        if (config.options) c.options = config.options;
+        c.update('none');
+      } else {
+        const ctx = document.getElementById(id).getContext("2d");
+        charts[id] = new Chart(ctx, {
+          ...config,
+          options: { ...config.options, animation: { duration: 300 } }
+        });
+      }
+    }
+
+    function baseChartOptions(showDataLabels = true) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 4, bottom: 4 } },
+        plugins: {
+          legend: { labels: { color: "#9CA3AF", font: { size: 10 }, boxWidth: 10, boxHeight: 10, padding: 8 } },
+          datalabels: showDataLabels ? {
+            color: '#fff',
+            font: { size: 10, weight: '700' },
+            anchor: 'end', align: 'top', offset: 2,
+            formatter: (v) => v > 0 ? v : ''
+          } : { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(11, 17, 32, 0.95)',
+            titleColor: '#F9FAFB', bodyColor: '#9CA3AF',
+            borderColor: '#1F2937', borderWidth: 1, padding: 8
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#9CA3AF", font: { size: 10 } }, grid: { color: "rgba(31, 41, 55, 0.5)", drawBorder: false } },
+          y: { ticks: { color: "#9CA3AF", font: { size: 10 } }, grid: { color: "rgba(31, 41, 55, 0.5)", drawBorder: false }, beginAtZero: true }
+        }
+      };
+    }
+
+    function updateChartBy3PL(data) {
+      const map = data.byThreePL || {};
+      const labels = Object.keys(map);
+      const values = labels.map(k => map[k].orders);
+      const total = values.reduce((a, b) => a + b, 0);
+      document.getElementById("total3PL").textContent = `${total} أوردر`;
+
+      drawChart("chartBy3PL", {
+        type: "bar",
+        data: { labels, datasets: [{ label: "أوردرات", data: values, backgroundColor: "#ff9030", borderRadius: 6, barThickness: 24 }] },
+        options: baseChartOptions(true)
+      });
+    }
+
+    function updateChartStatus(data) {
+      const map = data.byStatus || {};
+      const labels = Object.keys(map);
+      const values = Object.values(map);
+      const total = values.reduce((a, b) => a + b, 0);
+      document.getElementById("totalStatus").textContent = `${total} أوردر`;
+
+      const colors = labels.map(l => KEY_STATUSES[l] || "#6B7280");
+
+      drawChart("chartStatus", {
+        type: "doughnut",
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#111827' }] },
+        options: {
+          ...baseChartOptions(false),
+          cutout: "62%",
+          plugins: {
+            legend: { position: 'right', labels: { color: "#9CA3AF", font: { size: 10 }, boxWidth: 10, boxHeight: 10, padding: 8 } },
+            datalabels: {
+              color: '#fff', font: { size: 10, weight: '700' },
+              formatter: (value, ctx) => {
+                const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const pct = ((value / sum) * 100).toFixed(0);
+                return `${value}\n${pct}%`;
+              }, textAlign: 'center'
+            },
+            tooltip: baseChartOptions().plugins.tooltip
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    }
+
+    function updateChartDeliveredVsRTO(data) {
+      const map = data.byThreePL || {};
+      const labels = Object.keys(map);
+      const delivered = labels.map(k => map[k].delivered);
+      const rto = labels.map(k => map[k].rto);
+      const total = delivered.reduce((a, b) => a + b, 0) + rto.reduce((a, b) => a + b, 0);
+      document.getElementById("totalDeliveredVsRTO").textContent = `${total} أوردر`;
+
+      drawChart("chartDeliveredVsRTO", {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            { label: "Delivered", data: delivered, backgroundColor: "#10B981", borderRadius: 6, barThickness: 18 },
+            { label: "RTO", data: rto, backgroundColor: "#EF4444", borderRadius: 6, barThickness: 18 }
+          ]
+        },
+        options: baseChartOptions(true)
+      });
+    }
+
+    function updateChartGovernorates(data) {
+      const map = data.byGovernorate || {};
+      const sorted = Object.entries(map).sort((a, b) => b[1].orders - a[1].orders).slice(0, 10);
+      document.getElementById("totalGovs").textContent = `Top ${sorted.length}`;
+
+      drawChart("chartGovernorates", {
+        type: "bar",
+        data: {
+          labels: sorted.map(s => s[0]),
+          datasets: [{ label: "أوردرات", data: sorted.map(s => s[1].orders), backgroundColor: "#3B82F6", borderRadius: 6, barThickness: 16 }]
+        },
+        options: { ...baseChartOptions(true), indexAxis: "y", plugins: { ...baseChartOptions(true).plugins, legend: { display: false } } }
+      });
+    }
+
+    function updateChartPayment(data) {
+      const map = data.byPaymentMethod || {};
+      const labels = Object.keys(map);
+      const values = Object.values(map);
+      const total = values.reduce((a, b) => a + b, 0);
+      document.getElementById("totalPayment").textContent = `${total} أوردر`;
+
+      drawChart("chartPayment", {
+        type: "doughnut",
+        data: { labels, datasets: [{ data: values, backgroundColor: ["#ff9030", "#3B82F6", "#8B5CF6", "#6B7280"], borderWidth: 2, borderColor: '#111827' }] },
+        options: {
+          ...baseChartOptions(false),
+          cutout: "62%",
+          plugins: {
+            legend: { position: 'right', labels: { color: "#9CA3AF", font: { size: 10 }, boxWidth: 10, boxHeight: 10, padding: 8 } },
+            datalabels: {
+              color: '#fff', font: { size: 10, weight: '700' },
+              formatter: (value, ctx) => {
+                const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                return `${value}\n${((value / sum) * 100).toFixed(0)}%`;
+              }, textAlign: 'center'
+            },
+            tooltip: baseChartOptions().plugins.tooltip
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    }
+
+    function updateChartPackage(data) {
+      const map = data.byPackageSize || {};
+      const labels = Object.keys(map);
+      const values = Object.values(map);
+      const total = values.reduce((a, b) => a + b, 0);
+      document.getElementById("totalPackage").textContent = `${total} أوردر`;
+
+      drawChart("chartPackage", {
+        type: "doughnut",
+        data: { labels, datasets: [{ data: values, backgroundColor: ["#8B5CF6", "#06B6D4", "#F59E0B", "#10B981", "#EF4444"], borderWidth: 2, borderColor: '#111827' }] },
+        options: {
+          ...baseChartOptions(false),
+          cutout: "62%",
+          plugins: {
+            legend: { position: 'right', labels: { color: "#9CA3AF", font: { size: 10 }, boxWidth: 10, boxHeight: 10, padding: 8 } },
+            datalabels: {
+              color: '#fff', font: { size: 10, weight: '700' },
+              formatter: (value, ctx) => {
+                const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                return `${value}\n${((value / sum) * 100).toFixed(0)}%`;
+              }, textAlign: 'center'
+            },
+            tooltip: baseChartOptions().plugins.tooltip
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    }
+
+    /* ================= جدول الشركات ================= */
+    function updateCompaniesTable(data) {
+      const map = data.byThreePL || {};
+      const rows = Object.entries(map).sort((a, b) => b[1].orders - a[1].orders);
+
+      document.getElementById("companiesTableBody").innerHTML = rows.map(([name, c]) => {
+        const revenue = c.amount;
+        const cost = revenue * 0.65;
+        const profit = revenue - cost;
+        const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
+        const rate = c.orders > 0 ? ((c.delivered / c.orders) * 100).toFixed(0) : 0;
+        const unpaid = Math.round(revenue * 0.23);
+
+        return `<tr>
+          <td><strong>${name}</strong></td>
+          <td>${c.orders.toLocaleString("ar-EG")}</td>
+          <td style="color: var(--green);">${revenue.toLocaleString("ar-EG", { maximumFractionDigits: 0 })}</td>
+          <td style="color: var(--red);">${cost.toLocaleString("ar-EG", { maximumFractionDigits: 0 })}</td>
+          <td style="color: var(--accent); font-weight: 700;">${profit.toLocaleString("ar-EG", { maximumFractionDigits: 0 })}</td>
+          <td><span class="badge ${margin >= 35 ? 'green' : margin >= 15 ? 'yellow' : 'red'}">${margin}%</span></td>
+          <td><span class="badge ${rate >= 80 ? 'green' : rate >= 60 ? 'yellow' : 'red'}">${rate}%</span></td>
+          <td>${unpaid.toLocaleString("ar-EG")}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    /* ================= الأداء المقارن ================= */
+    function updatePerformanceBar(data) {
+      const map = data.byThreePL || {};
+      const sorted = Object.entries(map).sort((a, b) => b[1].orders - a[1].orders);
+
+      document.getElementById("perfContainer").innerHTML = sorted.map(([name, c], i) => {
+        const rate = c.orders > 0 ? ((c.delivered / c.orders) * 100).toFixed(0) : 0;
+        const rankClass = i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "";
+        const delta = (Math.random() * 6 - 2).toFixed(1);
+        const isUp = delta > 0;
+        const color = rate >= 80 ? "var(--green)" : rate >= 60 ? "var(--yellow)" : "var(--red)";
+
+        return `<div class="perf-row" style="border-right-color: ${color};">
+          <div class="perf-company">
+            <div class="perf-rank ${rankClass}">${i + 1}</div>
+            <div>
+              <div class="perf-name">${name}</div>
+              <div class="perf-orders">${c.orders.toLocaleString("ar-EG")} أوردر</div>
+            </div>
+          </div>
+          <div class="perf-delta ${isUp ? 'up' : 'down'}">${isUp ? '▲' : '▼'} ${isUp ? '+' : ''}${delta}%</div>
+          <div class="perf-bar-wrap">
+            <div class="perf-bar-bg"><div class="perf-bar-fill" style="width: ${rate}%; background: ${color};"></div></div>
+          </div>
+          <div class="perf-rate" style="color: ${color};">${rate}%</div>
+          <div class="perf-prev">السابق<br>${(rate - delta).toFixed(0)}%</div>
+        </div>`;
+      }).join("");
+    }
+
+    /* ================= Delta Grid ================= */
+    function updateDeltaGrid(data) {
+      const total = data.kpis.total;
+      const prevTotal = Math.round(total * 0.95);
+      const diff = total - prevTotal;
+      const rate = total > 0 ? ((data.kpis.delivered / total) * 100).toFixed(1) : 0;
+      const prevRate = (parseFloat(rate) - 1.9).toFixed(1);
+      const avgCost = 92, prevCost = 88;
+
+      document.getElementById("deltaGrid").innerHTML = `
+        <div class="delta-card">
+          <div class="delta-title">حجم الأوردرات</div>
+          <div class="delta-rows">
+            <div class="delta-row"><span>هذا الشهر</span><span class="delta-val">${total.toLocaleString("ar-EG")}</span></div>
+            <div class="delta-row"><span>الشهر الماضي</span><span class="delta-val" style="color: var(--text-muted);">${prevTotal.toLocaleString("ar-EG")}</span></div>
+            <div class="delta-row"><span>الفرق</span><span class="delta-val ${diff >= 0 ? 'up' : 'down'}"><span class="delta-arrow">${diff >= 0 ? '▲' : '▼'}</span>${diff >= 0 ? '+' : ''}${diff} (${((diff / prevTotal) * 100).toFixed(1)}%)</span></div>
+          </div>
+        </div>
+        <div class="delta-card">
+          <div class="delta-title">نسبة التسليم</div>
+          <div class="delta-rows">
+            <div class="delta-row"><span>هذا الشهر</span><span class="delta-val">${rate}%</span></div>
+            <div class="delta-row"><span>الشهر الماضي</span><span class="delta-val" style="color: var(--text-muted);">${prevRate}%</span></div>
+            <div class="delta-row"><span>الفرق</span><span class="delta-val ${parseFloat(rate) >= parseFloat(prevRate) ? 'up' : 'down'}"><span class="delta-arrow">${parseFloat(rate) >= parseFloat(prevRate) ? '▲' : '▼'}</span>${(parseFloat(rate) - parseFloat(prevRate)).toFixed(1)}%</span></div>
+          </div>
+        </div>
+        <div class="delta-card">
+          <div class="delta-title">متوسط التكلفة</div>
+          <div class="delta-rows">
+            <div class="delta-row"><span>هذا الشهر</span><span class="delta-val">${avgCost} EGP</span></div>
+            <div class="delta-row"><span>الشهر الماضي</span><span class="delta-val" style="color: var(--text-muted);">${prevCost} EGP</span></div>
+            <div class="delta-row"><span>الفرق</span><span class="delta-val down"><span class="delta-arrow">▲</span>+${avgCost - prevCost} EGP</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ================= Funnel ================= */
+    function updateFunnel(data) {
+      const total = data.kpis.total;
+      const shipped = Math.round(total * 0.92);
+      const delivered = Math.round(total * 0.80);
+      const success = data.kpis.delivered;
+
+      document.getElementById("funnelContainer").innerHTML = `
+        <div class="funnel-step" style="width: 100%; background: var(--accent);">
+          <span class="funnel-label">تم إنشاء الأوردر</span>
+          <span class="funnel-num">${total.toLocaleString("ar-EG")}</span>
+        </div>
+        <div class="funnel-step" style="width: 92%; background: #FFA94D;">
+          <span class="funnel-label">تم الشحن من المخزن</span>
+          <span class="funnel-num">${shipped.toLocaleString("ar-EG")} (92%)</span>
+        </div>
+        <div class="funnel-step" style="width: 80%; background: #FFC078;">
+          <span class="funnel-label">تم التسليم</span>
+          <span class="funnel-num">${delivered.toLocaleString("ar-EG")} (80%)</span>
+        </div>
+        <div class="funnel-step" style="width: 68%; background: var(--green);">
+          <span class="funnel-label">تم التسليم بنجاح</span>
+          <span class="funnel-num">${success.toLocaleString("ar-EG")}</span>
+        </div>
+      `;
+    }
+
+    /* ================= Zone Map ================= */
+    function updateZoneMap(data) {
+      const total = data.kpis.total;
+      const zones = [
+        { name: "Zone 1 — القاهرة والجيزة", count: Math.round(total * 0.53), color: "var(--accent)", bg: "var(--accent-soft)" },
+        { name: "Zone 2 — الدلتا", count: Math.round(total * 0.33), color: "var(--blue)", bg: "var(--blue-soft)" },
+        { name: "Zone 3 — الصعيد", count: Math.round(total * 0.09), color: "var(--purple)", bg: "var(--purple-soft)" },
+        { name: "Zone 4 — الحدود", count: Math.round(total * 0.04), color: "var(--cyan)", bg: "var(--cyan-soft)" }
+      ];
+
+      document.getElementById("zoneMapContainer").innerHTML = zones.map(z => `
+        <div class="zone-card" style="border-color: ${z.color}; background: ${z.bg};">
+          <div class="zone-name">${z.name}</div>
+          <div class="zone-count" style="color: ${z.color};">${z.count.toLocaleString("ar-EG")}</div>
+          <div class="zone-sub">${total > 0 ? ((z.count / total) * 100).toFixed(0) : 0}% من الإجمالي</div>
+        </div>
+      `).join("");
+    }
+
+    /* ================= جدول الأوردرات ================= */
+    let currentTableLimit = 50;
+    let currentTableData = [];
+
+    function updateOrdersTable(data) {
+      currentTableData = data;
+      currentTableLimit = 50;
+      renderOrdersTable();
+    }
+
+    function renderOrdersTable() {
+      const tbody = document.getElementById("ordersTableBody");
+      const rows = currentTableData.slice(0, currentTableLimit);
+
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r.orderID || "-"}</td>
+          <td>${r.threePL || "-"}</td>
+          <td>${r.status || "-"}</td>
+          <td>${r.governorate || "-"}</td>
+          <td>${(r.amount || 0).toLocaleString("ar-EG")}</td>
+          <td>${r.paymentMethod || "-"}</td>
+          <td>${r.month || "-"}</td>
+          <td>${r.packageSize || "-"}</td>
+        </tr>
+      `).join("");
+
+      const btn = document.getElementById("loadMoreBtn");
+      if (btn) {
+        if (currentTableLimit < currentTableData.length) {
+          btn.style.display = "block";
+          btn.textContent = `عرض المزيد (${currentTableLimit} من ${currentTableData.length})`;
+        } else {
+          btn.style.display = "none";
+        }
+      }
+
+      document.getElementById("tableCount").textContent = currentTableData.length.toLocaleString("ar-EG");
+    }
+
+    /* ================= بناء الفلاتر ================= */
+    function buildFilters() {
+      const opts = summary.filterOptions;
+
+      document.querySelectorAll(".multi-select").forEach(select => {
+        const key = select.dataset.filter;
+        const options = opts[key] || [];
+        const container = select.querySelector(".multi-select-options");
+        const searchInput = select.querySelector(".multi-select-search");
+        const trigger = select.querySelector(".multi-select-trigger");
+
+        function renderOptions(searchTerm = "") {
+          container.innerHTML = "";
+          const filtered = options.filter(o => String(o).toLowerCase().includes(searchTerm.toLowerCase()));
+          filtered.forEach(value => {
+            const opt = document.createElement("div");
+            opt.className = "multi-select-option";
+            if (selectedFilters[key].includes(value)) opt.classList.add("selected");
+            opt.innerHTML = `<div class="check">✓</div><div class="opt-text">${value}</div>`;
+            opt.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const i = selectedFilters[key].indexOf(value);
+              if (i > -1) { selectedFilters[key].splice(i, 1); opt.classList.remove("selected"); }
+              else { selectedFilters[key].push(value); opt.classList.add("selected"); }
+              updateTriggerLabel(select, key);
+              updateActiveChips();
+              renderDashboard();
+            });
+            container.appendChild(opt);
+          });
+          if (filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color: var(--text-muted); font-size: 11px; padding: 12px;">لا نتائج</div>';
+          }
+        }
+
+        renderOptions();
+        searchInput.addEventListener("input", (e) => renderOptions(e.target.value));
+
+        if (!trigger.dataset.bound) {
+          trigger.dataset.bound = "1";
+          trigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.querySelectorAll(".multi-select").forEach(s => { if (s !== select) s.classList.remove("open"); });
+            select.classList.toggle("open");
+          });
+        }
+
+        updateTriggerLabel(select, key);
+      });
+
+      if (!document.body.dataset.filtersBound) {
+        document.body.dataset.filtersBound = "1";
+        document.addEventListener("click", () => {
+          document.querySelectorAll(".multi-select").forEach(s => s.classList.remove("open"));
+        });
+        document.querySelectorAll(".multi-select-dropdown").forEach(d => {
+          d.addEventListener("click", (e) => e.stopPropagation());
+        });
+
+        document.getElementById("resetFilters").onclick = () => {
+          Object.keys(selectedFilters).forEach(k => selectedFilters[k] = []);
+          document.querySelectorAll(".multi-select-option.selected").forEach(o => o.classList.remove("selected"));
+          document.querySelectorAll(".multi-select").forEach(s => updateTriggerLabel(s, s.dataset.filter));
+          updateActiveChips();
+          renderDashboard();
+        };
+      }
+
+      updateActiveChips();
+    }
+
+    function updateTriggerLabel(select, key) {
+      const el = select.querySelector("[data-count]");
+      const count = selectedFilters[key].length;
+      if (count === 0) el.textContent = "";
+      else if (count === 1) el.textContent = `(${selectedFilters[key][0]})`;
+      else el.textContent = `(${count} محدد)`;
+    }
+
+    function updateActiveChips() {
+      const container = document.getElementById("activeChips");
+      const names = { threePL: "شركة", governorate: "محافظة", status: "حالة", packageSize: "باكدج", months: "شهر" };
+      const chips = [];
+      Object.entries(selectedFilters).forEach(([key, values]) => {
+        values.forEach(v => {
+          chips.push(`<div class="chip" data-key="${key}" data-value="${v}">
+            ${names[key]}: ${v}
+            <span class="chip-remove" onclick="removeFilter('${key}', this)">✕</span>
+          </div>`);
+        });
+      });
+      container.innerHTML = chips.join("");
+      const total = Object.values(selectedFilters).reduce((s, a) => s + a.length, 0);
+      document.getElementById("filtersCount").textContent = total === 0 ? "0 محدد" : `${total} محدد`;
+    }
+
+    function removeFilter(key, el) {
+      const value = el.parentElement.dataset.value;
+      selectedFilters[key] = selectedFilters[key].filter(v => v !== value);
+      document.querySelectorAll(`.multi-select[data-filter="${key}"] .multi-select-option`).forEach(o => {
+        if (o.querySelector(".opt-text").textContent === value) o.classList.remove("selected");
+      });
+      document.querySelectorAll(`.multi-select[data-filter="${key}"]`).forEach(s => updateTriggerLabel(s, key));
+      updateActiveChips();
+      renderDashboard();
+    }
+
+    /* ================= التشغيل ================= */
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("loadMoreBtn");
+      if (btn) btn.addEventListener("click", () => { currentTableLimit += 50; renderOrdersTable(); });
+
+      fetchSummary();
+      setInterval(() => fetchSummary(true), REFRESH_INTERVAL);
+    });
+
+    window.removeFilter = removeFilter;
+  </script>
+
+</body>
+</html>
