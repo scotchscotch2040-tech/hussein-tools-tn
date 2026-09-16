@@ -137,7 +137,7 @@
 
   .dd-menu {
     display: none; position: absolute; top: calc(100% + 6px); right: 0;
-    min-width: 190px; background: var(--clay-card);
+    min-width: 210px; background: var(--clay-card);
     border-radius: var(--clay-radius-sm);
     box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     border: 1px solid var(--clay-border);
@@ -163,6 +163,15 @@
   .dd-item.danger { color: var(--clay-danger); }
   .dd-item.success { color: var(--clay-success); }
   .dd-item.gold { color: var(--clay-gold); }
+  /* ✅ عنصر التصدير المميز */
+  .dd-item.highlight {
+    background: linear-gradient(135deg, rgba(125, 155, 122, 0.18) 0%, rgba(184, 149, 110, 0.18) 100%);
+    color: var(--clay-success);
+    font-weight: 800;
+  }
+  .dd-item.highlight:hover {
+    background: linear-gradient(135deg, rgba(125, 155, 122, 0.3) 0%, rgba(184, 149, 110, 0.3) 100%);
+  }
 
   /* ============ UPLOAD ============ */
   .upload-grid {
@@ -560,7 +569,6 @@
     opacity: 0.5;
   }
 
-  /* ✅ حقل الملاحظات */
   .action-input.notes-input {
     text-align: right;
     width: 180px;
@@ -697,6 +705,7 @@
         </button>
         <div class="dd-menu">
           <button class="dd-item gold" onclick="exportAllExcel(); closeAllDD()">⬇️ الكل Excel</button>
+          <button class="dd-item highlight" onclick="exportWorkedExcel(); closeAllDD()">⭐ تصدير اللي اشتغلنا عليه</button>
           <button class="dd-item gold" onclick="exportCSV('seller'); closeAllDD()">⬇️ موردين</button>
           <button class="dd-item gold" onclick="exportCSV('oos'); closeAllDD()">⬇️ Out of Stock</button>
           <button class="dd-item gold" onclick="exportCSV('nosku'); closeAllDD()">⬇️ ملهوش كود</button>
@@ -734,7 +743,7 @@
     <div class="upload-card orders">
       <div class="card-header-row">
         <h3>🛒 الأوردرات المتروكة</h3>
-        <button class="clear-card-btn" onclick="clearOrders()" title="إزالة (الشغل محفوظ)">🗑️ إزالة</button>
+        <button class="clear-card-btn" onclick="clearOrders()" title="إزالة (شغل تراكمي)">🗑️ إزالة الكل</button>
       </div>
       <div class="upload-body">
         <label class="file-drop" id="ordersDrop">
@@ -858,6 +867,8 @@ let stockChanged = false;
 let orderActions = {};
 let metaInfo = { lastUpdate: null, stockDate: null };
 
+let processedOrderNumbers = new Set();
+
 let columnFilters = {
   order: '', email: '', createdAt: '', qty: '', product: '', sku: '',
   shippingName: '', shippingPhone: '', shippingProvince: '',
@@ -972,6 +983,7 @@ function scheduleSave() {
     if (results.length) {
       await idbSet('resultsSnapshot', { data: results, stockChanged, savedAt: Date.now() });
     }
+    await idbSet('processedOrders', Array.from(processedOrderNumbers));
     updateSavedBadge();
   }, 300);
 }
@@ -982,6 +994,7 @@ async function saveNow() {
   if (results.length) {
     await idbSet('resultsSnapshot', { data: results, stockChanged, savedAt: Date.now() });
   }
+  await idbSet('processedOrders', Array.from(processedOrderNumbers));
   updateSavedBadge();
 }
 
@@ -1101,7 +1114,6 @@ function cleanNewOrderValue(raw) {
   return isNaN(n) ? '' : String(n);
 }
 
-// ✅ تنظيف الملاحظات
 function cleanNotes(raw) {
   if (raw === null || raw === undefined) return '';
   return String(raw).trim();
@@ -1135,7 +1147,7 @@ function showToast(message, icon = '✅') {
   document.getElementById('toastMessage').textContent = message;
   toast.classList.add('show');
   clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
 let copyToastTimeout;
@@ -1410,9 +1422,8 @@ function loadStock(json) {
   console.log('✅ Stock loaded:', Object.keys(stockMap).length, 'products');
 }
 
-// ================== Load Orders ==================
+// ================== Load Orders (تراكمي) ==================
 function loadOrders(json) {
-  ordersRows = [];
   if (!json.length) { alert('شيت الأوردرات فاضي!'); return; }
 
   const headers = Object.keys(json[0]);
@@ -1429,12 +1440,23 @@ function loadOrders(json) {
 
   if (!colOrder) { alert('مش لاقي عمود "Name" في شيت الأوردرات.'); return; }
 
+  const existingOrders = new Set();
+  results.forEach(r => { if (r.order && r.order !== '—') existingOrders.add(r.order); });
+  processedOrderNumbers.forEach(o => existingOrders.add(o));
+
+  console.log('📋 أوردرات موجودة قبل الرفع:', existingOrders.size);
+
   let lastOrder = '';
   let lastShipProv = '';
   let lastEmail = '';
   let lastCreated = '';
   let lastShipName = '';
   let lastShipPhone = '';
+
+  const newOrdersRows = [];
+  const seenInThisFile = new Set();
+  let skippedCount = 0;
+  let duplicateInFileCount = 0;
 
   json.forEach(row => {
     const orderVal = normalizeKey(row[colOrder]);
@@ -1452,6 +1474,13 @@ function loadOrders(json) {
       if (newShipPhone) lastShipPhone = newShipPhone;
     }
 
+    if (!lastOrder) return;
+
+    if (existingOrders.has(lastOrder)) {
+      skippedCount++;
+      return;
+    }
+
     const sku = normalizeSku(row[colSku]);
     const name = normalizeKey(row[colName]);
     const qty = toNumber(row[colQty]);
@@ -1460,7 +1489,14 @@ function loadOrders(json) {
     if (!name && !sku) return;
     if (!isAllowedProvince(lastShipProv)) return;
 
-    ordersRows.push({
+    const rowKey = lastOrder + '||' + sku + '||' + name;
+    if (seenInThisFile.has(rowKey)) {
+      duplicateInFileCount++;
+      return;
+    }
+    seenInThisFile.add(rowKey);
+
+    newOrdersRows.push({
       order: lastOrder,
       email: lastEmail || normalizeKey(row[colEmail]),
       createdAt: lastCreated || normalizeKey(row[colCreated]),
@@ -1471,9 +1507,23 @@ function loadOrders(json) {
     });
   });
 
+  ordersRows = [...ordersRows, ...newOrdersRows];
   ordersLoaded = ordersRows.length > 0;
-  if (!ordersLoaded && json.length) showToast('⚠️ مفيش أوردرات في المحافظات المطلوبة', '⚠️');
-  console.log('✅ Orders loaded:', ordersRows.length, 'line items');
+
+  const newUniqueOrders = new Set(newOrdersRows.map(o => o.order)).size;
+
+  let msg = `✅ اتضاف ${newUniqueOrders} أوردر جديد`;
+  if (skippedCount > 0) msg += ` | ⏭️ اتخطى ${skippedCount} صف (أوردر قديم)`;
+  if (duplicateInFileCount > 0) msg += ` | 🔁 اتخطى ${duplicateInFileCount} صف مكرر في نفس الملف`;
+  showToast(msg, '📁');
+
+  console.log('✅ Loaded:', {
+    newRows: newOrdersRows.length,
+    newUniqueOrders,
+    skippedOld: skippedCount,
+    duplicateInFile: duplicateInFileCount,
+    totalRows: ordersRows.length
+  });
 }
 
 // ================== Auto Compare ==================
@@ -1483,24 +1533,21 @@ function tryAutoCompare() {
   compare();
 }
 
-// ================== Compare ==================
+// ================== Compare (تراكمي) ==================
 function compare() {
   if (isComparing) return;
   isComparing = true;
 
   showSkeleton();
   showProgress(0, 'جاري بدء التحليل...', 'بيتم تحضير البيانات');
-  document.getElementById('kpiRow').style.display = 'none';
-  document.getElementById('stats').style.display = 'none';
-  document.getElementById('topProductsRow').style.display = 'none';
-  document.getElementById('tableWrap').style.display = 'none';
-  document.getElementById('emptyState').style.display = 'none';
 
   setTimeout(() => showProgress(15, 'جاري قراءة الأوردرات...', ordersRows.length + ' سطر'), 100);
 
   setTimeout(() => {
     showProgress(45, 'جاري مطابقة المخزون...', 'بيتم التحقق من الأكواد');
-    results = [];
+
+    const existingResultOrders = new Set(results.map(r => r.order).filter(o => o && o !== '—'));
+    processedOrderNumbers.forEach(o => existingResultOrders.add(o));
 
     const orderSkuDemand = {};
     ordersRows.forEach(item => {
@@ -1522,7 +1569,11 @@ function compare() {
       if (orderFullyInHaram[ord] === undefined) orderFullyInHaram[ord] = true;
     });
 
+    const newResults = [];
+
     ordersRows.forEach(item => {
+      if (item.order && existingResultOrders.has(item.order)) return;
+
       const sku = item.sku;
       const savedAction = orderActions[item.order] || {};
       const actionFields = {
@@ -1534,7 +1585,7 @@ function compare() {
       };
 
       if (!sku) {
-        results.push({
+        newResults.push({
           order: item.order, email: item.email, createdAt: item.createdAt,
           name: item.name, sku: '—', model: '—',
           qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
@@ -1552,7 +1603,7 @@ function compare() {
       const stock = stockMap[sku];
       if (!stock) {
         const seller = getSellerName(sku);
-        results.push({
+        newResults.push({
           order: item.order, email: item.email, createdAt: item.createdAt,
           name: item.name, sku: sku, model: '—',
           qty: item.qty, shopifyPrice: item.price, stockPrice: '—',
@@ -1574,7 +1625,7 @@ function compare() {
       const haramHighlight = orderFullyInHaram[item.order] === true;
 
       if (totalAvailable <= 0 && stock.total <= 0) {
-        results.push({
+        newResults.push({
           order: item.order, email: item.email, createdAt: item.createdAt,
           name: item.name, sku: sku, model: stock.model,
           qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
@@ -1591,7 +1642,7 @@ function compare() {
       }
 
       if (stock.haram <= 0) {
-        results.push({
+        newResults.push({
           order: item.order, email: item.email, createdAt: item.createdAt,
           name: item.name, sku: sku, model: stock.model,
           qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
@@ -1607,7 +1658,7 @@ function compare() {
         return;
       }
 
-      results.push({
+      newResults.push({
         order: item.order, email: item.email, createdAt: item.createdAt,
         name: item.name, sku: sku, model: stock.model,
         qty: item.qty, shopifyPrice: item.price, stockPrice: stock.price,
@@ -1621,6 +1672,18 @@ function compare() {
         total: stock.total, held: stock.held, transfer: stock.transfer,
         haramHighlight, ...actionFields
       });
+    });
+
+    results = [...results, ...newResults];
+
+    newResults.forEach(r => {
+      if (r.order && r.order !== '—') processedOrderNumbers.add(r.order);
+    });
+
+    console.log('✅ Compare done:', {
+      oldResults: existingResultOrders.size,
+      newResults: newResults.length,
+      totalResults: results.length
     });
   }, 350);
 
@@ -1645,7 +1708,6 @@ function compare() {
     document.getElementById('topProductsRow').style.display = 'block';
     document.getElementById('tableWrap').style.display = 'block';
     document.getElementById('emptyState').style.display = 'none';
-    showToast('تم التحليل تلقائيًا', '⚡');
     isComparing = false;
     saveNow();
   }, 1600);
@@ -1799,7 +1861,7 @@ function renderTopProducts() {
   `).join('');
 }
 
-// ================== Table Header (مع ملاحظات) ==================
+// ================== Table Header ==================
 const COLUMNS = [
   { key: 'idx', label: '#', filterType: 'none' },
   { key: 'order', label: 'الأوردر', filterType: 'text' },
@@ -1819,7 +1881,7 @@ const COLUMNS = [
   { key: 'newOrderNumber', label: 'رقم الأوردر الجديد', filterType: 'text' },
   { key: 'newOrderDate', label: 'تاريخ الأوردر الجديد', filterType: 'text' },
   { key: 'newOrderValue', label: 'قيمة الأوردر الجديد', filterType: 'text' },
-  { key: 'notes', label: '📝 ملاحظات', filterType: 'text' },   // ✅ العمود الجديد
+  { key: 'notes', label: '📝 ملاحظات', filterType: 'text' },
   { key: 'haram', label: 'الهرم', filterType: 'text' },
   { key: 'bahary', label: 'البحر الأعظم', filterType: 'text' },
   { key: 'suez', label: 'السويس', filterType: 'text' },
@@ -1957,7 +2019,6 @@ function onNewOrderValueChange(order, value) {
   applyActionHighlight();
 }
 
-// ✅ معالج الملاحظات
 function onNotesChange(order, value) {
   if (!order || order === '—') return;
   const cleaned = cleanNotes(value);
@@ -1967,7 +2028,7 @@ function onNotesChange(order, value) {
 
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
     const inputs = tr.querySelectorAll('.action-input');
-    const notesInp = inputs[3]; // الملاحظات index 3
+    const notesInp = inputs[3];
     if (notesInp && document.activeElement !== notesInp && notesInp.value !== cleaned) {
       notesInp.value = cleaned;
       notesInp.classList.toggle('has-value', !!cleaned);
@@ -2096,7 +2157,6 @@ function renderTable() {
         value="${(r.newOrderValue || '').replace(/"/g, '&quot;')}"
         onchange="onNewOrderValueChange('${(r.order || '').replace(/'/g, "\\'")}', this.value)">`;
 
-    // ✅ حقل الملاحظات
     const notesInput = `
       <input type="text" class="action-input notes-input ${r.notes ? 'has-value' : ''}" placeholder="اكتب ملاحظة..."
         value="${(r.notes || '').replace(/"/g, '&quot;')}"
@@ -2248,6 +2308,28 @@ function exportAllExcel() {
   buildExcelSheet(results, 'الأوردرات_المتروكة_الكامل');
 }
 
+// ✅ تصدير اللي اشتغلنا عليه (اللي اتحطله حالة منتج)
+function exportWorkedExcel() {
+  if (!results.length) { showToast('مفيش بيانات', '⚠️'); return; }
+
+  // ✅ ناخد الصفوف اللي فيها حالة منتج مطلوبة فقط
+  const workedResults = results.filter(r => {
+    const status = (r.productStatus || '').trim();
+    return status === 'تم تنفيذ الطلب'
+        || status === 'لم يتم تنفيذ الطلب'
+        || status === 'متابعة'
+        || status === 'تم إرسال ايميل'
+        || status === 'لم يتم الرد';
+  });
+
+  if (!workedResults.length) {
+    showToast('مفيش أوردرات اشتغلنا عليها بعد', '⚠️');
+    return;
+  }
+
+  buildExcelSheet(workedResults, 'الأوردرات_اللي_اشتغلنا_عليها');
+}
+
 function exportFollowupExcel() {
   if (!results.length) { showToast('مفيش بيانات', '⚠️'); return; }
   buildExcelSheet(results, 'قائمة_الفولو_أب');
@@ -2256,7 +2338,8 @@ function exportFollowupExcel() {
 // ================== Backup ==================
 async function exportBackup() {
   const backup = {
-    version: 1, exportedAt: Date.now(), metaInfo, orderActions,
+    version: 2, exportedAt: Date.now(), metaInfo, orderActions,
+    processedOrders: Array.from(processedOrderNumbers),
     resultsSnapshot: results.length ? { data: results, stockChanged, savedAt: Date.now() } : null
   };
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
@@ -2277,6 +2360,10 @@ async function importBackup(event) {
     if (!backup.orderActions) { showToast('ملف غير صالح', '⚠️'); return; }
     orderActions = backup.orderActions || {};
     metaInfo = backup.metaInfo || { lastUpdate: null, stockDate: null };
+
+    if (backup.processedOrders && Array.isArray(backup.processedOrders)) {
+      processedOrderNumbers = new Set(backup.processedOrders);
+    }
 
     if (backup.resultsSnapshot && backup.resultsSnapshot.data) {
       results = backup.resultsSnapshot.data;
@@ -2313,13 +2400,33 @@ function clearStock() {
   showToast('تم إزالة الاستوك — الشغل محفوظ', '🗑️');
 }
 
-function clearOrders() {
-  ordersRows = []; ordersLoaded = false;
+async function clearOrders() {
+  if (!confirm('متأكد من مسح كل الأوردرات؟ (الجدول + الأكشنز + الأوردرات المعالجة)')) return;
+
+  ordersRows = [];
+  results = [];
+  processedOrderNumbers = new Set();
+  orderActions = {};
+
   document.getElementById('ordersPaste').value = '';
   document.getElementById('ordersFile').value = '';
   document.getElementById('ordersName').textContent = '';
   document.getElementById('ordersDrop').classList.remove('has-file');
-  showToast('تم إزالة الأوردرات', '🗑️');
+
+  document.getElementById('kpiRow').style.display = 'none';
+  document.getElementById('stats').style.display = 'none';
+  document.getElementById('topProductsRow').style.display = 'none';
+  document.getElementById('tableWrap').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'block';
+  hideProgress(); hideSkeleton();
+  isComparing = false;
+
+  await idbRemove('orderActions');
+  await idbRemove('resultsSnapshot');
+  await idbRemove('processedOrders');
+
+  updateSavedBadge();
+  showToast('تم مسح كل الأوردرات والأكشنز', '🗑️');
 }
 
 async function clearAllActions() {
@@ -2338,6 +2445,7 @@ async function clearAll() {
   stockMap = {}; stockLoaded = false;
   ordersRows = []; ordersLoaded = false;
   results = []; orderActions = {};
+  processedOrderNumbers = new Set();
   stockChanged = false;
   metaInfo = { lastUpdate: null, stockDate: null };
 
@@ -2365,6 +2473,7 @@ async function clearAll() {
   await idbRemove('orderActions');
   await idbRemove('metaInfo');
   await idbRemove('resultsSnapshot');
+  await idbRemove('processedOrders');
 
   updateInfoBar(); updateSavedBadge(); updateWarnBadge();
   showToast('تم مسح كل البيانات', '🗑️');
@@ -2379,6 +2488,11 @@ async function loadSavedState() {
     const savedMeta = await idbGet('metaInfo');
     if (savedMeta) metaInfo = savedMeta;
 
+    const savedProcessed = await idbGet('processedOrders');
+    if (savedProcessed && Array.isArray(savedProcessed)) {
+      processedOrderNumbers = new Set(savedProcessed);
+    }
+
     if (!stockLoaded) {
       metaInfo.stockDate = null;
     }
@@ -2387,6 +2501,11 @@ async function loadSavedState() {
     if (savedSnapshot && savedSnapshot.data && savedSnapshot.data.length) {
       results = savedSnapshot.data;
       stockChanged = savedSnapshot.stockChanged || false;
+
+      results.forEach(r => {
+        if (r.order && r.order !== '—') processedOrderNumbers.add(r.order);
+      });
+
       renderStats(); renderKPIs(); renderTopProducts();
       buildTableHeader(); renderTable();
       document.getElementById('kpiRow').style.display = 'grid';
