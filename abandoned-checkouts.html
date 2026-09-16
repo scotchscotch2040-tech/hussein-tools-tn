@@ -324,7 +324,6 @@
   .stat-badge.status-email .num { color: var(--clay-blue); }
   .stat-badge.status-noanswer .num { color: var(--clay-warning); }
 
-  /* ✅ Badge الجديد - ما تم الشغل عليه */
   .stat-badge.work-progress {
     background: linear-gradient(135deg, rgba(125, 155, 122, 0.2) 0%, rgba(184, 149, 110, 0.2) 100%);
     border-color: var(--clay-success);
@@ -561,6 +560,28 @@
     opacity: 0.5;
   }
 
+  /* ✅ حقل الملاحظات */
+  .action-input.notes-input {
+    text-align: right;
+    width: 180px;
+    font-weight: 600;
+    background: rgba(122, 143, 166, 0.06);
+    border-color: rgba(122, 143, 166, 0.4);
+  }
+  .action-input.notes-input:focus {
+    border-color: var(--clay-blue);
+    background: rgba(122, 143, 166, 0.12);
+  }
+  .action-input.notes-input.has-value {
+    border-color: var(--clay-blue);
+    background: rgba(122, 143, 166, 0.12);
+  }
+  .action-input.notes-input::placeholder {
+    color: var(--clay-text-soft);
+    opacity: 0.5;
+    font-size: 9px;
+  }
+
   .stock-num { font-weight: 700; color: var(--clay-text); }
   .stock-zero { color: var(--clay-text-soft); opacity: 0.6; font-weight: 700; }
   .stock-total { color: var(--clay-success); font-weight: 800; }
@@ -783,7 +804,6 @@
     <div class="stat-badge status-followup">🔄 متابعة: <span class="num" id="statStatusFollowup">0</span></div>
     <div class="stat-badge status-email">📧 تم إرسال ايميل: <span class="num" id="statStatusEmail">0</span></div>
     <div class="stat-badge status-noanswer">📵 لم يتم الرد: <span class="num" id="statStatusNoAnswer">0</span></div>
-    <!-- ✅ Badge الجديد - ما تم الشغل عليه -->
     <div class="stat-badge work-progress">
       📊 اشتغلنا عليها: <span class="num" id="statWorkDone">0</span> من <span class="total-num" id="statWorkTotal">0</span>
       <span class="percent-badge" id="statWorkPercent">0%</span>
@@ -843,6 +863,7 @@ let columnFilters = {
   shippingName: '', shippingPhone: '', shippingProvince: '',
   shopifyPrice: '', stockPrice: '', priceDiff: '', status: 'all',
   productStatus: 'all', newOrderNumber: '', newOrderDate: '', newOrderValue: '',
+  notes: '',
   haram: '', bahary: '', suez: '', nasr: '', online: '', total: '', held: '', transfer: ''
 };
 
@@ -1078,6 +1099,12 @@ function cleanNewOrderValue(raw) {
   if (!s) return '';
   const n = Number(s);
   return isNaN(n) ? '' : String(n);
+}
+
+// ✅ تنظيف الملاحظات
+function cleanNotes(raw) {
+  if (raw === null || raw === undefined) return '';
+  return String(raw).trim();
 }
 
 function getSellerName(sku) {
@@ -1502,6 +1529,7 @@ function compare() {
         newOrderNumber: savedAction.newOrderNumber || '',
         newOrderDate: savedAction.newOrderDate || '',
         newOrderValue: savedAction.newOrderValue || '',
+        notes: savedAction.notes || '',
         productStatus: savedAction.productStatus || ''
       };
 
@@ -1623,7 +1651,7 @@ function compare() {
   }, 1600);
 }
 
-// ================== ✅ Stats (مع نسبة ما تم الشغل عليه) ==================
+// ================== Stats ==================
 function renderStats() {
   document.getElementById('statTotal').textContent = results.length;
   document.getElementById('statAvailable').textContent = results.filter(r => r.status === 'available').length;
@@ -1633,7 +1661,6 @@ function renderStats() {
   document.getElementById('statNosku').textContent = results.filter(r => r.status === 'nosku').length;
   document.getElementById('statPriceMismatch').textContent = results.filter(r => r.priceMismatch).length;
 
-  // ✅ حساب حالة المنتج - مرة واحدة لكل أوردر فريد
   const statusOrders = {
     done: new Set(),
     notdone: new Set(),
@@ -1642,10 +1669,7 @@ function renderStats() {
     noanswer: new Set()
   };
 
-  // ✅ إجمالي الأوردرات الفريدة (اللي ظهرت في results)
   const allUniqueOrders = new Set();
-
-  // ✅ الأوردرات اللي اشتغلنا عليها (أي أوردر عنده حالة غير فاضية)
   const workedOrders = new Set();
 
   results.forEach(r => {
@@ -1666,7 +1690,6 @@ function renderStats() {
   document.getElementById('statStatusEmail').textContent = statusOrders.email.size;
   document.getElementById('statStatusNoAnswer').textContent = statusOrders.noanswer.size;
 
-  // ✅ Badge "اشتغلنا عليها" - X من Y + النسبة
   const workedCount = workedOrders.size;
   const totalUnique = allUniqueOrders.size;
   const percent = totalUnique > 0 ? (workedCount / totalUnique) * 100 : 0;
@@ -1776,7 +1799,7 @@ function renderTopProducts() {
   `).join('');
 }
 
-// ================== Table Header ==================
+// ================== Table Header (مع ملاحظات) ==================
 const COLUMNS = [
   { key: 'idx', label: '#', filterType: 'none' },
   { key: 'order', label: 'الأوردر', filterType: 'text' },
@@ -1796,6 +1819,7 @@ const COLUMNS = [
   { key: 'newOrderNumber', label: 'رقم الأوردر الجديد', filterType: 'text' },
   { key: 'newOrderDate', label: 'تاريخ الأوردر الجديد', filterType: 'text' },
   { key: 'newOrderValue', label: 'قيمة الأوردر الجديد', filterType: 'text' },
+  { key: 'notes', label: '📝 ملاحظات', filterType: 'text' },   // ✅ العمود الجديد
   { key: 'haram', label: 'الهرم', filterType: 'text' },
   { key: 'bahary', label: 'البحر الأعظم', filterType: 'text' },
   { key: 'suez', label: 'السويس', filterType: 'text' },
@@ -1933,12 +1957,33 @@ function onNewOrderValueChange(order, value) {
   applyActionHighlight();
 }
 
+// ✅ معالج الملاحظات
+function onNotesChange(order, value) {
+  if (!order || order === '—') return;
+  const cleaned = cleanNotes(value);
+  if (!orderActions[order]) orderActions[order] = {};
+  orderActions[order].notes = cleaned;
+  results.forEach(r => { if (r.order === order) r.notes = cleaned; });
+
+  document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
+    const inputs = tr.querySelectorAll('.action-input');
+    const notesInp = inputs[3]; // الملاحظات index 3
+    if (notesInp && document.activeElement !== notesInp && notesInp.value !== cleaned) {
+      notesInp.value = cleaned;
+      notesInp.classList.toggle('has-value', !!cleaned);
+    }
+  });
+
+  scheduleSave();
+  applyActionHighlight();
+}
+
 function applyActionHighlight() {
   document.querySelectorAll('#resultBody tr').forEach(tr => {
     const order = tr.dataset.order;
     if (!order) return;
     const a = orderActions[order];
-    const has = a && (a.newOrderNumber || a.newOrderValue || a.productStatus);
+    const has = a && (a.newOrderNumber || a.newOrderValue || a.productStatus || a.notes);
     if (has) tr.classList.add('has-action');
     else tr.classList.remove('has-action');
   });
@@ -1952,7 +1997,8 @@ function renderTable() {
       product: r.name, sku: r.sku,
       shippingName: r.shippingName, shippingPhone: r.shippingPhone,
       shippingProvince: r.shippingProvince, priceDiff: r.priceDiff,
-      newOrderNumber: r.newOrderNumber, newOrderDate: r.newOrderDate, newOrderValue: r.newOrderValue
+      newOrderNumber: r.newOrderNumber, newOrderDate: r.newOrderDate, newOrderValue: r.newOrderValue,
+      notes: r.notes
     };
     for (const [k, v] of Object.entries(textFilters)) {
       const f = (columnFilters[k] || '').toLowerCase();
@@ -1975,7 +2021,7 @@ function renderTable() {
 
   const tbody = document.getElementById('resultBody');
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="26" style="padding:30px;color:var(--clay-text-soft);text-align:center;">مفيش نتائج مطابقة</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="27" style="padding:30px;color:var(--clay-text-soft);text-align:center;">مفيش نتائج مطابقة</td></tr>';
     return;
   }
 
@@ -2017,7 +2063,7 @@ function renderTable() {
 
     const rowClass = r.haramHighlight ? ' haram-highlight' : '';
     const a = orderActions[r.order];
-    const hasAction = a && (a.newOrderNumber || a.newOrderValue || a.productStatus);
+    const hasAction = a && (a.newOrderNumber || a.newOrderValue || a.productStatus || a.notes);
     const actionClass = hasAction ? ' has-action' : '';
 
     const statusSelectClass =
@@ -2050,6 +2096,12 @@ function renderTable() {
         value="${(r.newOrderValue || '').replace(/"/g, '&quot;')}"
         onchange="onNewOrderValueChange('${(r.order || '').replace(/'/g, "\\'")}', this.value)">`;
 
+    // ✅ حقل الملاحظات
+    const notesInput = `
+      <input type="text" class="action-input notes-input ${r.notes ? 'has-value' : ''}" placeholder="اكتب ملاحظة..."
+        value="${(r.notes || '').replace(/"/g, '&quot;')}"
+        onchange="onNotesChange('${(r.order || '').replace(/'/g, "\\'")}', this.value)">`;
+
     html += `<tr class="row-enter${rowClass}${actionClass}" data-order="${(r.order || '').replace(/"/g, '&quot;')}">
       <td>${i + 1}</td>
       <td><span class="order-link">${r.order || '—'}</span></td>
@@ -2069,6 +2121,7 @@ function renderTable() {
       <td>${newOrderInput}</td>
       <td>${newOrderDateInput}</td>
       <td>${newValueInput}</td>
+      <td>${notesInput}</td>
       <td>${numCell(r.haram)}</td>
       <td>${numCell(r.bahary)}</td>
       <td>${numCell(r.suez)}</td>
@@ -2087,7 +2140,7 @@ function exportCSV(type = 'all') {
   if (!results.length) return;
   const headers = ['الأوردر','الإيميل','تاريخ الإنشاء','الكمية','المنتج','كود الصنف',
     'اسم العميل','الموبايل','المحافظة','سعر Shopify','سعر Edara','فرق السعر','حالة الفرق','الحالة',
-    'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد',
+    'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد','ملاحظات',
     'الهرم','البحر الأعظم','السويس','مدينة نصر','Online','الإجمالي','المحتجز','رهن التحويل'];
 
   const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'Out of Stock', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
@@ -2112,7 +2165,7 @@ function exportCSV(type = 'all') {
     r.shopifyPrice, r.stockPrice, r.priceDiff,
     (r.priceDiff === '—' ? '—' : diffStatusAr[r.priceDiffStatus]),
     (r.status === 'seller' ? r.seller : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
-    r.productStatus || '', r.newOrderNumber || '', r.newOrderDate || '', r.newOrderValue || '',
+    r.productStatus || '', r.newOrderNumber || '', r.newOrderDate || '', r.newOrderValue || '', r.notes || '',
     r.haram, r.bahary, r.suez, r.nasr, r.online,
     r.total, r.held, r.transfer
   ]);
@@ -2134,7 +2187,7 @@ function exportCSV(type = 'all') {
 function buildExcelSheet(filteredResults, fileName) {
   const headers = ['الأوردر','الإيميل','تاريخ الإنشاء','الكمية','المنتج','كود الصنف',
     'اسم العميل','الموبايل','المحافظة','سعر Shopify','سعر Edara','فرق السعر','حالة الفرق','الحالة',
-    'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد',
+    'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد','ملاحظات',
     'الهرم','البحر الأعظم','السويس','مدينة نصر','Online','الإجمالي','المحتجز','رهن التحويل'];
 
   const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'Out of Stock', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
@@ -2148,7 +2201,7 @@ function buildExcelSheet(filteredResults, fileName) {
       r.shopifyPrice, r.stockPrice, r.priceDiff,
       (r.priceDiff === '—' ? '—' : diffStatusAr[r.priceDiffStatus]),
       (r.status === 'seller' ? r.seller : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
-      r.productStatus || '', r.newOrderNumber || '', r.newOrderDate || '', r.newOrderValue || '',
+      r.productStatus || '', r.newOrderNumber || '', r.newOrderDate || '', r.newOrderValue || '', r.notes || '',
       r.haram, r.bahary, r.suez, r.nasr, r.online,
       r.total, r.held, r.transfer
     ]);
@@ -2273,7 +2326,7 @@ async function clearAllActions() {
   if (!confirm('متأكد من مسح كل الأكشنز؟')) return;
   orderActions = {};
   results.forEach(r => {
-    r.productStatus = ''; r.newOrderNumber = ''; r.newOrderDate = ''; r.newOrderValue = '';
+    r.productStatus = ''; r.newOrderNumber = ''; r.newOrderDate = ''; r.newOrderValue = ''; r.notes = '';
   });
   await saveNow();
   renderStats(); renderKPIs(); renderTable(); updateSavedBadge();
@@ -2298,6 +2351,7 @@ async function clearAll() {
     shippingName:'', shippingPhone:'', shippingProvince:'',
     shopifyPrice:'', stockPrice:'', priceDiff:'', status:'all',
     productStatus:'all', newOrderNumber:'', newOrderDate:'', newOrderValue:'',
+    notes:'',
     haram:'', bahary:'', suez:'', nasr:'', online:'', total:'', held:'', transfer:''
   };
   document.getElementById('kpiRow').style.display = 'none';
@@ -2387,7 +2441,7 @@ window.addEventListener('load', async function() {
 
 window.addEventListener('beforeunload', () => {
   if (saveTimeout) clearTimeout(saveTimeout);
-  try { saveNow(); } catch(e) {}
+  try { saveNow(); } catch (e) {}
 });
 </script>
 </body>
