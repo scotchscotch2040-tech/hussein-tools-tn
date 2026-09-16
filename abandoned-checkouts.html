@@ -260,7 +260,6 @@
   .kpi-card.dates .kpi-value { color: var(--clay-blue); font-size: 10px; }
   .kpi-card .kpi-sub { font-size: 8px; color: var(--clay-text-soft); margin-top: 1px; }
 
-  /* ✅ Zoom أقوى وأوضح */
   .kpi-card.zoomable {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     cursor: default;
@@ -322,7 +321,29 @@
   .stat-badge.status-done .num { color: var(--clay-success); }
   .stat-badge.status-notdone .num { color: var(--clay-danger); }
   .stat-badge.status-followup .num { color: var(--clay-purple); }
-  .stat-badge.status-empty .num { color: var(--clay-text-soft); }
+  .stat-badge.status-email .num { color: var(--clay-blue); }
+  .stat-badge.status-noanswer .num { color: var(--clay-warning); }
+
+  /* ✅ Badge الجديد - ما تم الشغل عليه */
+  .stat-badge.work-progress {
+    background: linear-gradient(135deg, rgba(125, 155, 122, 0.2) 0%, rgba(184, 149, 110, 0.2) 100%);
+    border-color: var(--clay-success);
+    font-weight: 800;
+  }
+  .stat-badge.work-progress .num { color: var(--clay-success); font-size: 12px; }
+  .stat-badge.work-progress .total-num { color: var(--clay-text-soft); font-size: 11px; }
+  .stat-badge.work-progress .percent-badge {
+    display: inline-block; margin-right: 3px;
+    padding: 1px 6px; border-radius: 8px;
+    font-size: 9px; font-weight: 800;
+    background: var(--clay-success); color: #fff;
+  }
+  .stat-badge.work-progress .percent-badge.low {
+    background: var(--clay-danger);
+  }
+  .stat-badge.work-progress .percent-badge.mid {
+    background: var(--clay-warning);
+  }
 
   /* ============ TOP PRODUCTS ============ */
   .top-products-row {
@@ -760,7 +781,13 @@
     <div class="stat-badge status-done">✔️ تم تنفيذ الطلب: <span class="num" id="statStatusDone">0</span></div>
     <div class="stat-badge status-notdone">❌ لم يتم تنفيذ الطلب: <span class="num" id="statStatusNotDone">0</span></div>
     <div class="stat-badge status-followup">🔄 متابعة: <span class="num" id="statStatusFollowup">0</span></div>
-    <div class="stat-badge status-empty">⏳ بدون حالة: <span class="num" id="statStatusEmpty">0</span></div>
+    <div class="stat-badge status-email">📧 تم إرسال ايميل: <span class="num" id="statStatusEmail">0</span></div>
+    <div class="stat-badge status-noanswer">📵 لم يتم الرد: <span class="num" id="statStatusNoAnswer">0</span></div>
+    <!-- ✅ Badge الجديد - ما تم الشغل عليه -->
+    <div class="stat-badge work-progress">
+      📊 اشتغلنا عليها: <span class="num" id="statWorkDone">0</span> من <span class="total-num" id="statWorkTotal">0</span>
+      <span class="percent-badge" id="statWorkPercent">0%</span>
+    </div>
   </div>
 
   <!-- TOP 5 -->
@@ -1596,7 +1623,7 @@ function compare() {
   }, 1600);
 }
 
-// ================== Stats ==================
+// ================== ✅ Stats (مع نسبة ما تم الشغل عليه) ==================
 function renderStats() {
   document.getElementById('statTotal').textContent = results.length;
   document.getElementById('statAvailable').textContent = results.filter(r => r.status === 'available').length;
@@ -1606,24 +1633,52 @@ function renderStats() {
   document.getElementById('statNosku').textContent = results.filter(r => r.status === 'nosku').length;
   document.getElementById('statPriceMismatch').textContent = results.filter(r => r.priceMismatch).length;
 
+  // ✅ حساب حالة المنتج - مرة واحدة لكل أوردر فريد
   const statusOrders = {
-    done: new Set(), notdone: new Set(),
-    followup: new Set(), empty: new Set()
+    done: new Set(),
+    notdone: new Set(),
+    followup: new Set(),
+    email: new Set(),
+    noanswer: new Set()
   };
+
+  // ✅ إجمالي الأوردرات الفريدة (اللي ظهرت في results)
+  const allUniqueOrders = new Set();
+
+  // ✅ الأوردرات اللي اشتغلنا عليها (أي أوردر عنده حالة غير فاضية)
+  const workedOrders = new Set();
 
   results.forEach(r => {
     const orderKey = r.order || '—';
+    allUniqueOrders.add(orderKey);
+
     const status = (r.productStatus || '').trim();
-    if (status === 'تم تنفيذ الطلب') statusOrders.done.add(orderKey);
-    else if (status === 'لم يتم تنفيذ الطلب') statusOrders.notdone.add(orderKey);
-    else if (status === 'متابعة') statusOrders.followup.add(orderKey);
-    else if (status === '') statusOrders.empty.add(orderKey);
+    if (status === 'تم تنفيذ الطلب') { statusOrders.done.add(orderKey); workedOrders.add(orderKey); }
+    else if (status === 'لم يتم تنفيذ الطلب') { statusOrders.notdone.add(orderKey); workedOrders.add(orderKey); }
+    else if (status === 'متابعة') { statusOrders.followup.add(orderKey); workedOrders.add(orderKey); }
+    else if (status === 'تم إرسال ايميل') { statusOrders.email.add(orderKey); workedOrders.add(orderKey); }
+    else if (status === 'لم يتم الرد') { statusOrders.noanswer.add(orderKey); workedOrders.add(orderKey); }
   });
 
   document.getElementById('statStatusDone').textContent = statusOrders.done.size;
   document.getElementById('statStatusNotDone').textContent = statusOrders.notdone.size;
   document.getElementById('statStatusFollowup').textContent = statusOrders.followup.size;
-  document.getElementById('statStatusEmpty').textContent = statusOrders.empty.size;
+  document.getElementById('statStatusEmail').textContent = statusOrders.email.size;
+  document.getElementById('statStatusNoAnswer').textContent = statusOrders.noanswer.size;
+
+  // ✅ Badge "اشتغلنا عليها" - X من Y + النسبة
+  const workedCount = workedOrders.size;
+  const totalUnique = allUniqueOrders.size;
+  const percent = totalUnique > 0 ? (workedCount / totalUnique) * 100 : 0;
+
+  document.getElementById('statWorkDone').textContent = workedCount;
+  document.getElementById('statWorkTotal').textContent = totalUnique;
+  const percentEl = document.getElementById('statWorkPercent');
+  percentEl.textContent = percent.toFixed(1) + '%';
+  percentEl.classList.remove('low', 'mid');
+  if (percent >= 70) { /* default green */ }
+  else if (percent >= 40) percentEl.classList.add('mid');
+  else percentEl.classList.add('low');
 }
 
 // ================== KPIs ==================
@@ -1681,7 +1736,7 @@ function renderKPIs() {
   }
 }
 
-// ================== ✅ Top 5 (بدون مخزون) ==================
+// ================== Top 5 ==================
 function renderTopProducts() {
   const productMap = {};
   results.forEach(r => {
@@ -2332,7 +2387,7 @@ window.addEventListener('load', async function() {
 
 window.addEventListener('beforeunload', () => {
   if (saveTimeout) clearTimeout(saveTimeout);
-  try { saveNow(); } catch (e) {}
+  try { saveNow(); } catch(e) {}
 });
 </script>
 </body>
