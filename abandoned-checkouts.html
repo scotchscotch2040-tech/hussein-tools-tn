@@ -427,6 +427,7 @@
   .action-select.status-notdone { border-color: var(--clay-danger); color: var(--clay-danger); }
   .action-select.status-email { border-color: var(--clay-blue); color: var(--clay-blue); }
   .action-select.status-noanswer { border-color: var(--clay-warning); color: var(--clay-warning); }
+  .action-select.status-followup { border-color: var(--clay-purple); color: var(--clay-purple); }
 
   .action-input {
     padding: 4px 6px; font-size: 10px; font-family: inherit; font-weight: 600;
@@ -720,6 +721,7 @@ const PRODUCT_STATUS_OPTIONS = [
   { value: '', label: '— اختر —' },
   { value: 'تم تنفيذ الطلب', label: 'تم تنفيذ الطلب' },
   { value: 'لم يتم تنفيذ الطلب', label: 'لم يتم تنفيذ الطلب' },
+  { value: 'متابعة', label: 'متابعة' },
   { value: 'تم إرسال ايميل', label: 'تم إرسال ايميل' },
   { value: 'لم يتم الرد', label: 'لم يتم الرد' }
 ];
@@ -1286,6 +1288,29 @@ function compare() {
     showProgress(45, 'جاري مطابقة المخزون...', 'بيتم التحقق من الأكواد');
     results = [];
 
+    // ✅ نجمع أولاً إجمالي الكمية المطلوبة لكل SKU في كل أوردر
+    // عشان نعرف هل الأوردر كامل متوفر في الهرم ولا لأ
+    const orderSkuDemand = {};
+    ordersRows.forEach(item => {
+      const ord = item.order || '—';
+      const sku = item.sku || '—';
+      const key = ord + '||' + sku;
+      if (!orderSkuDemand[key]) orderSkuDemand[key] = 0;
+      orderSkuDemand[key] += (item.qty || 1);
+    });
+
+    // ✅ لكل أوردر: هل كل منتج فيه متوفر بالكمية المطلوبة في الهرم؟
+    const orderFullyInHaram = {};
+    Object.keys(orderSkuDemand).forEach(key => {
+      const [ord, sku] = key.split('||');
+      if (orderFullyInHaram[ord] === false) return; // خلاص اتأكد إن مش كامل
+      const stock = stockMap[sku];
+      if (!stock) { orderFullyInHaram[ord] = false; return; }
+      const required = orderSkuDemand[key];
+      if (stock.haram < required) { orderFullyInHaram[ord] = false; return; }
+      if (orderFullyInHaram[ord] === undefined) orderFullyInHaram[ord] = true;
+    });
+
     ordersRows.forEach(item => {
       const sku = item.sku;
       const savedAction = orderActions[item.order] || {};
@@ -1334,7 +1359,9 @@ function compare() {
       const priceMismatch = (item.price > 0 && stock.price > 0 && item.price !== stock.price);
       const totalAvailable = stock.haram + stock.bahary + stock.suez + stock.nasr + stock.online;
       const pd = getPriceDiff(item.price, stock.price);
-      const haramHighlight = stock.haram > 0;
+
+      // ✅ التظليل البرتقالي: الأوردر كامل متوفر في الهرم
+      const haramHighlight = orderFullyInHaram[item.order] === true;
 
       if (totalAvailable <= 0 && stock.total <= 0) {
         results.push({
@@ -1554,6 +1581,7 @@ function buildTableHeader() {
         <option value="all" ${v === 'all' ? 'selected' : ''}>الكل</option>
         <option value="تم تنفيذ الطلب" ${v === 'تم تنفيذ الطلب' ? 'selected' : ''}>تم تنفيذ</option>
         <option value="لم يتم تنفيذ الطلب" ${v === 'لم يتم تنفيذ الطلب' ? 'selected' : ''}>لم يتم</option>
+        <option value="متابعة" ${v === 'متابعة' ? 'selected' : ''}>متابعة</option>
         <option value="تم إرسال ايميل" ${v === 'تم إرسال ايميل' ? 'selected' : ''}>ايميل</option>
         <option value="لم يتم الرد" ${v === 'لم يتم الرد' ? 'selected' : ''}>لا رد</option>
         <option value="__empty__" ${v === '__empty__' ? 'selected' : ''}>فاضي</option>
@@ -1579,9 +1607,10 @@ function onProductStatusChange(order, value) {
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"] .action-select`).forEach(sel => {
     if (sel.value !== value) {
       sel.value = value;
-      sel.classList.remove('status-done', 'status-notdone', 'status-email', 'status-noanswer');
+      sel.classList.remove('status-done', 'status-notdone', 'status-followup', 'status-email', 'status-noanswer');
       if (value === 'تم تنفيذ الطلب') sel.classList.add('status-done');
       else if (value === 'لم يتم تنفيذ الطلب') sel.classList.add('status-notdone');
+      else if (value === 'متابعة') sel.classList.add('status-followup');
       else if (value === 'تم إرسال ايميل') sel.classList.add('status-email');
       else if (value === 'لم يتم الرد') sel.classList.add('status-noanswer');
     }
@@ -1600,7 +1629,6 @@ function onNewOrderNumberChange(order, value) {
   const oldNumber = orderActions[order].newOrderNumber || '';
   orderActions[order].newOrderNumber = cleaned;
 
-  // لو الرقم اتغير (سواء اتكتب لأول مرة أو اتغير لرقم تاني)
   let dateValue = orderActions[order].newOrderDate || '';
   if (cleaned && cleaned !== oldNumber) {
     dateValue = formatDateTimeAr(Date.now());
@@ -1617,7 +1645,6 @@ function onNewOrderNumberChange(order, value) {
     }
   });
 
-  // حدّث كل الصفوف في الـ DOM (بدون لمس الـ input اللي عليه focus)
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
     const inputs = tr.querySelectorAll('.action-input');
     const numInput = inputs[0];
@@ -1645,7 +1672,7 @@ function onNewOrderValueChange(order, value) {
 
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
     const inputs = tr.querySelectorAll('.action-input');
-    const inp = inputs[2]; // القيمة بقت index 2
+    const inp = inputs[2];
     if (inp && document.activeElement !== inp && inp.value !== cleaned) inp.value = cleaned;
   });
 
@@ -1744,6 +1771,7 @@ function renderTable() {
     const statusSelectClass =
       r.productStatus === 'تم تنفيذ الطلب' ? 'status-done' :
       r.productStatus === 'لم يتم تنفيذ الطلب' ? 'status-notdone' :
+      r.productStatus === 'متابعة' ? 'status-followup' :
       r.productStatus === 'تم إرسال ايميل' ? 'status-email' :
       r.productStatus === 'لم يتم الرد' ? 'status-noanswer' : '';
 
