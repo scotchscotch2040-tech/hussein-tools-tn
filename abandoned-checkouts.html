@@ -10,7 +10,7 @@
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 15px;
+    padding: 10px;
     min-height: 100vh;
     background: var(--clay-bg);
     transition: all 0.4s ease;
@@ -64,26 +64,28 @@
   .header-top {
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px; flex-wrap: wrap;
-    padding: 8px 14px; background: var(--clay-card);
+    padding: 6px 12px; background: var(--clay-card);
     border-radius: var(--clay-radius); box-shadow: var(--clay-shadow);
     border: 1px solid var(--clay-border);
-    margin-bottom: 10px;
-    min-height: 50px;
+    margin-bottom: 8px;
+    min-height: 44px;
+    position: relative;
+    z-index: 100;
   }
-  .header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
   .header-logo {
-    width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+    width: 30px; height: 30px; border-radius: 50%; object-fit: cover;
     border: 2px solid var(--clay-accent); flex-shrink: 0;
   }
   .header-info { display: flex; flex-direction: column; min-width: 0; }
-  .header-title { color: var(--clay-text); font-size: 15px; font-weight: 700; white-space: nowrap; }
-  .header-subtitle { color: var(--clay-text-soft); font-size: 10px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header-title { color: var(--clay-text); font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .header-subtitle { color: var(--clay-text-soft); font-size: 9px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .header-chips { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .header-chips { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
   .h-chip {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 4px 10px; border-radius: 20px;
-    font-size: 11px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 3px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 700;
     border: 1px solid var(--clay-border);
     background: var(--clay-bg); color: var(--clay-text);
     white-space: nowrap;
@@ -103,7 +105,7 @@
 
   .theme-toggle {
     background: var(--clay-card); border: 1px solid var(--clay-border);
-    border-radius: 50%; width: 34px; height: 34px; font-size: 16px;
+    border-radius: 50%; width: 30px; height: 30px; font-size: 14px;
     cursor: pointer; transition: all 0.3s ease;
     display: flex; align-items: center; justify-content: center;
     color: var(--clay-text); flex-shrink: 0;
@@ -111,29 +113,80 @@
   }
   .theme-toggle:hover { transform: rotate(30deg) scale(1.1); }
 
+  /* ============ HEADER DROPDOWNS ============ */
+  .header-actions {
+    display: flex; gap: 5px; align-items: center; flex-wrap: wrap;
+  }
+  .dd-wrap { position: relative; display: inline-block; }
+  .dd-toggle {
+    padding: 5px 10px; border-radius: var(--clay-radius-sm);
+    font-size: 10px; font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: inherit; color: var(--clay-text);
+    background: var(--clay-bg);
+    box-shadow: var(--clay-shadow-sm);
+    border: 1px solid var(--clay-border); white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .dd-toggle:hover { transform: translateY(-1px); }
+  .dd-toggle .arrow { font-size: 8px; transition: transform 0.2s ease; }
+  .dd-wrap.open .dd-toggle .arrow { transform: rotate(180deg); }
+  .dd-toggle.primary { color: var(--clay-success); }
+  .dd-toggle.danger { color: var(--clay-danger); }
+  .dd-toggle.gold { color: var(--clay-gold); }
+
+  .dd-menu {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 190px; background: var(--clay-card);
+    border-radius: var(--clay-radius-sm);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border: 1px solid var(--clay-border);
+    padding: 5px; z-index: 200;
+    animation: ddFadeIn 0.18s ease;
+  }
+  .dd-wrap.open .dd-menu { display: block; }
+  @keyframes ddFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .dd-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 9px; border-radius: 8px;
+    font-size: 10px; font-weight: 700; color: var(--clay-text);
+    cursor: pointer; transition: all 0.15s ease;
+    border: none; background: transparent; width: 100%;
+    font-family: inherit; text-align: right;
+    white-space: nowrap;
+  }
+  .dd-item:hover { background: var(--clay-bg); }
+  .dd-item.danger { color: var(--clay-danger); }
+  .dd-item.success { color: var(--clay-success); }
+  .dd-item.gold { color: var(--clay-gold); }
+
   /* ============ UPLOAD ============ */
   .upload-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-    margin-bottom: 10px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-bottom: 8px;
   }
   @media (max-width: 900px) { .upload-grid { grid-template-columns: 1fr; } }
 
   .upload-card {
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
-    padding: 10px 12px;
+    padding: 8px 10px;
     border-top: 3px solid var(--clay-accent);
   }
   .upload-card.orders { border-top-color: var(--clay-purple); }
 
   .upload-card .card-header-row {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 8px; margin-bottom: 6px;
+    gap: 8px; margin-bottom: 5px;
   }
-  .upload-card h3 { margin: 0; color: var(--clay-text); font-size: 12px; font-weight: 700; }
+  .upload-card h3 { margin: 0; color: var(--clay-text); font-size: 11px; font-weight: 700; }
 
   .clear-card-btn {
-    padding: 3px 8px; font-size: 10px;
+    padding: 2px 7px; font-size: 9px;
     border: 1px solid var(--clay-border); border-radius: 8px;
     background: var(--clay-card); color: var(--clay-danger);
     cursor: pointer; font-family: inherit; font-weight: 700;
@@ -143,13 +196,13 @@
   .clear-card-btn:hover { transform: translateY(-1px); }
 
   .upload-body {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: stretch;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch;
   }
   @media (max-width: 600px) { .upload-body { grid-template-columns: 1fr; } }
 
   .file-drop {
     border: 2px dashed var(--clay-border); border-radius: var(--clay-radius-sm);
-    padding: 12px 8px; text-align: center; cursor: pointer;
+    padding: 8px 6px; text-align: center; cursor: pointer;
     transition: all 0.3s ease; background: var(--clay-bg);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     min-height: 70px;
@@ -157,81 +210,95 @@
   .file-drop:hover, .file-drop.dragover { border-color: var(--clay-accent); }
   .file-drop.has-file { border-color: var(--clay-success); background: rgba(125, 155, 122, 0.08); }
   .file-drop input { display: none; }
-  .file-drop .icon { font-size: 18px; margin-bottom: 2px; }
-  .file-drop .label { font-size: 10px; color: var(--clay-text-soft); font-weight: 600; }
-  .file-drop .filename { font-size: 9px; color: var(--clay-success); font-weight: 600; margin-top: 3px; word-break: break-all; max-width: 100%; }
+  .file-drop .icon { font-size: 16px; margin-bottom: 2px; }
+  .file-drop .label { font-size: 9px; color: var(--clay-text-soft); font-weight: 600; }
+  .file-drop .filename { font-size: 8px; color: var(--clay-success); font-weight: 600; margin-top: 2px; word-break: break-all; max-width: 100%; }
 
   .paste-wrap { display: flex; flex-direction: column; }
   .paste-area {
-    flex: 1; min-height: 70px; padding: 8px 10px; font-size: 10px;
+    flex: 1; min-height: 70px; padding: 6px 8px; font-size: 9px;
     border: 1px solid var(--clay-border); border-radius: var(--clay-radius-sm);
     background: var(--clay-bg); color: var(--clay-text); font-family: inherit;
     resize: none;
   }
   .paste-area:focus { outline: none; border-color: var(--clay-accent); }
-  .paste-area::placeholder { color: var(--clay-text-soft); opacity: 0.6; font-size: 10px; }
+  .paste-area::placeholder { color: var(--clay-text-soft); opacity: 0.6; font-size: 9px; }
 
-  /* ============ ACTIONS ============ */
-  .actions {
-    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
-    margin-bottom: 10px; align-items: center;
-  }
-
-  .btn {
-    padding: 6px 12px; border: none; border-radius: var(--clay-radius-sm);
-    font-size: 11px; font-weight: 700; cursor: pointer;
-    transition: all 0.2s ease; display: inline-flex; align-items: center;
-    gap: 4px; font-family: inherit; color: var(--clay-text);
-    background: var(--clay-card);
-    box-shadow: var(--clay-shadow-sm);
-    border: 1px solid var(--clay-border); white-space: nowrap;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-primary-outline { color: var(--clay-success); }
-  .btn-danger-outline { color: var(--clay-danger); }
-  .btn-export { color: var(--clay-gold); }
-
-  /* ============ KPI ROW ============ */
+  /* ============ ✅ KPI ROW - مضغوطة واحترافية ============ */
   .kpi-row {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-    margin-bottom: 10px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    margin-bottom: 6px;
   }
   @media (max-width: 1200px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 700px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
 
   .kpi-card {
-    background: var(--clay-card); border-radius: var(--clay-radius);
-    box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
-    padding: 8px 10px; text-align: center;
-    border-right: 4px solid var(--clay-accent);
+    background: var(--clay-card); border-radius: 10px;
+    box-shadow: var(--clay-shadow-sm); border: 1px solid var(--clay-border);
+    padding: 5px 8px; text-align: center;
+    border-right: 3px solid var(--clay-accent);
+    position: relative;
+    overflow: hidden;
   }
   .kpi-card.money { border-right-color: var(--clay-gold); }
   .kpi-card.avg { border-right-color: var(--clay-orange); }
   .kpi-card.new-orders { border-right-color: var(--clay-success); }
   .kpi-card.new-money { border-right-color: var(--clay-orange); }
   .kpi-card.dates { border-right-color: var(--clay-blue); }
-  .kpi-card .kpi-title { font-size: 10px; color: var(--clay-text-soft); font-weight: 700; margin-bottom: 3px; }
-  .kpi-card .kpi-value { font-size: 16px; font-weight: 700; color: var(--clay-gold); }
+  .kpi-card .kpi-title {
+    font-size: 9px; color: var(--clay-text-soft); font-weight: 700;
+    margin-bottom: 2px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .kpi-card .kpi-value { font-size: 13px; font-weight: 800; color: var(--clay-gold); line-height: 1.2; }
   .kpi-card.money .kpi-value { color: var(--clay-gold); }
   .kpi-card.avg .kpi-value { color: var(--clay-orange); }
   .kpi-card.new-orders .kpi-value { color: var(--clay-success); }
   .kpi-card.new-money .kpi-value { color: var(--clay-orange); }
-  .kpi-card.dates .kpi-value { color: var(--clay-blue); font-size: 12px; }
-  .kpi-card .kpi-sub { font-size: 9px; color: var(--clay-text-soft); margin-top: 2px; }
+  .kpi-card.dates .kpi-value { color: var(--clay-blue); font-size: 10px; }
+  .kpi-card .kpi-sub { font-size: 8px; color: var(--clay-text-soft); margin-top: 1px; }
 
-  /* ============ STATS BADGES ============ */
+  .kpi-card.zoomable {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+    transform-origin: center center;
+    will-change: transform;
+  }
+  .kpi-card.zoomable:hover {
+    transform: scale(1.05);
+    box-shadow: 8px 8px 20px rgba(0,0,0,0.14), -8px -8px 20px rgba(255,255,255,0.55);
+    z-index: 5;
+  }
+  [data-theme="dark"] .kpi-card.zoomable:hover {
+    box-shadow: 8px 8px 20px rgba(0,0,0,0.5), -8px -8px 20px rgba(78,73,67,0.5);
+  }
+
+  .kpi-percent {
+    display: inline-block; margin-right: 4px;
+    padding: 0px 5px; border-radius: 8px;
+    font-size: 8px; font-weight: 800;
+    background: var(--clay-orange-soft);
+    color: var(--clay-orange);
+    border: 1px solid var(--clay-orange);
+    vertical-align: middle;
+  }
+  .kpi-percent.high { background: rgba(125, 155, 122, 0.2); color: var(--clay-success); border-color: var(--clay-success); }
+  .kpi-percent.low { background: rgba(181, 122, 122, 0.2); color: var(--clay-danger); border-color: var(--clay-danger); }
+
+  /* ============ ✅ STATS - Badges مضغوطة ============ */
   .stats {
-    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
-    margin-bottom: 10px;
+    display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+    margin-bottom: 6px;
   }
   .stat-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 10px; border-radius: 20px;
-    font-size: 11px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 14px;
+    font-size: 10px; font-weight: 700;
     background: var(--clay-card); border: 1px solid var(--clay-border);
     box-shadow: var(--clay-shadow-sm);
+    white-space: nowrap;
   }
-  .stat-badge .num { font-size: 13px; font-weight: 800; }
+  .stat-badge .num { font-size: 11px; font-weight: 800; }
   .stat-badge.total .num { color: var(--clay-blue); }
   .stat-badge.available .num { color: var(--clay-success); }
   .stat-badge.notinbranch .num { color: #c48a8a; }
@@ -239,30 +306,35 @@
   .stat-badge.oos .num { color: var(--clay-danger); }
   .stat-badge.nosku .num { color: var(--clay-warning); }
   .stat-badge.pricemismatch .num { color: var(--clay-gold); }
+  /* ✅ حالة المنتج الجديدة */
+  .stat-badge.status-done .num { color: var(--clay-success); }
+  .stat-badge.status-notdone .num { color: var(--clay-danger); }
+  .stat-badge.status-followup .num { color: var(--clay-purple); }
+  .stat-badge.status-empty .num { color: var(--clay-text-soft); }
 
   /* ============ TOP PRODUCTS ============ */
   .top-products-row {
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
     border-right: 4px solid var(--clay-orange);
-    padding: 8px 12px; margin-bottom: 10px;
+    padding: 6px 10px; margin-bottom: 6px;
   }
   .top-products-title {
-    font-size: 11px; font-weight: 700; color: var(--clay-text);
-    margin-bottom: 6px;
+    font-size: 10px; font-weight: 700; color: var(--clay-text);
+    margin-bottom: 5px;
   }
   .top-products-list {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
   }
   @media (max-width: 900px) { .top-products-list { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 500px) { .top-products-list { grid-template-columns: 1fr; } }
 
   .top-product-item {
     background: var(--clay-bg);
-    border-radius: var(--clay-radius-sm);
-    padding: 5px 8px;
+    border-radius: 8px;
+    padding: 5px 7px;
     border: 1px solid var(--clay-border);
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 5px;
     transition: all 0.2s ease;
   }
   .top-product-item:hover { border-color: var(--clay-orange); }
@@ -270,7 +342,7 @@
     width: 20px; height: 20px; border-radius: 50%;
     background: var(--clay-orange); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 11px; flex-shrink: 0;
+    font-weight: 700; font-size: 10px; flex-shrink: 0;
   }
   .top-product-rank.rank-1 { background: linear-gradient(135deg, #ff9030 0%, #ffb347 100%); }
   .top-product-rank.rank-2 { background: linear-gradient(135deg, #b8956e 0%, #d4ae84 100%); }
@@ -279,38 +351,35 @@
   .top-product-rank.rank-5 { background: linear-gradient(135deg, #7a8fa6 0%, #9ab0c7 100%); }
   .top-product-info { flex: 1; min-width: 0; }
   .top-product-name {
-    font-size: 10px; font-weight: 700; color: var(--clay-text);
+    font-size: 9px; font-weight: 700; color: var(--clay-text);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     margin-bottom: 1px;
   }
   .top-product-meta {
-    font-size: 9px; color: var(--clay-text-soft); font-weight: 600;
-    display: flex; gap: 6px; flex-wrap: wrap;
+    font-size: 8px; color: var(--clay-text-soft); font-weight: 600;
+    display: flex; gap: 5px; flex-wrap: wrap;
   }
   .top-product-meta strong { color: var(--clay-orange); }
-
-  /* ============ EXPORT ROW ============ */
-  .export-row {
-    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-    margin-bottom: 10px;
-  }
+  .top-product-meta .stock-tag { color: var(--clay-success); font-weight: 700; }
+  .top-product-meta .stock-tag.zero { color: var(--clay-text-soft); opacity: 0.6; }
+  .top-product-meta .stock-tag.missing { color: var(--clay-danger); font-weight: 700; }
 
   /* ============ PROGRESS ============ */
   .progress-wrap {
-    display: none; max-width: 600px; margin: 0 auto 12px;
+    display: none; max-width: 500px; margin: 0 auto 8px;
     background: var(--clay-card); border-radius: var(--clay-radius);
-    padding: 12px 16px; box-shadow: var(--clay-shadow);
+    padding: 10px 14px; box-shadow: var(--clay-shadow);
     border: 1px solid var(--clay-border);
   }
   .progress-wrap.show { display: block; }
   .progress-label {
     display: flex; justify-content: space-between; align-items: center;
-    color: var(--clay-text); font-weight: 700; font-size: 12px;
-    margin-bottom: 6px;
+    color: var(--clay-text); font-weight: 700; font-size: 11px;
+    margin-bottom: 5px;
   }
-  .progress-label .progress-percent { color: var(--clay-orange); font-size: 13px; }
+  .progress-label .progress-percent { color: var(--clay-orange); font-size: 12px; }
   .progress-bar-bg {
-    width: 100%; height: 10px; border-radius: 20px;
+    width: 100%; height: 8px; border-radius: 20px;
     background: var(--clay-bg); overflow: hidden;
   }
   .progress-bar-fill {
@@ -320,7 +389,7 @@
     transition: width 0.3s ease;
   }
   .progress-sub {
-    font-size: 10px; color: var(--clay-text-soft); margin-top: 4px;
+    font-size: 9px; color: var(--clay-text-soft); margin-top: 3px;
     text-align: center; font-weight: 600;
   }
 
@@ -338,21 +407,28 @@
   .skeleton-table {
     display: none; background: var(--clay-card);
     border-radius: var(--clay-radius); box-shadow: var(--clay-shadow);
-    border: 1px solid var(--clay-border); padding: 12px; margin-bottom: 10px;
+    border: 1px solid var(--clay-border); padding: 12px; margin-bottom: 8px;
   }
   .skeleton-table.show { display: block; }
   .skeleton-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
-  .skeleton-cell { height: 16px; border-radius: 4px; flex: 1; }
+  .skeleton-cell { height: 14px; border-radius: 4px; flex: 1; }
   .skeleton-cell.short { flex: 0.5; }
   .skeleton-cell.med { flex: 0.8; }
 
-  /* ============ TABLE ============ */
+  /* ============ ✅ TABLE - مكبّر ============ */
   .table-wrap {
     background: var(--clay-card); border-radius: var(--clay-radius);
     overflow: hidden; box-shadow: var(--clay-shadow);
-    border: 1px solid var(--clay-border); margin-bottom: 10px;
+    border: 1px solid var(--clay-border); margin-bottom: 8px;
   }
-  .table-scroll { overflow-x: auto; max-height: calc(100vh - 420px); min-height: 300px; overflow-y: auto; }
+
+  .table-scroll {
+    overflow-x: auto;
+    /* ✅ تكبير الجدول لاستغلال المساحة */
+    max-height: calc(100vh - 280px);
+    min-height: 500px;
+    overflow-y: auto;
+  }
 
   table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
   thead { position: sticky; top: 0; z-index: 10; }
@@ -381,6 +457,7 @@
     border-bottom: 1px solid var(--clay-border);
     border-left: 1px solid rgba(213, 206, 195, 0.4);
     color: var(--clay-text);
+    font-weight: 700;
   }
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
   tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
@@ -430,7 +507,7 @@
   .action-select.status-followup { border-color: var(--clay-purple); color: var(--clay-purple); }
 
   .action-input {
-    padding: 4px 6px; font-size: 10px; font-family: inherit; font-weight: 600;
+    padding: 4px 6px; font-size: 10px; font-family: inherit; font-weight: 700;
     background: var(--clay-bg); color: var(--clay-text);
     border: 1px solid var(--clay-border); border-radius: 6px;
     text-align: center; width: 105px;
@@ -438,7 +515,6 @@
   .action-input:focus { outline: none; border-color: var(--clay-orange); }
   .action-input::placeholder { color: var(--clay-text-soft); opacity: 0.4; font-size: 9px; }
 
-  /* Input التاريخ - Auto-filled */
   .action-input.auto-filled-date {
     background: rgba(255, 144, 48, 0.08);
     border-color: var(--clay-orange);
@@ -457,13 +533,13 @@
   }
 
   .stock-num { font-weight: 700; color: var(--clay-text); }
-  .stock-zero { color: var(--clay-text-soft); opacity: 0.5; font-weight: 400; }
-  .stock-total { color: var(--clay-success); font-weight: 700; }
-  .stock-held { color: var(--clay-gold); font-weight: 600; }
+  .stock-zero { color: var(--clay-text-soft); opacity: 0.6; font-weight: 700; }
+  .stock-total { color: var(--clay-success); font-weight: 800; }
+  .stock-held { color: var(--clay-gold); font-weight: 700; }
 
-  .order-link { color: var(--clay-blue); font-weight: 700; font-size: 11px; }
+  .order-link { color: var(--clay-blue); font-weight: 800; font-size: 11px; }
   .email-link, .phone-link {
-    cursor: pointer; font-size: 10px; font-weight: 600;
+    cursor: pointer; font-size: 10px; font-weight: 700;
     padding: 1px 4px; border-radius: 4px;
     display: inline-flex; align-items: center; gap: 2px;
   }
@@ -475,13 +551,14 @@
   .product-name {
     text-align: right !important; max-width: 220px;
     white-space: normal; font-size: 11px; line-height: 1.4;
+    font-weight: 700;
   }
 
   .price-cell { font-weight: 700; color: var(--clay-gold); direction: ltr; }
   .price-mismatch { color: var(--clay-danger); position: relative; }
   .price-mismatch::after { content: " ⚠️"; font-size: 10px; }
 
-  .date-cell { font-size: 10px; color: var(--clay-text-soft); direction: ltr; }
+  .date-cell { font-size: 10px; color: var(--clay-text-soft); direction: ltr; font-weight: 700; }
 
   .empty-state {
     text-align: center; padding: 40px 20px; color: var(--clay-text-soft);
@@ -516,13 +593,14 @@
   .toast .toast-icon { font-size: 16px; }
 
   @media (max-width: 820px) {
-    body { padding: 10px; }
-    .header-top { flex-direction: column; align-items: flex-start; padding: 8px 12px; }
+    body { padding: 8px; }
+    .header-top { flex-direction: column; align-items: flex-start; padding: 6px 10px; }
     .header-chips { width: 100%; }
+    .header-actions { width: 100%; }
     .upload-body { grid-template-columns: 1fr; }
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .top-products-list { grid-template-columns: 1fr; }
-    .table-scroll { max-height: calc(100vh - 500px); }
+    .table-scroll { max-height: calc(100vh - 400px); min-height: 350px; }
   }
 </style>
 </head>
@@ -540,12 +618,44 @@
         <span class="header-subtitle">Created By Hussein Gamal Sr.Operation &amp; 3PL Logistics</span>
       </div>
     </div>
+
     <div class="header-chips">
       <span class="h-chip auto">⚡ تلقائي</span>
       <span class="h-chip saved" id="savedBadge">💾 0 محفوظ</span>
       <span class="h-chip warn" id="warnBadge">⚠️ الاستوك اتغير</span>
       <span class="h-chip time" id="lastUpdateChip">📅 آخر تحديث: —</span>
       <span class="h-chip stock" id="stockDateChip">📊 المخزون: —</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="dd-wrap" id="ddActions">
+        <button class="dd-toggle primary" onclick="toggleDD('ddActions', event)">
+          ⚙️ الإجراءات <span class="arrow">▼</span>
+        </button>
+        <div class="dd-menu">
+          <button class="dd-item success" onclick="exportBackup(); closeAllDD()">⬇️ نسخة احتياطية</button>
+          <button class="dd-item success" onclick="document.getElementById('restoreFile').click(); closeAllDD()">⬆️ استيراد</button>
+          <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="importBackup(event)">
+          <button class="dd-item danger" onclick="clearAllActions(); closeAllDD()">🗑️ مسح الأكشنز</button>
+          <button class="dd-item danger" onclick="clearAll(); closeAllDD()">🗑️ مسح الكل</button>
+        </div>
+      </div>
+
+      <div class="dd-wrap" id="ddExport">
+        <button class="dd-toggle gold" onclick="toggleDD('ddExport', event)">
+          ⬇️ تصدير <span class="arrow">▼</span>
+        </button>
+        <div class="dd-menu">
+          <button class="dd-item gold" onclick="exportAllExcel(); closeAllDD()">⬇️ الكل Excel</button>
+          <button class="dd-item gold" onclick="exportCSV('seller'); closeAllDD()">⬇️ موردين</button>
+          <button class="dd-item gold" onclick="exportCSV('oos'); closeAllDD()">⬇️ Out of Stock</button>
+          <button class="dd-item gold" onclick="exportCSV('nosku'); closeAllDD()">⬇️ ملهوش كود</button>
+          <button class="dd-item gold" onclick="exportCSV('pricemismatch'); closeAllDD()">⬇️ سعر مختلف</button>
+          <button class="dd-item gold" onclick="exportCSV('notinbranch'); closeAllDD()">⬇️ مش في الهرم</button>
+          <button class="dd-item gold" onclick="exportFollowupExcel(); closeAllDD()">📞 فولو أب</button>
+        </div>
+      </div>
+
       <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
     </div>
   </div>
@@ -591,15 +701,6 @@
     </div>
   </div>
 
-  <!-- ACTIONS -->
-  <div class="actions">
-    <button class="btn btn-primary-outline" onclick="exportBackup()">⬇️ نسخة احتياطية</button>
-    <button class="btn btn-primary-outline" onclick="document.getElementById('restoreFile').click()">⬆️ استيراد</button>
-    <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="importBackup(event)">
-    <button class="btn btn-danger-outline" onclick="clearAllActions()">🗑️ مسح الأكشنز</button>
-    <button class="btn btn-danger-outline" onclick="clearAll()">🗑️ مسح الكل</button>
-  </div>
-
   <!-- PROGRESS -->
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-label">
@@ -612,25 +713,25 @@
 
   <!-- KPI ROW -->
   <div class="kpi-row" id="kpiRow" style="display:none;">
-    <div class="kpi-card money">
+    <div class="kpi-card money zoomable">
       <div class="kpi-title">💰 إجمالي القيمة المفقودة</div>
       <div class="kpi-value" id="kpiMoney">0 EGP</div>
       <div class="kpi-sub" id="kpiMoneySub">مجموع أسعار الأوردرات</div>
     </div>
-    <div class="kpi-card avg">
+    <div class="kpi-card avg zoomable">
       <div class="kpi-title">📊 متوسط قيمة الأوردر</div>
       <div class="kpi-value" id="kpiAvg">0 EGP</div>
       <div class="kpi-sub" id="kpiAvgSub">متوسط لكل أوردر فريد</div>
     </div>
-    <div class="kpi-card new-orders">
+    <div class="kpi-card new-orders zoomable">
       <div class="kpi-title">✅ عدد الأوردرات الجديدة</div>
       <div class="kpi-value" id="kpiNewOrders">0</div>
       <div class="kpi-sub">أوردر فريد برقم جديد</div>
     </div>
-    <div class="kpi-card new-money">
-      <div class="kpi-title">💵 إجمالي المبالغ الجديدة</div>
+    <div class="kpi-card new-money zoomable">
+      <div class="kpi-title">💵 إجمالي المبالغ الجديدة <span class="kpi-percent" id="kpiNewPercent">0%</span></div>
       <div class="kpi-value" id="kpiNewMoney">0 EGP</div>
-      <div class="kpi-sub">مجموع القيم الجديدة</div>
+      <div class="kpi-sub" id="kpiNewMoneySub">من إجمالي القيمة المفقودة</div>
     </div>
     <div class="kpi-card dates">
       <div class="kpi-title">📅 نطاق التواريخ</div>
@@ -639,32 +740,25 @@
     </div>
   </div>
 
-  <!-- STATS BADGES -->
+  <!-- ✅ STATS BADGES - مع حالة المنتج -->
   <div class="stats" id="stats" style="display:none;">
     <div class="stat-badge total">📦 إجمالي: <span class="num" id="statTotal">0</span></div>
     <div class="stat-badge available">✅ متوفر: <span class="num" id="statAvailable">0</span></div>
     <div class="stat-badge notinbranch">🏢 مش في الهرم: <span class="num" id="statNotInBranch">0</span></div>
     <div class="stat-badge seller">🌍 موردين: <span class="num" id="statSeller">0</span></div>
-    <div class="stat-badge oos">🚫 OOS: <span class="num" id="statOos">0</span></div>
+    <div class="stat-badge oos">🚫 Out of Stock: <span class="num" id="statOos">0</span></div>
     <div class="stat-badge nosku">❌ ملهوش كود: <span class="num" id="statNosku">0</span></div>
     <div class="stat-badge pricemismatch">⚠️ سعر مختلف: <span class="num" id="statPriceMismatch">0</span></div>
+    <div class="stat-badge status-done">✔️ تم تنفيذ الطلب: <span class="num" id="statStatusDone">0</span></div>
+    <div class="stat-badge status-notdone">❌ لم يتم تنفيذ الطلب: <span class="num" id="statStatusNotDone">0</span></div>
+    <div class="stat-badge status-followup">🔄 متابعة: <span class="num" id="statStatusFollowup">0</span></div>
+    <div class="stat-badge status-empty">⏳ بدون حالة: <span class="num" id="statStatusEmpty">0</span></div>
   </div>
 
   <!-- TOP 5 -->
   <div class="top-products-row" id="topProductsRow" style="display:none;">
     <div class="top-products-title">🏆 أعلى 5 منتجات مطلوبة</div>
     <div class="top-products-list" id="topProductsList"></div>
-  </div>
-
-  <!-- EXPORT ROW -->
-  <div class="export-row" id="exportRow" style="display:none;">
-    <button class="btn btn-export" onclick="exportAllExcel()">⬇️ الكل Excel</button>
-    <button class="btn btn-export" onclick="exportCSV('seller')">⬇️ موردين</button>
-    <button class="btn btn-export" onclick="exportCSV('oos')">⬇️ OOS</button>
-    <button class="btn btn-export" onclick="exportCSV('nosku')">⬇️ ملهوش كود</button>
-    <button class="btn btn-export" onclick="exportCSV('pricemismatch')">⬇️ سعر مختلف</button>
-    <button class="btn btn-export" onclick="exportCSV('notinbranch')">⬇️ مش في الهرم</button>
-    <button class="btn btn-export" onclick="exportFollowupExcel()">📞 فولو أب</button>
   </div>
 
   <!-- SKELETON -->
@@ -725,6 +819,32 @@ const PRODUCT_STATUS_OPTIONS = [
   { value: 'تم إرسال ايميل', label: 'تم إرسال ايميل' },
   { value: 'لم يتم الرد', label: 'لم يتم الرد' }
 ];
+
+// ================== ✅ SKU Cleaner ==================
+function cleanSku(sku) {
+  if (sku === null || sku === undefined) return '';
+  let s = String(sku).trim();
+  s = s.replace(/[\u00A0\u200B-\u200D\uFEFF]/g, '');
+  s = s.replace(/\s+/g, '');
+  s = s.replace(/\.0+$/, '');
+  if (/^\d+$/.test(s)) {
+    s = s.replace(/^0+/, '') || '0';
+  }
+  return s.toUpperCase();
+}
+
+// ================== Dropdowns ==================
+function toggleDD(id, event) {
+  if (event) event.stopPropagation();
+  const el = document.getElementById(id);
+  const wasOpen = el.classList.contains('open');
+  closeAllDD();
+  if (!wasOpen) el.classList.add('open');
+}
+function closeAllDD() {
+  document.querySelectorAll('.dd-wrap.open').forEach(el => el.classList.remove('open'));
+}
+document.addEventListener('click', () => closeAllDD());
 
 // ================== IndexedDB ==================
 const DB_NAME = 'abandoned_checkouts_db';
@@ -869,8 +989,27 @@ function formatDate(dateStr) {
 function getDateOnly(dateStr) {
   if (!dateStr) return '';
   const s = String(dateStr).trim();
-  const match = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  let match = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+  match = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (match) return `${match[3]}-${match[2]}-${match[1]}`;
+  const num = Number(s);
+  if (!isNaN(num) && num > 20000 && num < 80000) {
+    const d = new Date(Math.round((num - 25569) * 86400 * 1000));
+    if (!isNaN(d.getTime())) {
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+  }
+  const d2 = new Date(s);
+  if (!isNaN(d2.getTime())) {
+    const y = d2.getFullYear();
+    const m = String(d2.getMonth() + 1).padStart(2, '0');
+    const day = String(d2.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
   return '';
 }
 
@@ -1156,7 +1295,7 @@ function buildDefaultStockRows(rows) {
   });
 }
 
-// ================== Load Stock ==================
+// ================== ✅ Load Stock ==================
 function loadStock(json) {
   stockMap = {};
   if (!json.length) { alert('شيت المخزون فاضي!'); return; }
@@ -1179,14 +1318,17 @@ function loadStock(json) {
 
   if (!colSku) { alert('مش لاقي عمود "كود الصنف" في شيت المخزون.'); return; }
 
+  let skipped = 0;
   json.forEach(row => {
-    const sku = normalizeKey(row[colSku]);
-    if (!sku) return;
+    const sku = cleanSku(row[colSku]);
+    if (!sku) { skipped++; return; }
+
     stockMap[sku] = {
       sku,
       name: normalizeKey(row[colName]),
       model: normalizeKey(row[colModel]),
       price: toNumber(row[colPrice]),
+      // ✅ "الإجمالي" من الشيت مباشرة (بدون أي حساب)
       total: toNumber(row[colTotal]),
       held: toNumber(row[colHeld]),
       transfer: toNumber(row[colTrans]),
@@ -1204,7 +1346,8 @@ function loadStock(json) {
   updateInfoBar();
   updateWarnBadge();
   scheduleSave();
-  console.log('Stock loaded:', Object.keys(stockMap).length, 'products');
+  console.log('✅ Stock loaded:', Object.keys(stockMap).length, 'products (skipped:', skipped, ')');
+  console.log('📋 Sample stock keys:', Object.keys(stockMap).slice(0, 10));
 }
 
 // ================== Load Orders ==================
@@ -1228,6 +1371,10 @@ function loadOrders(json) {
 
   let lastOrder = '';
   let lastShipProv = '';
+  let lastEmail = '';
+  let lastCreated = '';
+  let lastShipName = '';
+  let lastShipPhone = '';
 
   json.forEach(row => {
     const orderVal = normalizeKey(row[colOrder]);
@@ -1235,9 +1382,17 @@ function loadOrders(json) {
       lastOrder = orderVal;
       const newShipProv = normalizeKey(row[colShipProv]);
       if (newShipProv) lastShipProv = newShipProv;
+      const newEmail = normalizeKey(row[colEmail]);
+      if (newEmail) lastEmail = newEmail;
+      const newCreated = normalizeKey(row[colCreated]);
+      if (newCreated) lastCreated = newCreated;
+      const newShipName = normalizeKey(row[colShipName]);
+      if (newShipName) lastShipName = newShipName;
+      const newShipPhone = normalizeKey(row[colShipPhone]);
+      if (newShipPhone) lastShipPhone = newShipPhone;
     }
 
-    const sku = normalizeKey(row[colSku]);
+    const sku = cleanSku(row[colSku]);
     const name = normalizeKey(row[colName]);
     const qty = toNumber(row[colQty]);
     const price = toNumber(row[colPrice]);
@@ -1247,18 +1402,18 @@ function loadOrders(json) {
 
     ordersRows.push({
       order: lastOrder,
-      email: normalizeKey(row[colEmail]),
-      createdAt: normalizeKey(row[colCreated]),
+      email: lastEmail || normalizeKey(row[colEmail]),
+      createdAt: lastCreated || normalizeKey(row[colCreated]),
       sku, name, qty: qty || 1, price,
-      shippingName: normalizeKey(row[colShipName]),
-      shippingPhone: cleanPhone(normalizeKey(row[colShipPhone])),
+      shippingName: lastShipName || normalizeKey(row[colShipName]),
+      shippingPhone: cleanPhone(lastShipPhone || normalizeKey(row[colShipPhone])),
       shippingProvince: normalizeProvince(lastShipProv),
     });
   });
 
   ordersLoaded = ordersRows.length > 0;
   if (!ordersLoaded && json.length) showToast('⚠️ مفيش أوردرات في المحافظات المطلوبة', '⚠️');
-  console.log('Orders loaded:', ordersRows.length, 'line items');
+  console.log('✅ Orders loaded:', ordersRows.length, 'line items');
 }
 
 // ================== Auto Compare ==================
@@ -1279,7 +1434,6 @@ function compare() {
   document.getElementById('stats').style.display = 'none';
   document.getElementById('topProductsRow').style.display = 'none';
   document.getElementById('tableWrap').style.display = 'none';
-  document.getElementById('exportRow').style.display = 'none';
   document.getElementById('emptyState').style.display = 'none';
 
   setTimeout(() => showProgress(15, 'جاري قراءة الأوردرات...', ordersRows.length + ' سطر'), 100);
@@ -1288,8 +1442,6 @@ function compare() {
     showProgress(45, 'جاري مطابقة المخزون...', 'بيتم التحقق من الأكواد');
     results = [];
 
-    // ✅ نجمع أولاً إجمالي الكمية المطلوبة لكل SKU في كل أوردر
-    // عشان نعرف هل الأوردر كامل متوفر في الهرم ولا لأ
     const orderSkuDemand = {};
     ordersRows.forEach(item => {
       const ord = item.order || '—';
@@ -1299,11 +1451,10 @@ function compare() {
       orderSkuDemand[key] += (item.qty || 1);
     });
 
-    // ✅ لكل أوردر: هل كل منتج فيه متوفر بالكمية المطلوبة في الهرم؟
     const orderFullyInHaram = {};
     Object.keys(orderSkuDemand).forEach(key => {
       const [ord, sku] = key.split('||');
-      if (orderFullyInHaram[ord] === false) return; // خلاص اتأكد إن مش كامل
+      if (orderFullyInHaram[ord] === false) return;
       const stock = stockMap[sku];
       if (!stock) { orderFullyInHaram[ord] = false; return; }
       const required = orderSkuDemand[key];
@@ -1359,8 +1510,6 @@ function compare() {
       const priceMismatch = (item.price > 0 && stock.price > 0 && item.price !== stock.price);
       const totalAvailable = stock.haram + stock.bahary + stock.suez + stock.nasr + stock.online;
       const pd = getPriceDiff(item.price, stock.price);
-
-      // ✅ التظليل البرتقالي: الأوردر كامل متوفر في الهرم
       const haramHighlight = orderFullyInHaram[item.order] === true;
 
       if (totalAvailable <= 0 && stock.total <= 0) {
@@ -1434,7 +1583,6 @@ function compare() {
     document.getElementById('stats').style.display = 'flex';
     document.getElementById('topProductsRow').style.display = 'block';
     document.getElementById('tableWrap').style.display = 'block';
-    document.getElementById('exportRow').style.display = 'flex';
     document.getElementById('emptyState').style.display = 'none';
     showToast('تم التحليل تلقائيًا', '⚡');
     isComparing = false;
@@ -1442,7 +1590,7 @@ function compare() {
   }, 1600);
 }
 
-// ================== Stats ==================
+// ================== ✅ Stats (مع حالة المنتج - عدّاد فريد لكل أوردر) ==================
 function renderStats() {
   document.getElementById('statTotal').textContent = results.length;
   document.getElementById('statAvailable').textContent = results.filter(r => r.status === 'available').length;
@@ -1451,6 +1599,29 @@ function renderStats() {
   document.getElementById('statOos').textContent = results.filter(r => r.status === 'oos').length;
   document.getElementById('statNosku').textContent = results.filter(r => r.status === 'nosku').length;
   document.getElementById('statPriceMismatch').textContent = results.filter(r => r.priceMismatch).length;
+
+  // ✅ حالة المنتج - عدّاد فريد لكل أوردر (مش لكل صف)
+  const statusOrders = {
+    done: new Set(),
+    notdone: new Set(),
+    followup: new Set(),
+    empty: new Set()
+  };
+
+  results.forEach(r => {
+    const orderKey = r.order || '—';
+    const status = (r.productStatus || '').trim();
+    if (status === 'تم تنفيذ الطلب') statusOrders.done.add(orderKey);
+    else if (status === 'لم يتم تنفيذ الطلب') statusOrders.notdone.add(orderKey);
+    else if (status === 'متابعة') statusOrders.followup.add(orderKey);
+    else if (status === '') statusOrders.empty.add(orderKey);
+    // ملاحظة: "تم إرسال ايميل" و "لم يتم الرد" مش بنحسبهم في العداد ده (متجاهلينهم)
+  });
+
+  document.getElementById('statStatusDone').textContent = statusOrders.done.size;
+  document.getElementById('statStatusNotDone').textContent = statusOrders.notdone.size;
+  document.getElementById('statStatusFollowup').textContent = statusOrders.followup.size;
+  document.getElementById('statStatusEmpty').textContent = statusOrders.empty.size;
 }
 
 // ================== KPIs ==================
@@ -1470,16 +1641,32 @@ function renderKPIs() {
   document.getElementById('kpiAvg').textContent = avg.toLocaleString('en-US') + ' EGP';
   document.getElementById('kpiAvgSub').textContent = uniqueOrders + ' أوردر فريد';
 
-  const uniqueNew = new Set();
+  const uniqueNewNumbers = new Set();
+  results.forEach(r => {
+    const newNum = (r.newOrderNumber || '').trim();
+    if (newNum) uniqueNewNumbers.add(newNum);
+  });
+
   let totalNew = 0;
   results.forEach(r => {
-    if (r.newOrderNumber && !uniqueNew.has(r.order)) {
-      uniqueNew.add(r.order);
-      totalNew += parseFloat(r.newOrderValue) || 0;
+    if (r.newOrderNumber && r.newOrderValue) {
+      const v = parseFloat(r.newOrderValue);
+      if (!isNaN(v)) totalNew += v;
     }
   });
-  document.getElementById('kpiNewOrders').textContent = uniqueNew.size;
+
+  document.getElementById('kpiNewOrders').textContent = uniqueNewNumbers.size;
   document.getElementById('kpiNewMoney').textContent = totalNew.toLocaleString('en-US') + ' EGP';
+
+  const percentEl = document.getElementById('kpiNewPercent');
+  let percent = 0;
+  if (totalMoney > 0) {
+    percent = (totalNew / totalMoney) * 100;
+  }
+  percentEl.textContent = percent.toFixed(1) + '%';
+  percentEl.classList.remove('high', 'low');
+  if (percent >= 50) percentEl.classList.add('high');
+  else if (percent < 20) percentEl.classList.add('low');
 
   const dates = results.map(r => getDateOnly(r.createdAt)).filter(d => d).sort();
   if (dates.length) {
@@ -1488,18 +1675,37 @@ function renderKPIs() {
     document.getElementById('kpiDateSub').textContent = 'خلال ' + (dd + 1) + ' يوم';
   } else {
     document.getElementById('kpiDateRange').textContent = '—';
-    document.getElementById('kpiDateSub').textContent = '';
+    document.getElementById('kpiDateSub').textContent = 'مفيش تواريخ';
   }
 }
 
-// ================== Top 5 ==================
+// ================== ✅ Top 5 ==================
 function renderTopProducts() {
   const productMap = {};
   results.forEach(r => {
     const key = r.sku && r.sku !== '—' ? r.sku : ('NAME:' + (r.name || '—'));
-    if (!productMap[key]) productMap[key] = { sku: r.sku, name: r.name || '—', orders: 0, qty: 0 };
+    if (!productMap[key]) {
+      productMap[key] = {
+        sku: r.sku,
+        name: r.name || '—',
+        orders: 0,
+        qty: 0,
+        totalStock: 0,
+        stockFound: false
+      };
+    }
     productMap[key].orders += 1;
     productMap[key].qty += (r.qty || 0);
+
+    // ✅ لو لسه مش لاقيين المخزون، حاول ندور بـ cleanSku
+    if (!productMap[key].stockFound && r.sku && r.sku !== '—') {
+      const cleaned = cleanSku(r.sku);
+      const stock = stockMap[cleaned];
+      if (stock) {
+        productMap[key].totalStock = stock.total || 0;   // ← "الإجمالي" من الشيت
+        productMap[key].stockFound = true;
+      }
+    }
   });
 
   const sorted = Object.values(productMap)
@@ -1511,7 +1717,19 @@ function renderTopProducts() {
     return;
   }
 
-  container.innerHTML = sorted.map((p, i) => `
+  container.innerHTML = sorted.map((p, i) => {
+    let stockHtml = '';
+    if (p.sku === '—' || !p.sku) {
+      stockHtml = `<span>مخزون: <span class="stock-tag missing">لا يوجد كود</span></span>`;
+    } else if (!p.stockFound) {
+      stockHtml = `<span>مخزون: <span class="stock-tag missing">مش في المخزون</span></span>`;
+    } else if (p.totalStock > 0) {
+      stockHtml = `<span>مخزون: <span class="stock-tag">${p.totalStock}</span></span>`;
+    } else {
+      stockHtml = `<span>مخزون: <span class="stock-tag zero">0</span></span>`;
+    }
+
+    return `
     <div class="top-product-item">
       <div class="top-product-rank rank-${i + 1}">${i + 1}</div>
       <div class="top-product-info">
@@ -1519,10 +1737,11 @@ function renderTopProducts() {
         <div class="top-product-meta">
           <span>SKU: <strong>${p.sku}</strong></span>
           <span>قطع: <strong>${p.qty}</strong></span>
+          ${stockHtml}
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ================== Table Header ==================
@@ -1572,7 +1791,7 @@ function buildTableHeader() {
         <option value="notinbranch" ${v === 'notinbranch' ? 'selected' : ''}>مش في الهرم</option>
         <option value="pricemismatch" ${v === 'pricemismatch' ? 'selected' : ''}>سعر مختلف</option>
         <option value="seller" ${v === 'seller' ? 'selected' : ''}>موردين</option>
-        <option value="oos" ${v === 'oos' ? 'selected' : ''}>OOS</option>
+        <option value="oos" ${v === 'oos' ? 'selected' : ''}>Out of Stock</option>
         <option value="nosku" ${v === 'nosku' ? 'selected' : ''}>ملهوش كود</option>
       </select>`;
     } else if (col.filterType === 'selectProductStatus') {
@@ -1617,6 +1836,7 @@ function onProductStatusChange(order, value) {
   });
 
   scheduleSave();
+  renderStats();
   renderKPIs();
   applyActionHighlight();
 }
@@ -1734,7 +1954,7 @@ function renderTable() {
     else if (r.status === 'notinbranch') badge = '<span class="badge badge-notinbranch">مش في الهرم</span>';
     else if (r.status === 'pricemismatch') badge = '<span class="badge badge-pricemismatch">سعر مختلف</span>';
     else if (r.status === 'seller') badge = `<span class="badge badge-seller">${r.seller}</span>`;
-    else if (r.status === 'oos') badge = '<span class="badge badge-oos">OOS</span>';
+    else if (r.status === 'oos') badge = '<span class="badge badge-oos">Out of Stock</span>';
     else badge = '<span class="badge badge-nosku">ملهوش كود</span>';
 
     let diffBadge = '<span class="stock-zero">—</span>';
@@ -1838,7 +2058,7 @@ function exportCSV(type = 'all') {
     'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد',
     'الهرم','البحر الأعظم','السويس','مدينة نصر','Online','الإجمالي','المحتجز','رهن التحويل'];
 
-  const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'OOS', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
+  const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'Out of Stock', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
   const diffStatusAr = { edara:'إدارة أغلى', shopify:'Shopify أغلى', same:'نفس السعر' };
 
   let filtered, fileName;
@@ -1885,7 +2105,7 @@ function buildExcelSheet(filteredResults, fileName) {
     'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد',
     'الهرم','البحر الأعظم','السويس','مدينة نصر','Online','الإجمالي','المحتجز','رهن التحويل'];
 
-  const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'OOS', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
+  const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'Out of Stock', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
   const diffStatusAr = { edara:'إدارة أغلى', shopify:'Shopify أغلى', same:'نفس السعر' };
 
   const aoa = [headers];
@@ -1982,7 +2202,6 @@ async function importBackup(event) {
       document.getElementById('stats').style.display = 'flex';
       document.getElementById('topProductsRow').style.display = 'block';
       document.getElementById('tableWrap').style.display = 'block';
-      document.getElementById('exportRow').style.display = 'flex';
       document.getElementById('emptyState').style.display = 'none';
     }
 
@@ -2025,7 +2244,7 @@ async function clearAllActions() {
     r.productStatus = ''; r.newOrderNumber = ''; r.newOrderDate = ''; r.newOrderValue = '';
   });
   await saveNow();
-  renderKPIs(); renderTable(); updateSavedBadge();
+  renderStats(); renderKPIs(); renderTable(); updateSavedBadge();
   showToast('تم مسح الأكشنز', '🗑️');
 }
 
@@ -2053,7 +2272,6 @@ async function clearAll() {
   document.getElementById('stats').style.display = 'none';
   document.getElementById('topProductsRow').style.display = 'none';
   document.getElementById('tableWrap').style.display = 'none';
-  document.getElementById('exportRow').style.display = 'none';
   document.getElementById('emptyState').style.display = 'block';
   hideProgress(); hideSkeleton();
   isComparing = false;
@@ -2089,7 +2307,6 @@ async function loadSavedState() {
       document.getElementById('stats').style.display = 'flex';
       document.getElementById('topProductsRow').style.display = 'block';
       document.getElementById('tableWrap').style.display = 'block';
-      document.getElementById('exportRow').style.display = 'flex';
       document.getElementById('emptyState').style.display = 'none';
       showToast('تم استرجاع آخر تحليل', '💾');
     }
