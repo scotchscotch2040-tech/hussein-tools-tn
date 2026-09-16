@@ -224,10 +224,12 @@
   .paste-area:focus { outline: none; border-color: var(--clay-accent); }
   .paste-area::placeholder { color: var(--clay-text-soft); opacity: 0.6; font-size: 9px; }
 
-  /* ============ ✅ KPI ROW - مضغوطة واحترافية ============ */
+  /* ============ KPI ROW ============ */
   .kpi-row {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
     margin-bottom: 6px;
+    position: relative;
+    z-index: 50;
   }
   @media (max-width: 1200px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 700px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
@@ -258,19 +260,23 @@
   .kpi-card.dates .kpi-value { color: var(--clay-blue); font-size: 10px; }
   .kpi-card .kpi-sub { font-size: 8px; color: var(--clay-text-soft); margin-top: 1px; }
 
+  /* ✅ Zoom أقوى وأوضح */
   .kpi-card.zoomable {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     cursor: default;
     transform-origin: center center;
     will-change: transform;
   }
   .kpi-card.zoomable:hover {
-    transform: scale(1.05);
-    box-shadow: 8px 8px 20px rgba(0,0,0,0.14), -8px -8px 20px rgba(255,255,255,0.55);
-    z-index: 5;
+    transform: scale(1.18);
+    box-shadow: 12px 12px 28px rgba(0,0,0,0.22), -10px -10px 24px rgba(255,255,255,0.7);
+    z-index: 60;
   }
+  .kpi-card.zoomable:hover .kpi-title { font-size: 11px; font-weight: 800; color: var(--clay-text); }
+  .kpi-card.zoomable:hover .kpi-value { font-size: 16px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+  .kpi-card.zoomable:hover .kpi-sub { font-size: 10px; font-weight: 700; color: var(--clay-text); }
   [data-theme="dark"] .kpi-card.zoomable:hover {
-    box-shadow: 8px 8px 20px rgba(0,0,0,0.5), -8px -8px 20px rgba(78,73,67,0.5);
+    box-shadow: 12px 12px 28px rgba(0,0,0,0.6), -10px -10px 24px rgba(78,73,67,0.6);
   }
 
   .kpi-percent {
@@ -285,7 +291,7 @@
   .kpi-percent.high { background: rgba(125, 155, 122, 0.2); color: var(--clay-success); border-color: var(--clay-success); }
   .kpi-percent.low { background: rgba(181, 122, 122, 0.2); color: var(--clay-danger); border-color: var(--clay-danger); }
 
-  /* ============ ✅ STATS - Badges مضغوطة ============ */
+  /* ============ STATS ============ */
   .stats {
     display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
     margin-bottom: 6px;
@@ -297,6 +303,13 @@
     background: var(--clay-card); border: 1px solid var(--clay-border);
     box-shadow: var(--clay-shadow-sm);
     white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .stat-badge:hover {
+    transform: scale(1.1);
+    box-shadow: 6px 6px 14px rgba(0,0,0,0.15), -4px -4px 12px rgba(255,255,255,0.6);
+    z-index: 60;
+    position: relative;
   }
   .stat-badge .num { font-size: 11px; font-weight: 800; }
   .stat-badge.total .num { color: var(--clay-blue); }
@@ -306,7 +319,6 @@
   .stat-badge.oos .num { color: var(--clay-danger); }
   .stat-badge.nosku .num { color: var(--clay-warning); }
   .stat-badge.pricemismatch .num { color: var(--clay-gold); }
-  /* ✅ حالة المنتج الجديدة */
   .stat-badge.status-done .num { color: var(--clay-success); }
   .stat-badge.status-notdone .num { color: var(--clay-danger); }
   .stat-badge.status-followup .num { color: var(--clay-purple); }
@@ -332,17 +344,17 @@
   .top-product-item {
     background: var(--clay-bg);
     border-radius: 8px;
-    padding: 5px 7px;
+    padding: 6px 8px;
     border: 1px solid var(--clay-border);
     display: flex; align-items: center; gap: 5px;
     transition: all 0.2s ease;
   }
-  .top-product-item:hover { border-color: var(--clay-orange); }
+  .top-product-item:hover { border-color: var(--clay-orange); transform: scale(1.04); }
   .top-product-rank {
-    width: 20px; height: 20px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: var(--clay-orange); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 10px; flex-shrink: 0;
+    font-weight: 700; font-size: 11px; flex-shrink: 0;
   }
   .top-product-rank.rank-1 { background: linear-gradient(135deg, #ff9030 0%, #ffb347 100%); }
   .top-product-rank.rank-2 { background: linear-gradient(135deg, #b8956e 0%, #d4ae84 100%); }
@@ -351,18 +363,15 @@
   .top-product-rank.rank-5 { background: linear-gradient(135deg, #7a8fa6 0%, #9ab0c7 100%); }
   .top-product-info { flex: 1; min-width: 0; }
   .top-product-name {
-    font-size: 9px; font-weight: 700; color: var(--clay-text);
+    font-size: 10px; font-weight: 700; color: var(--clay-text);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
   }
   .top-product-meta {
-    font-size: 8px; color: var(--clay-text-soft); font-weight: 600;
-    display: flex; gap: 5px; flex-wrap: wrap;
+    font-size: 9px; color: var(--clay-text-soft); font-weight: 600;
+    display: flex; gap: 8px; flex-wrap: wrap;
   }
-  .top-product-meta strong { color: var(--clay-orange); }
-  .top-product-meta .stock-tag { color: var(--clay-success); font-weight: 700; }
-  .top-product-meta .stock-tag.zero { color: var(--clay-text-soft); opacity: 0.6; }
-  .top-product-meta .stock-tag.missing { color: var(--clay-danger); font-weight: 700; }
+  .top-product-meta strong { color: var(--clay-orange); font-size: 11px; }
 
   /* ============ PROGRESS ============ */
   .progress-wrap {
@@ -415,7 +424,7 @@
   .skeleton-cell.short { flex: 0.5; }
   .skeleton-cell.med { flex: 0.8; }
 
-  /* ============ ✅ TABLE - مكبّر ============ */
+  /* ============ TABLE ============ */
   .table-wrap {
     background: var(--clay-card); border-radius: var(--clay-radius);
     overflow: hidden; box-shadow: var(--clay-shadow);
@@ -424,7 +433,6 @@
 
   .table-scroll {
     overflow-x: auto;
-    /* ✅ تكبير الجدول لاستغلال المساحة */
     max-height: calc(100vh - 280px);
     min-height: 500px;
     overflow-y: auto;
@@ -740,7 +748,7 @@
     </div>
   </div>
 
-  <!-- ✅ STATS BADGES - مع حالة المنتج -->
+  <!-- STATS BADGES -->
   <div class="stats" id="stats" style="display:none;">
     <div class="stat-badge total">📦 إجمالي: <span class="num" id="statTotal">0</span></div>
     <div class="stat-badge available">✅ متوفر: <span class="num" id="statAvailable">0</span></div>
@@ -820,11 +828,12 @@ const PRODUCT_STATUS_OPTIONS = [
   { value: 'لم يتم الرد', label: 'لم يتم الرد' }
 ];
 
-// ================== ✅ SKU Cleaner ==================
-function cleanSku(sku) {
+// ================== SKU Normalizer ==================
+function normalizeSku(sku) {
   if (sku === null || sku === undefined) return '';
-  let s = String(sku).trim();
-  s = s.replace(/[\u00A0\u200B-\u200D\uFEFF]/g, '');
+  let s = String(sku);
+  s = s.replace(/[\u00A0\u200B-\u200D\uFEFF\u2028\u2029]/g, '');
+  s = s.trim();
   s = s.replace(/\s+/g, '');
   s = s.replace(/\.0+$/, '');
   if (/^\d+$/.test(s)) {
@@ -1295,7 +1304,7 @@ function buildDefaultStockRows(rows) {
   });
 }
 
-// ================== ✅ Load Stock ==================
+// ================== Load Stock ==================
 function loadStock(json) {
   stockMap = {};
   if (!json.length) { alert('شيت المخزون فاضي!'); return; }
@@ -1318,17 +1327,15 @@ function loadStock(json) {
 
   if (!colSku) { alert('مش لاقي عمود "كود الصنف" في شيت المخزون.'); return; }
 
-  let skipped = 0;
   json.forEach(row => {
-    const sku = cleanSku(row[colSku]);
-    if (!sku) { skipped++; return; }
+    const sku = normalizeSku(row[colSku]);
+    if (!sku) return;
 
     stockMap[sku] = {
       sku,
       name: normalizeKey(row[colName]),
       model: normalizeKey(row[colModel]),
       price: toNumber(row[colPrice]),
-      // ✅ "الإجمالي" من الشيت مباشرة (بدون أي حساب)
       total: toNumber(row[colTotal]),
       held: toNumber(row[colHeld]),
       transfer: toNumber(row[colTrans]),
@@ -1346,8 +1353,7 @@ function loadStock(json) {
   updateInfoBar();
   updateWarnBadge();
   scheduleSave();
-  console.log('✅ Stock loaded:', Object.keys(stockMap).length, 'products (skipped:', skipped, ')');
-  console.log('📋 Sample stock keys:', Object.keys(stockMap).slice(0, 10));
+  console.log('✅ Stock loaded:', Object.keys(stockMap).length, 'products');
 }
 
 // ================== Load Orders ==================
@@ -1392,7 +1398,7 @@ function loadOrders(json) {
       if (newShipPhone) lastShipPhone = newShipPhone;
     }
 
-    const sku = cleanSku(row[colSku]);
+    const sku = normalizeSku(row[colSku]);
     const name = normalizeKey(row[colName]);
     const qty = toNumber(row[colQty]);
     const price = toNumber(row[colPrice]);
@@ -1590,7 +1596,7 @@ function compare() {
   }, 1600);
 }
 
-// ================== ✅ Stats (مع حالة المنتج - عدّاد فريد لكل أوردر) ==================
+// ================== Stats ==================
 function renderStats() {
   document.getElementById('statTotal').textContent = results.length;
   document.getElementById('statAvailable').textContent = results.filter(r => r.status === 'available').length;
@@ -1600,12 +1606,9 @@ function renderStats() {
   document.getElementById('statNosku').textContent = results.filter(r => r.status === 'nosku').length;
   document.getElementById('statPriceMismatch').textContent = results.filter(r => r.priceMismatch).length;
 
-  // ✅ حالة المنتج - عدّاد فريد لكل أوردر (مش لكل صف)
   const statusOrders = {
-    done: new Set(),
-    notdone: new Set(),
-    followup: new Set(),
-    empty: new Set()
+    done: new Set(), notdone: new Set(),
+    followup: new Set(), empty: new Set()
   };
 
   results.forEach(r => {
@@ -1615,7 +1618,6 @@ function renderStats() {
     else if (status === 'لم يتم تنفيذ الطلب') statusOrders.notdone.add(orderKey);
     else if (status === 'متابعة') statusOrders.followup.add(orderKey);
     else if (status === '') statusOrders.empty.add(orderKey);
-    // ملاحظة: "تم إرسال ايميل" و "لم يتم الرد" مش بنحسبهم في العداد ده (متجاهلينهم)
   });
 
   document.getElementById('statStatusDone').textContent = statusOrders.done.size;
@@ -1679,7 +1681,7 @@ function renderKPIs() {
   }
 }
 
-// ================== ✅ Top 5 ==================
+// ================== ✅ Top 5 (بدون مخزون) ==================
 function renderTopProducts() {
   const productMap = {};
   results.forEach(r => {
@@ -1689,23 +1691,11 @@ function renderTopProducts() {
         sku: r.sku,
         name: r.name || '—',
         orders: 0,
-        qty: 0,
-        totalStock: 0,
-        stockFound: false
+        qty: 0
       };
     }
     productMap[key].orders += 1;
     productMap[key].qty += (r.qty || 0);
-
-    // ✅ لو لسه مش لاقيين المخزون، حاول ندور بـ cleanSku
-    if (!productMap[key].stockFound && r.sku && r.sku !== '—') {
-      const cleaned = cleanSku(r.sku);
-      const stock = stockMap[cleaned];
-      if (stock) {
-        productMap[key].totalStock = stock.total || 0;   // ← "الإجمالي" من الشيت
-        productMap[key].stockFound = true;
-      }
-    }
   });
 
   const sorted = Object.values(productMap)
@@ -1717,19 +1707,7 @@ function renderTopProducts() {
     return;
   }
 
-  container.innerHTML = sorted.map((p, i) => {
-    let stockHtml = '';
-    if (p.sku === '—' || !p.sku) {
-      stockHtml = `<span>مخزون: <span class="stock-tag missing">لا يوجد كود</span></span>`;
-    } else if (!p.stockFound) {
-      stockHtml = `<span>مخزون: <span class="stock-tag missing">مش في المخزون</span></span>`;
-    } else if (p.totalStock > 0) {
-      stockHtml = `<span>مخزون: <span class="stock-tag">${p.totalStock}</span></span>`;
-    } else {
-      stockHtml = `<span>مخزون: <span class="stock-tag zero">0</span></span>`;
-    }
-
-    return `
+  container.innerHTML = sorted.map((p, i) => `
     <div class="top-product-item">
       <div class="top-product-rank rank-${i + 1}">${i + 1}</div>
       <div class="top-product-info">
@@ -1737,11 +1715,10 @@ function renderTopProducts() {
         <div class="top-product-meta">
           <span>SKU: <strong>${p.sku}</strong></span>
           <span>قطع: <strong>${p.qty}</strong></span>
-          ${stockHtml}
         </div>
       </div>
-    </div>`;
-  }).join('');
+    </div>
+  `).join('');
 }
 
 // ================== Table Header ==================
