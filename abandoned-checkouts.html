@@ -72,13 +72,8 @@
     --grp-stock-border: rgba(255, 168, 82, 0.6);
   }
 
-  /* ✅ في الوضع الليلي: كل النصوص في الإحصائيات تبقى بيضاء */
-  [data-theme="dark"] .stat-badge {
-    color: #ffffff !important;
-  }
-  [data-theme="dark"] .stat-badge .num {
-    color: #ffffff !important;
-  }
+  [data-theme="dark"] .stat-badge { color: #ffffff !important; }
+  [data-theme="dark"] .stat-badge .num { color: #ffffff !important; }
   [data-theme="dark"] .stat-badge.total .num,
   [data-theme="dark"] .stat-badge.available .num,
   [data-theme="dark"] .stat-badge.notinbranch .num,
@@ -90,17 +85,12 @@
   [data-theme="dark"] .stat-badge.status-notdone .num,
   [data-theme="dark"] .stat-badge.status-followup .num,
   [data-theme="dark"] .stat-badge.status-email .num,
-  [data-theme="dark"] .stat-badge.status-noanswer .num {
-    color: #ffffff !important;
-  }
+  [data-theme="dark"] .stat-badge.status-noanswer .num { color: #ffffff !important; }
   [data-theme="dark"] .stat-badge.work-progress .num,
-  [data-theme="dark"] .stat-badge.work-progress .total-num {
-    color: #ffffff !important;
-  }
+  [data-theme="dark"] .stat-badge.work-progress .total-num { color: #ffffff !important; }
 
   .container { max-width: 1900px; margin: 0 auto; }
 
-  /* HEADER */
   .header-top {
     display: flex; align-items: center; justify-content: space-between;
     gap: 8px; flex-wrap: wrap;
@@ -111,10 +101,7 @@
     position: relative; z-index: 100;
   }
   .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-  .header-logo {
-    width: 30px; height: 30px; border-radius: 50%; object-fit: cover;
-    border: 2px solid var(--clay-accent); flex-shrink: 0;
-  }
+  .header-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid var(--clay-accent); flex-shrink: 0; }
   .header-info { display: flex; flex-direction: column; min-width: 0; }
   .header-title { color: var(--clay-text); font-size: 13px; font-weight: 700; white-space: nowrap; }
   .header-subtitle { color: var(--clay-text-soft); font-size: 9px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -150,14 +137,6 @@
   }
   .theme-toggle:hover { transform: rotate(30deg) scale(1.1); }
 
-  /* Sync Section */
-  .sync-section {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    padding: 7px 14px; background: var(--clay-card);
-    border-radius: var(--clay-radius); box-shadow: var(--clay-shadow-sm);
-    border: 1px solid var(--clay-border);
-    margin-bottom: 8px; flex-wrap: wrap;
-  }
   .sync-info {
     font-size: 10px; font-weight: 700; color: var(--clay-blue);
     display: flex; align-items: center; gap: 5px;
@@ -183,7 +162,6 @@
   .sync-btn:hover { transform: translateY(-2px); box-shadow: 4px 4px 12px rgba(125, 155, 122, 0.5); }
   .sync-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  /* HEADER DROPDOWNS */
   .header-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
   .dd-wrap { position: relative; display: inline-block; }
   .dd-toggle {
@@ -239,7 +217,6 @@
     background: linear-gradient(135deg, rgba(125, 155, 122, 0.3) 0%, rgba(184, 149, 110, 0.3) 100%);
   }
 
-  /* UPLOAD */
   .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
   @media (max-width: 900px) { .upload-grid { grid-template-columns: 1fr; } }
 
@@ -292,7 +269,6 @@
   .paste-area:focus { outline: none; border-color: var(--clay-accent); }
   .paste-area::placeholder { color: var(--clay-text-soft); opacity: 0.6; font-size: 9px; }
 
-  /* KPI ROW */
   .kpi-row {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
     margin-bottom: 6px; position: relative; z-index: 50;
@@ -347,7 +323,6 @@
   .kpi-percent.high { background: rgba(125, 155, 122, 0.2); color: var(--clay-success); border-color: var(--clay-success); }
   .kpi-percent.low { background: rgba(181, 122, 122, 0.2); color: var(--clay-danger); border-color: var(--clay-danger); }
 
-  /* STATS */
   .stats { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-bottom: 6px; }
   .stat-badge {
     display: inline-flex; align-items: center; gap: 4px;
@@ -391,7 +366,6 @@
   .stat-badge.work-progress .percent-badge.low { background: var(--clay-danger); }
   .stat-badge.work-progress .percent-badge.mid { background: var(--clay-warning); }
 
-  /* TOP PRODUCTS */
   .top-products-row {
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
@@ -432,7 +406,6 @@
   }
   .top-product-meta strong { color: var(--clay-orange); font-size: 11px; }
 
-  /* PROGRESS */
   .progress-wrap {
     display: none; max-width: 500px; margin: 0 auto 8px;
     background: var(--clay-card); border-radius: var(--clay-radius);
@@ -454,7 +427,6 @@
   }
   .progress-sub { font-size: 9px; color: var(--clay-text-soft); margin-top: 3px; text-align: center; font-weight: 600; }
 
-  /* SKELETON */
   .skeleton {
     background: linear-gradient(90deg, var(--clay-card) 25%, var(--clay-bg) 50%, var(--clay-card) 75%);
     background-size: 200% 100%; animation: skeleton-loading 1.4s ease-in-out infinite;
@@ -472,7 +444,6 @@
   .skeleton-cell.short { flex: 0.5; }
   .skeleton-cell.med { flex: 0.8; }
 
-  /* TABLE */
   .table-wrap {
     background: var(--clay-card); border-radius: var(--clay-radius);
     overflow: hidden; box-shadow: var(--clay-shadow);
@@ -510,26 +481,10 @@
   }
   .group-label:last-child { border-left: none; }
 
-  .group-order {
-    background: var(--grp-order);
-    border-bottom: 3px solid var(--grp-order-border);
-    color: var(--clay-blue);
-  }
-  .group-product {
-    background: var(--grp-product);
-    border-bottom: 3px solid var(--grp-product-border);
-    color: var(--clay-purple);
-  }
-  .group-actions {
-    background: var(--grp-action);
-    border-bottom: 3px solid var(--grp-action-border);
-    color: var(--clay-success);
-  }
-  .group-stock {
-    background: var(--grp-stock);
-    border-bottom: 3px solid var(--grp-stock-border);
-    color: var(--clay-orange);
-  }
+  .group-order { background: var(--grp-order); border-bottom: 3px solid var(--grp-order-border); color: var(--clay-blue); }
+  .group-product { background: var(--grp-product); border-bottom: 3px solid var(--grp-product-border); color: var(--clay-purple); }
+  .group-actions { background: var(--grp-action); border-bottom: 3px solid var(--grp-action-border); color: var(--clay-success); }
+  .group-stock { background: var(--grp-stock); border-bottom: 3px solid var(--grp-stock-border); color: var(--clay-orange); }
 
   table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
 
@@ -573,7 +528,6 @@
   }
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
 
-  /* ✅ أي صف أقف عليه ينور برتقالي */
   tbody tr:hover {
     background: var(--clay-orange-soft) !important;
     box-shadow: inset 0 0 0 2px var(--clay-orange);
@@ -668,7 +622,6 @@
   }
   .empty-state .icon { font-size: 36px; margin-bottom: 8px; }
 
-  /* TOASTS */
   .copy-toast {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
     background: var(--clay-card); color: var(--clay-text);
@@ -708,7 +661,6 @@
 <body>
 <div class="container">
 
-  <!-- HEADER -->
   <div class="header-top">
     <div class="header-left">
       <img class="header-logo"
@@ -772,7 +724,6 @@
     </div>
   </div>
 
-  <!-- UPLOAD -->
   <div class="upload-grid">
     <div class="upload-card">
       <div class="card-header-row">
@@ -813,7 +764,6 @@
     </div>
   </div>
 
-  <!-- PROGRESS -->
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-label">
       <span id="progressText">جاري التحليل...</span>
@@ -823,7 +773,6 @@
     <div class="progress-sub" id="progressSub">بيتم مطابقة الأوردرات مع المخزون</div>
   </div>
 
-  <!-- KPI ROW -->
   <div class="kpi-row" id="kpiRow" style="display:none;">
     <div class="kpi-card money zoomable">
       <div class="kpi-title">💰 إجمالي القيمة المفقودة</div>
@@ -852,7 +801,6 @@
     </div>
   </div>
 
-  <!-- STATS BADGES -->
   <div class="stats" id="stats" style="display:none;">
     <div class="stat-badge total">📦 إجمالي: <span class="num" id="statTotal">0</span></div>
     <div class="stat-badge available">✅ متوفر: <span class="num" id="statAvailable">0</span></div>
@@ -872,13 +820,11 @@
     </div>
   </div>
 
-  <!-- TOP 5 -->
   <div class="top-products-row" id="topProductsRow" style="display:none;">
     <div class="top-products-title">🏆 أعلى 5 منتجات مطلوبة</div>
     <div class="top-products-list" id="topProductsList"></div>
   </div>
 
-  <!-- SKELETON -->
   <div class="skeleton-table" id="skeletonTable">
     <div class="skeleton-row"><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell med"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell med"></div></div>
     <div class="skeleton-row"><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell med"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell med"></div></div>
@@ -887,7 +833,6 @@
     <div class="skeleton-row"><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell med"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell med"></div></div>
   </div>
 
-  <!-- TABLE -->
   <div class="table-wrap" id="tableWrap" style="display:none;">
     <div class="table-scroll">
       <div class="column-groups-bar" id="columnGroupsBar">
@@ -913,9 +858,9 @@
 <div id="copyToast" class="copy-toast"><span>📋</span><span id="copyToastMessage">تم النسخ</span></div>
 <div id="toast" class="toast"><span class="toast-icon">✅</span><span id="toastMessage">تم</span></div><script>
 // ==================================================
-// ✅ رابط Google Apps Script — حطه هنا
+// ✅ رابط Google Apps Script
 // ==================================================
-const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwgPQ-_CY1JL-X3QME8v1UM9fqZ6rXmFGh1NSBaZQcvzIcazk7XofoXJ0SO3r8xjTq68Q/exec';  // ← الصق رابطك بين علامتي التنصيص
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwgPQ-_CY1JL-X3QME8v1UM9fqZ6rXmFGh1NSBaZQcvzIcazk7XofoXJ0SO3r8xjTq68Q/exec';
 
 // ================== Globals ==================
 let stockMap = {};
@@ -1096,13 +1041,14 @@ async function syncToGoogleSheets(silent = false) {
     return false;
   }
 
+  // ✅ التعديل المهم: يبعت كل الأوردرات اللي ليها أي بيانات
+  // (حتى لو الحالة رجعت "اختر" — عشان تتحذف من الشيت)
   const workedResults = results.filter(r => {
     const status = (r.productStatus || '').trim();
-    return status === 'تم تنفيذ الطلب'
-        || status === 'لم يتم تنفيذ الطلب'
-        || status === 'متابعة'
-        || status === 'تم إرسال ايميل'
-        || status === 'لم يتم الرد';
+    const hasNewOrder = (r.newOrderNumber || '').trim();
+    const hasNewValue = (r.newOrderValue || '').trim();
+    const hasNotes = (r.notes || '').trim();
+    return status !== '' || hasNewOrder || hasNewValue || hasNotes;
   });
 
   if (!workedResults.length) {
@@ -1185,7 +1131,6 @@ function markSyncPending() {
   pendingSyncChanges = true;
 }
 
-// ✅ مزامنة تلقائية كل دقيقة
 function startAutoSync() {
   if (autoSyncInterval) clearInterval(autoSyncInterval);
   autoSyncInterval = setInterval(async () => {
@@ -1196,7 +1141,6 @@ function startAutoSync() {
   }, 60 * 1000);
 }
 
-// ✅ حفظ تلقائي كل دقيقة
 function startAutoSave() {
   if (autoSaveInterval) clearInterval(autoSaveInterval);
   autoSaveInterval = setInterval(async () => {
@@ -1889,7 +1833,7 @@ function renderStats() {
   const percentEl = document.getElementById('statWorkPercent');
   percentEl.textContent = percent.toFixed(1) + '%';
   percentEl.classList.remove('low', 'mid');
-  if (percent >= 70) { /* default green */ }
+  if (percent >= 70) { }
   else if (percent >= 40) percentEl.classList.add('mid');
   else percentEl.classList.add('low');
 }
@@ -1976,7 +1920,7 @@ function renderTopProducts() {
   `).join('');
 }
 
-// ================== Table Header (مع مجموعات) ==================
+// ================== Table Header ==================
 const COLUMNS = [
   { key: 'idx', label: '#', filterType: 'none', group: 'order' },
   { key: 'order', label: 'الأوردر', filterType: 'text', group: 'order' },
@@ -2613,9 +2557,7 @@ document.getElementById('ordersPaste').addEventListener('input', e => {
   if (parsed.rows.length) { loadOrders(parsed.rows); tryAutoCompare(); }
 });
 
-// ================== Keyboard Shortcuts ==================
 document.addEventListener('keydown', (e) => {
-  // Ctrl+Shift+S = تصدير Excel
   if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 's') {
     e.preventDefault();
     e.stopPropagation();
@@ -2624,7 +2566,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ================== Initialize ==================
 window.addEventListener('load', async function() {
   if (localStorage.getItem('theme') === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
