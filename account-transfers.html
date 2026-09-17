@@ -658,6 +658,7 @@ tbody tr:hover {
                     <th>📦 أوردر</th>
                     <th>💰 إجمالي</th>
                     <th>💳 تحصيل</th>
+                    <th>👤 المندوب</th>
                     <th>💵 دفع</th>
                     <th>🏦 ديبوزت</th>
                     <th>🔄 تحويل</th>
@@ -672,22 +673,22 @@ tbody tr:hover {
                 <tr class="totals">
                     <td colspan="2">📊 إجمالي المبلغ</td>
                     <td id="t1">0</td>
-                    <td colspan="8"></td>
+                    <td colspan="9"></td>
                 </tr>
                 <tr class="totals collected">
                     <td colspan="2">✅ التحصيل</td>
                     <td id="t2">0</td>
-                    <td colspan="8"></td>
+                    <td colspan="9"></td>
                 </tr>
                 <tr class="totals">
                     <td colspan="2">🏦 الديبوزت</td>
                     <td id="t3">0</td>
-                    <td colspan="8"></td>
+                    <td colspan="9"></td>
                 </tr>
                 <tr class="totals">
                     <td colspan="2">🔄 التحويل</td>
                     <td id="t4">0</td>
-                    <td colspan="8"></td>
+                    <td colspan="9"></td>
                 </tr>
             </tfoot>
         </table>
@@ -758,11 +759,19 @@ window.addEventListener("load", function() {
 function createRow(cols) {
     const tr = document.createElement("tr");
 
-    cols.forEach((c, i) => {
-        const td = document.createElement("td");
-        td.innerText = c || "";
+    // ترتيب الأعمدة:
+    // 0: تاريخ | 1: أوردر | 2: إجمالي | 3: تحصيل | 4: المندوب | 5: دفع
+    // 6: ديبوزت | 7: تحويل | 8: تاريخ ديبوزت | 9: تحويل | 10: تاريخ تحويل
+    const editableIndexes = [2, 3, 4, 6, 9];
 
-        if ([2, 3, 5, 8].includes(i)) {
+    // عدد الأعمدة الكلي (بدون عمود الحذف)
+    const totalCols = 11;
+
+    for (let i = 0; i < totalCols; i++) {
+        const td = document.createElement("td");
+        td.innerText = cols[i] || "";
+
+        if (editableIndexes.includes(i)) {
             td.classList.add("editable");
             td.contentEditable = true;
             td.oninput = function() {
@@ -772,7 +781,7 @@ function createRow(cols) {
         }
 
         tr.appendChild(td);
-    });
+    }
 
     const del = document.createElement("td");
     del.classList.add("no-img");
@@ -852,8 +861,8 @@ function updateTotals() {
         const td = r.children;
         total += cleanNumber(td[2]?.innerText);
         collected += cleanNumber(td[3]?.innerText);
-        deposit += cleanNumber(td[5]?.innerText);
-        transfer += cleanNumber(td[8]?.innerText);
+        deposit += cleanNumber(td[6]?.innerText);
+        transfer += cleanNumber(td[9]?.innerText);
     });
 
     document.getElementById('t1').innerText = formatNumber(total);
@@ -915,7 +924,7 @@ function exportExcel() {
     const rows = [];
     const headers = [];
     document.querySelectorAll("#table thead th:not(.no-img)").forEach(th => {
-        headers.push(th.innerText.replace(/[📅📦💰💳💵🏦🔄🗑️]/g, '').trim());
+        headers.push(th.innerText.replace(/[📅📦💰💳👤💵🏦🔄🗑️]/g, '').trim());
     });
     rows.push(headers.join('\t'));
 
