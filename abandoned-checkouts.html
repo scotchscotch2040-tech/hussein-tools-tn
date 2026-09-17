@@ -33,9 +33,16 @@
     --clay-purple: #9b7aa6;
     --clay-orange: #ff9030;
     --clay-orange-soft: rgba(255, 144, 48, 0.18);
-    --clay-orange-soft-hover: rgba(255, 144, 48, 0.30);
     --clay-radius: 16px;
     --clay-radius-sm: 10px;
+    --grp-order: rgba(122, 143, 166, 0.10);
+    --grp-order-border: rgba(122, 143, 166, 0.5);
+    --grp-product: rgba(155, 122, 166, 0.10);
+    --grp-product-border: rgba(155, 122, 166, 0.5);
+    --grp-action: rgba(125, 155, 122, 0.10);
+    --grp-action-border: rgba(125, 155, 122, 0.5);
+    --grp-stock: rgba(255, 144, 48, 0.10);
+    --grp-stock-border: rgba(255, 144, 48, 0.5);
   }
 
   [data-theme="dark"] {
@@ -55,22 +62,27 @@
     --clay-purple: #b59ac0;
     --clay-orange: #ffa852;
     --clay-orange-soft: rgba(255, 168, 82, 0.22);
-    --clay-orange-soft-hover: rgba(255, 168, 82, 0.36);
+    --grp-order: rgba(138, 163, 186, 0.14);
+    --grp-order-border: rgba(138, 163, 186, 0.6);
+    --grp-product: rgba(181, 154, 192, 0.14);
+    --grp-product-border: rgba(181, 154, 192, 0.6);
+    --grp-action: rgba(138, 170, 135, 0.14);
+    --grp-action-border: rgba(138, 170, 135, 0.6);
+    --grp-stock: rgba(255, 168, 82, 0.14);
+    --grp-stock-border: rgba(255, 168, 82, 0.6);
   }
 
   .container { max-width: 1900px; margin: 0 auto; }
 
-  /* ============ HEADER ============ */
+  /* HEADER */
   .header-top {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; flex-wrap: wrap;
+    gap: 8px; flex-wrap: wrap;
     padding: 6px 12px; background: var(--clay-card);
     border-radius: var(--clay-radius); box-shadow: var(--clay-shadow);
     border: 1px solid var(--clay-border);
-    margin-bottom: 8px;
-    min-height: 44px;
-    position: relative;
-    z-index: 100;
+    margin-bottom: 8px; min-height: 44px;
+    position: relative; z-index: 100;
   }
   .header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
   .header-logo {
@@ -97,11 +109,10 @@
   .h-chip.warn.show { display: inline-flex; }
   .h-chip.time { color: var(--clay-text-soft); }
   .h-chip.stock { color: var(--clay-text-soft); }
-  .h-chip.stock.warn {
-    background: rgba(181, 122, 122, 0.22);
-    color: var(--clay-danger);
-    border-color: var(--clay-danger);
-  }
+  .h-chip.stock.warn { background: rgba(181, 122, 122, 0.22); color: var(--clay-danger); border-color: var(--clay-danger); }
+  .h-chip.sync-chip { background: rgba(122, 143, 166, 0.15); color: var(--clay-blue); border-color: var(--clay-blue); }
+  .h-chip.sync-chip.ok { background: rgba(125, 155, 122, 0.2); color: var(--clay-success); border-color: var(--clay-success); }
+  .h-chip.sync-chip.err { background: rgba(181, 122, 122, 0.2); color: var(--clay-danger); border-color: var(--clay-danger); }
 
   .theme-toggle {
     background: var(--clay-card); border: 1px solid var(--clay-border);
@@ -113,10 +124,46 @@
   }
   .theme-toggle:hover { transform: rotate(30deg) scale(1.1); }
 
-  /* ============ HEADER DROPDOWNS ============ */
-  .header-actions {
-    display: flex; gap: 5px; align-items: center; flex-wrap: wrap;
+  /* Sync Section */
+  .sync-section {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 7px 14px; background: var(--clay-card);
+    border-radius: var(--clay-radius); box-shadow: var(--clay-shadow-sm);
+    border: 1px solid var(--clay-border);
+    margin-bottom: 8px; flex-wrap: wrap;
   }
+  .sync-info {
+    font-size: 10px; font-weight: 700; color: var(--clay-blue);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .sync-info .status-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--clay-success); margin-left: 2px;
+    box-shadow: 0 0 6px rgba(125, 155, 122, 0.6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .sync-info .status-dot.off { background: var(--clay-danger); box-shadow: 0 0 6px rgba(181, 122, 122, 0.6); animation: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  .sync-btn {
+    padding: 6px 16px; font-size: 11px; font-weight: 800;
+    border-radius: 10px; cursor: pointer; font-family: inherit;
+    border: 1px solid var(--clay-success); color: #fff;
+    background: linear-gradient(135deg, var(--clay-success) 0%, #5d7d5a 100%);
+    white-space: nowrap; transition: all 0.2s ease;
+    display: inline-flex; align-items: center; gap: 5px;
+    box-shadow: 3px 3px 8px rgba(125, 155, 122, 0.35);
+  }
+  .sync-btn:hover { transform: translateY(-2px); box-shadow: 4px 4px 12px rgba(125, 155, 122, 0.5); }
+  .sync-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .sync-btn kbd {
+    display: inline-block; padding: 1px 5px; border-radius: 4px;
+    background: rgba(255,255,255,0.25); font-family: inherit;
+    font-size: 9px; font-weight: 700;
+  }
+
+  /* HEADER DROPDOWNS */
+  .header-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
   .dd-wrap { position: relative; display: inline-block; }
   .dd-toggle {
     padding: 5px 10px; border-radius: var(--clay-radius-sm);
@@ -163,31 +210,24 @@
   .dd-item.danger { color: var(--clay-danger); }
   .dd-item.success { color: var(--clay-success); }
   .dd-item.gold { color: var(--clay-gold); }
-  /* ✅ عنصر التصدير المميز */
   .dd-item.highlight {
     background: linear-gradient(135deg, rgba(125, 155, 122, 0.18) 0%, rgba(184, 149, 110, 0.18) 100%);
-    color: var(--clay-success);
-    font-weight: 800;
+    color: var(--clay-success); font-weight: 800;
   }
   .dd-item.highlight:hover {
     background: linear-gradient(135deg, rgba(125, 155, 122, 0.3) 0%, rgba(184, 149, 110, 0.3) 100%);
   }
 
-  /* ============ UPLOAD ============ */
-  .upload-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    margin-bottom: 8px;
-  }
+  /* UPLOAD */
+  .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
   @media (max-width: 900px) { .upload-grid { grid-template-columns: 1fr; } }
 
   .upload-card {
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
-    padding: 8px 10px;
-    border-top: 3px solid var(--clay-accent);
+    padding: 8px 10px; border-top: 3px solid var(--clay-accent);
   }
   .upload-card.orders { border-top-color: var(--clay-purple); }
-
   .upload-card .card-header-row {
     display: flex; align-items: center; justify-content: space-between;
     gap: 8px; margin-bottom: 5px;
@@ -199,14 +239,12 @@
     border: 1px solid var(--clay-border); border-radius: 8px;
     background: var(--clay-card); color: var(--clay-danger);
     cursor: pointer; font-family: inherit; font-weight: 700;
-    box-shadow: var(--clay-shadow-sm);
-    transition: all 0.2s ease; white-space: nowrap;
+    box-shadow: var(--clay-shadow-sm); transition: all 0.2s ease;
+    white-space: nowrap;
   }
   .clear-card-btn:hover { transform: translateY(-1px); }
 
-  .upload-body {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch;
-  }
+  .upload-body { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
   @media (max-width: 600px) { .upload-body { grid-template-columns: 1fr; } }
 
   .file-drop {
@@ -233,12 +271,10 @@
   .paste-area:focus { outline: none; border-color: var(--clay-accent); }
   .paste-area::placeholder { color: var(--clay-text-soft); opacity: 0.6; font-size: 9px; }
 
-  /* ============ KPI ROW ============ */
+  /* KPI ROW */
   .kpi-row {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
-    margin-bottom: 6px;
-    position: relative;
-    z-index: 50;
+    margin-bottom: 6px; position: relative; z-index: 50;
   }
   @media (max-width: 1200px) { .kpi-row { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 700px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
@@ -248,8 +284,7 @@
     box-shadow: var(--clay-shadow-sm); border: 1px solid var(--clay-border);
     padding: 5px 8px; text-align: center;
     border-right: 3px solid var(--clay-accent);
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
   }
   .kpi-card.money { border-right-color: var(--clay-gold); }
   .kpi-card.avg { border-right-color: var(--clay-orange); }
@@ -258,8 +293,7 @@
   .kpi-card.dates { border-right-color: var(--clay-blue); }
   .kpi-card .kpi-title {
     font-size: 9px; color: var(--clay-text-soft); font-weight: 700;
-    margin-bottom: 2px; white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .kpi-card .kpi-value { font-size: 13px; font-weight: 800; color: var(--clay-gold); line-height: 1.2; }
   .kpi-card.money .kpi-value { color: var(--clay-gold); }
@@ -271,9 +305,7 @@
 
   .kpi-card.zoomable {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-    cursor: default;
-    transform-origin: center center;
-    will-change: transform;
+    cursor: default; transform-origin: center center; will-change: transform;
   }
   .kpi-card.zoomable:hover {
     transform: scale(1.18);
@@ -281,43 +313,33 @@
     z-index: 60;
   }
   .kpi-card.zoomable:hover .kpi-title { font-size: 11px; font-weight: 800; color: var(--clay-text); }
-  .kpi-card.zoomable:hover .kpi-value { font-size: 16px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+  .kpi-card.zoomable:hover .kpi-value { font-size: 16px; font-weight: 900; }
   .kpi-card.zoomable:hover .kpi-sub { font-size: 10px; font-weight: 700; color: var(--clay-text); }
-  [data-theme="dark"] .kpi-card.zoomable:hover {
-    box-shadow: 12px 12px 28px rgba(0,0,0,0.6), -10px -10px 24px rgba(78,73,67,0.6);
-  }
 
   .kpi-percent {
     display: inline-block; margin-right: 4px;
     padding: 0px 5px; border-radius: 8px;
     font-size: 8px; font-weight: 800;
-    background: var(--clay-orange-soft);
-    color: var(--clay-orange);
-    border: 1px solid var(--clay-orange);
-    vertical-align: middle;
+    background: var(--clay-orange-soft); color: var(--clay-orange);
+    border: 1px solid var(--clay-orange); vertical-align: middle;
   }
   .kpi-percent.high { background: rgba(125, 155, 122, 0.2); color: var(--clay-success); border-color: var(--clay-success); }
   .kpi-percent.low { background: rgba(181, 122, 122, 0.2); color: var(--clay-danger); border-color: var(--clay-danger); }
 
-  /* ============ STATS ============ */
-  .stats {
-    display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
-    margin-bottom: 6px;
-  }
+  /* STATS */
+  .stats { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-bottom: 6px; }
   .stat-badge {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 8px; border-radius: 14px;
     font-size: 10px; font-weight: 700;
     background: var(--clay-card); border: 1px solid var(--clay-border);
-    box-shadow: var(--clay-shadow-sm);
-    white-space: nowrap;
+    box-shadow: var(--clay-shadow-sm); white-space: nowrap;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .stat-badge:hover {
     transform: scale(1.1);
     box-shadow: 6px 6px 14px rgba(0,0,0,0.15), -4px -4px 12px rgba(255,255,255,0.6);
-    z-index: 60;
-    position: relative;
+    z-index: 60; position: relative;
   }
   .stat-badge .num { font-size: 11px; font-weight: 800; }
   .stat-badge.total .num { color: var(--clay-blue); }
@@ -335,8 +357,7 @@
 
   .stat-badge.work-progress {
     background: linear-gradient(135deg, rgba(125, 155, 122, 0.2) 0%, rgba(184, 149, 110, 0.2) 100%);
-    border-color: var(--clay-success);
-    font-weight: 800;
+    border-color: var(--clay-success); font-weight: 800;
   }
   .stat-badge.work-progress .num { color: var(--clay-success); font-size: 12px; }
   .stat-badge.work-progress .total-num { color: var(--clay-text-soft); font-size: 11px; }
@@ -346,35 +367,24 @@
     font-size: 9px; font-weight: 800;
     background: var(--clay-success); color: #fff;
   }
-  .stat-badge.work-progress .percent-badge.low {
-    background: var(--clay-danger);
-  }
-  .stat-badge.work-progress .percent-badge.mid {
-    background: var(--clay-warning);
-  }
+  .stat-badge.work-progress .percent-badge.low { background: var(--clay-danger); }
+  .stat-badge.work-progress .percent-badge.mid { background: var(--clay-warning); }
 
-  /* ============ TOP PRODUCTS ============ */
+  /* TOP PRODUCTS */
   .top-products-row {
     background: var(--clay-card); border-radius: var(--clay-radius);
     box-shadow: var(--clay-shadow); border: 1px solid var(--clay-border);
     border-right: 4px solid var(--clay-orange);
     padding: 6px 10px; margin-bottom: 6px;
   }
-  .top-products-title {
-    font-size: 10px; font-weight: 700; color: var(--clay-text);
-    margin-bottom: 5px;
-  }
-  .top-products-list {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
-  }
+  .top-products-title { font-size: 10px; font-weight: 700; color: var(--clay-text); margin-bottom: 5px; }
+  .top-products-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
   @media (max-width: 900px) { .top-products-list { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 500px) { .top-products-list { grid-template-columns: 1fr; } }
 
   .top-product-item {
-    background: var(--clay-bg);
-    border-radius: 8px;
-    padding: 6px 8px;
-    border: 1px solid var(--clay-border);
+    background: var(--clay-bg); border-radius: 8px;
+    padding: 6px 8px; border: 1px solid var(--clay-border);
     display: flex; align-items: center; gap: 5px;
     transition: all 0.2s ease;
   }
@@ -388,8 +398,7 @@
   .top-product-rank.rank-1 { background: linear-gradient(135deg, #ff9030 0%, #ffb347 100%); }
   .top-product-rank.rank-2 { background: linear-gradient(135deg, #b8956e 0%, #d4ae84 100%); }
   .top-product-rank.rank-3 { background: linear-gradient(135deg, #a67c6b 0%, #c99a86 100%); }
-  .top-product-rank.rank-4,
-  .top-product-rank.rank-5 { background: linear-gradient(135deg, #7a8fa6 0%, #9ab0c7 100%); }
+  .top-product-rank.rank-4, .top-product-rank.rank-5 { background: linear-gradient(135deg, #7a8fa6 0%, #9ab0c7 100%); }
   .top-product-info { flex: 1; min-width: 0; }
   .top-product-name {
     font-size: 10px; font-weight: 700; color: var(--clay-text);
@@ -402,7 +411,7 @@
   }
   .top-product-meta strong { color: var(--clay-orange); font-size: 11px; }
 
-  /* ============ PROGRESS ============ */
+  /* PROGRESS */
   .progress-wrap {
     display: none; max-width: 500px; margin: 0 auto 8px;
     background: var(--clay-card); border-radius: var(--clay-radius);
@@ -416,32 +425,21 @@
     margin-bottom: 5px;
   }
   .progress-label .progress-percent { color: var(--clay-orange); font-size: 12px; }
-  .progress-bar-bg {
-    width: 100%; height: 8px; border-radius: 20px;
-    background: var(--clay-bg); overflow: hidden;
-  }
+  .progress-bar-bg { width: 100%; height: 8px; border-radius: 20px; background: var(--clay-bg); overflow: hidden; }
   .progress-bar-fill {
     height: 100%; width: 0%;
     background: linear-gradient(90deg, var(--clay-orange) 0%, var(--clay-gold) 100%);
-    border-radius: 20px;
-    transition: width 0.3s ease;
+    border-radius: 20px; transition: width 0.3s ease;
   }
-  .progress-sub {
-    font-size: 9px; color: var(--clay-text-soft); margin-top: 3px;
-    text-align: center; font-weight: 600;
-  }
+  .progress-sub { font-size: 9px; color: var(--clay-text-soft); margin-top: 3px; text-align: center; font-weight: 600; }
 
-  /* ============ SKELETON ============ */
+  /* SKELETON */
   .skeleton {
     background: linear-gradient(90deg, var(--clay-card) 25%, var(--clay-bg) 50%, var(--clay-card) 75%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.4s ease-in-out infinite;
+    background-size: 200% 100%; animation: skeleton-loading 1.4s ease-in-out infinite;
     border-radius: 6px;
   }
-  @keyframes skeleton-loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
+  @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   .skeleton-table {
     display: none; background: var(--clay-card);
     border-radius: var(--clay-radius); box-shadow: var(--clay-shadow);
@@ -453,30 +451,90 @@
   .skeleton-cell.short { flex: 0.5; }
   .skeleton-cell.med { flex: 0.8; }
 
-  /* ============ TABLE ============ */
+  /* ✅ TABLE — بعد الإصلاح */
   .table-wrap {
     background: var(--clay-card); border-radius: var(--clay-radius);
     overflow: hidden; box-shadow: var(--clay-shadow);
     border: 1px solid var(--clay-border); margin-bottom: 8px;
+    position: relative;
+  }
+  .table-scroll {
+    overflow: auto;
+    max-height: calc(100vh - 300px);
+    min-height: 500px;
+    position: relative;
   }
 
-  .table-scroll {
-    overflow-x: auto;
-    max-height: calc(100vh - 280px);
-    min-height: 500px;
-    overflow-y: auto;
+  /* ✅ شريط المجموعات — جوه .table-scroll */
+  .column-groups-bar {
+    display: flex;
+    background: var(--clay-bg);
+    border-bottom: 2px solid var(--clay-border);
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    width: 100%;
+    min-width: fit-content;
+  }
+  .group-label {
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--clay-text);
+    border-left: 2px solid var(--clay-border);
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    position: relative;
+  }
+  .group-label:last-child { border-left: none; }
+
+  .group-order {
+    background: var(--grp-order);
+    border-bottom: 3px solid var(--grp-order-border);
+    color: var(--clay-blue);
+  }
+  .group-product {
+    background: var(--grp-product);
+    border-bottom: 3px solid var(--grp-product-border);
+    color: var(--clay-purple);
+  }
+  .group-actions {
+    background: var(--grp-action);
+    border-bottom: 3px solid var(--grp-action-border);
+    color: var(--clay-success);
+  }
+  .group-stock {
+    background: var(--grp-stock);
+    border-bottom: 3px solid var(--grp-stock-border);
+    color: var(--clay-orange);
   }
 
   table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
-  thead { position: sticky; top: 0; z-index: 10; }
+
+  /* ✅ رأس الجدول — sticky تحت شريط المجموعات */
+  thead {
+    position: sticky;
+    top: 33px;
+    z-index: 10;
+  }
   thead th {
-    background: var(--clay-card); color: var(--clay-accent);
+    background: var(--clay-card);
+    color: var(--clay-accent);
     text-align: center; font-weight: 700; font-size: 11px;
     border-bottom: 2px solid var(--clay-border);
     border-left: 1px solid var(--clay-border);
     box-shadow: 0 3px 6px rgba(0,0,0,0.06);
     padding: 6px 5px 5px 5px; vertical-align: top;
+    position: relative;
   }
+  /* ✅ تلوين خلفية رأس الجدول حسب المجموعة */
+  thead th.th-order { background: linear-gradient(180deg, var(--grp-order) 0%, var(--clay-card) 100%) !important; }
+  thead th.th-product { background: linear-gradient(180deg, var(--grp-product) 0%, var(--clay-card) 100%) !important; }
+  thead th.th-action { background: linear-gradient(180deg, var(--grp-action) 0%, var(--clay-card) 100%) !important; }
+  thead th.th-stock { background: linear-gradient(180deg, var(--grp-stock) 0%, var(--clay-card) 100%) !important; }
+
   .th-content { display: flex; flex-direction: column; gap: 3px; align-items: stretch; }
   .th-label { font-size: 11px; font-weight: 700; color: var(--clay-accent); text-align: center; padding: 1px 3px; }
 
@@ -493,8 +551,7 @@
     padding: 6px 8px; text-align: center;
     border-bottom: 1px solid var(--clay-border);
     border-left: 1px solid rgba(213, 206, 195, 0.4);
-    color: var(--clay-text);
-    font-weight: 700;
+    color: var(--clay-text); font-weight: 700;
   }
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
   tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
@@ -509,17 +566,9 @@
     background: var(--clay-orange-soft) !important;
     border-right: 3px solid var(--clay-orange);
   }
-  tbody tr.haram-highlight:hover {
-    background: var(--clay-orange-soft-hover) !important;
-  }
-  tbody tr.has-action {
-    box-shadow: inset 3px 0 0 0 var(--clay-success);
-  }
+  tbody tr.has-action { box-shadow: inset 3px 0 0 0 var(--clay-success); }
 
-  .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 12px;
-    font-size: 9px; font-weight: 700;
-  }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 700; }
   .badge-available { background: rgba(125, 155, 122, 0.22); color: var(--clay-success); }
   .badge-oos { background: rgba(181, 122, 122, 0.22); color: var(--clay-danger); }
   .badge-nosku { background: rgba(212, 163, 115, 0.22); color: var(--clay-warning); }
@@ -553,42 +602,20 @@
   .action-input::placeholder { color: var(--clay-text-soft); opacity: 0.4; font-size: 9px; }
 
   .action-input.auto-filled-date {
-    background: rgba(255, 144, 48, 0.08);
-    border-color: var(--clay-orange);
-    color: var(--clay-text-soft);
-    font-size: 10px;
-    cursor: default;
-    width: 130px;
+    background: rgba(255, 144, 48, 0.08); border-color: var(--clay-orange);
+    color: var(--clay-text-soft); font-size: 10px; cursor: default; width: 130px;
   }
-  .action-input.auto-filled-date:focus {
-    outline: none;
-    border-color: var(--clay-orange);
-  }
-  .action-input.auto-filled-date:empty::before {
-    content: "تلقائي";
-    opacity: 0.5;
-  }
+  .action-input.auto-filled-date:focus { outline: none; border-color: var(--clay-orange); }
+  .action-input.auto-filled-date:empty::before { content: "تلقائي"; opacity: 0.5; }
 
   .action-input.notes-input {
-    text-align: right;
-    width: 180px;
-    font-weight: 600;
+    text-align: right; width: 180px; font-weight: 600;
     background: rgba(122, 143, 166, 0.06);
     border-color: rgba(122, 143, 166, 0.4);
   }
-  .action-input.notes-input:focus {
-    border-color: var(--clay-blue);
-    background: rgba(122, 143, 166, 0.12);
-  }
-  .action-input.notes-input.has-value {
-    border-color: var(--clay-blue);
-    background: rgba(122, 143, 166, 0.12);
-  }
-  .action-input.notes-input::placeholder {
-    color: var(--clay-text-soft);
-    opacity: 0.5;
-    font-size: 9px;
-  }
+  .action-input.notes-input:focus { border-color: var(--clay-blue); background: rgba(122, 143, 166, 0.12); }
+  .action-input.notes-input.has-value { border-color: var(--clay-blue); background: rgba(122, 143, 166, 0.12); }
+  .action-input.notes-input::placeholder { color: var(--clay-text-soft); opacity: 0.5; font-size: 9px; }
 
   .stock-num { font-weight: 700; color: var(--clay-text); }
   .stock-zero { color: var(--clay-text-soft); opacity: 0.6; font-weight: 700; }
@@ -606,11 +633,7 @@
   .phone-link { color: var(--clay-success); direction: ltr; }
   .phone-link:hover { background: rgba(125, 155, 122, 0.15); }
 
-  .product-name {
-    text-align: right !important; max-width: 220px;
-    white-space: normal; font-size: 11px; line-height: 1.4;
-    font-weight: 700;
-  }
+  .product-name { text-align: right !important; max-width: 220px; white-space: normal; font-size: 11px; line-height: 1.4; font-weight: 700; }
 
   .price-cell { font-weight: 700; color: var(--clay-gold); direction: ltr; }
   .price-mismatch { color: var(--clay-danger); position: relative; }
@@ -621,12 +644,11 @@
   .empty-state {
     text-align: center; padding: 40px 20px; color: var(--clay-text-soft);
     font-size: 13px; background: var(--clay-card);
-    border-radius: var(--clay-radius);
-    border: 2px dashed var(--clay-border);
+    border-radius: var(--clay-radius); border: 2px dashed var(--clay-border);
   }
   .empty-state .icon { font-size: 36px; margin-bottom: 8px; }
 
-  /* ============ TOASTS ============ */
+  /* TOASTS */
   .copy-toast {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
     background: var(--clay-card); color: var(--clay-text);
@@ -659,6 +681,7 @@
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .top-products-list { grid-template-columns: 1fr; }
     .table-scroll { max-height: calc(100vh - 400px); min-height: 350px; }
+    .group-label { font-size: 10px; padding: 5px 8px; }
   }
 </style>
 </head>
@@ -683,6 +706,7 @@
       <span class="h-chip warn" id="warnBadge">⚠️ الاستوك اتغير</span>
       <span class="h-chip time" id="lastUpdateChip">📅 آخر تحديث: —</span>
       <span class="h-chip stock" id="stockDateChip">📊 المخزون: —</span>
+      <span class="h-chip sync-chip" id="syncChip" style="display:none;">🔄 آخر مزامنة: —</span>
     </div>
 
     <div class="header-actions">
@@ -717,6 +741,18 @@
 
       <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
     </div>
+  </div>
+
+  <!-- SYNC SECTION -->
+  <div class="sync-section">
+    <div class="sync-info">
+      <span id="syncStatusText">🔗 المزامنة معدة ومفعّلة</span>
+      <span class="status-dot" id="syncStatusDot"></span>
+    </div>
+    <button class="sync-btn" id="syncNowBtn" onclick="syncToGoogleSheets()" 
+            title="مزامنة الآن (Ctrl+S)">
+      🔄 مزامنة الآن <kbd>Ctrl+S</kbd>
+    </button>
   </div>
 
   <!-- UPLOAD -->
@@ -834,9 +870,15 @@
     <div class="skeleton-row"><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell med"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell med"></div></div>
   </div>
 
-  <!-- TABLE -->
+  <!-- ✅ TABLE — بعد الإصلاح: شريط المجموعات جوه .table-scroll -->
   <div class="table-wrap" id="tableWrap" style="display:none;">
     <div class="table-scroll">
+      <div class="column-groups-bar" id="columnGroupsBar">
+        <div class="group-label group-order" id="grpOrder" style="flex: 7;">📋 بيانات الأوردر</div>
+        <div class="group-label group-product" id="grpProduct" style="flex: 7;">🛒 بيانات المنتج</div>
+        <div class="group-label group-actions" id="grpActions" style="flex: 5;">⚙️ الأكشنز والمتابعة</div>
+        <div class="group-label group-stock" id="grpStock" style="flex: 8;">📊 المخزون (الفروع)</div>
+      </div>
       <table id="resultTable">
         <thead><tr id="tableHeaderRow"></tr></thead>
         <tbody id="resultBody"></tbody>
@@ -852,9 +894,12 @@
 </div>
 
 <div id="copyToast" class="copy-toast"><span>📋</span><span id="copyToastMessage">تم النسخ</span></div>
-<div id="toast" class="toast"><span class="toast-icon">✅</span><span id="toastMessage">تم</span></div>
+<div id="toast" class="toast"><span class="toast-icon">✅</span><span id="toastMessage">تم</span></div><script>
+// ==================================================
+// ✅ رابط Google Apps Script — حطه هنا
+// ==================================================
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwgPQ-_CY1JL-X3QME8v1UM9fqZ6rXmFGh1NSBaZQcvzIcazk7XofoXJ0SO3r8xjTq68Q/exec';  // ← الصق رابطك بين علامتي التنصيص
 
-<script>
 // ================== Globals ==================
 let stockMap = {};
 let ordersRows = [];
@@ -865,9 +910,11 @@ let isComparing = false;
 let stockChanged = false;
 
 let orderActions = {};
-let metaInfo = { lastUpdate: null, stockDate: null };
-
+let metaInfo = { lastUpdate: null, stockDate: null, lastSync: null };
 let processedOrderNumbers = new Set();
+
+let autoSyncInterval = null;
+let pendingSyncChanges = false;
 
 let columnFilters = {
   order: '', email: '', createdAt: '', qty: '', product: '', sku: '',
@@ -892,12 +939,9 @@ function normalizeSku(sku) {
   if (sku === null || sku === undefined) return '';
   let s = String(sku);
   s = s.replace(/[\u00A0\u200B-\u200D\uFEFF\u2028\u2029]/g, '');
-  s = s.trim();
-  s = s.replace(/\s+/g, '');
+  s = s.trim(); s = s.replace(/\s+/g, '');
   s = s.replace(/\.0+$/, '');
-  if (/^\d+$/.test(s)) {
-    s = s.replace(/^0+/, '') || '0';
-  }
+  if (/^\d+$/.test(s)) { s = s.replace(/^0+/, '') || '0'; }
   return s.toUpperCase();
 }
 
@@ -998,6 +1042,141 @@ async function saveNow() {
   updateSavedBadge();
 }
 
+// ================== Google Sheets Sync ==================
+function updateSyncChip(status, message) {
+  const chip = document.getElementById('syncChip');
+  if (!chip) return;
+  chip.style.display = 'inline-flex';
+  chip.classList.remove('ok', 'err');
+  if (status === 'ok') chip.classList.add('ok');
+  else if (status === 'err') chip.classList.add('err');
+  chip.innerHTML = message;
+}
+
+function updateSyncStatusDot(isOk) {
+  const dot = document.getElementById('syncStatusDot');
+  const text = document.getElementById('syncStatusText');
+  if (!dot) return;
+  if (isOk) {
+    dot.classList.remove('off');
+    if (text) text.textContent = '🔗 المزامنة معدة ومفعّلة';
+  } else {
+    dot.classList.add('off');
+    if (text) text.textContent = '⚠️ رابط المزامنة مش متظبط';
+  }
+}
+
+async function syncToGoogleSheets(silent = false) {
+  if (!SYNC_URL || !SYNC_URL.startsWith('https://script.google.com/')) {
+    if (!silent) showToast('⚠️ رابط المزامنة مش متظبط في الكود', '⚠️');
+    updateSyncStatusDot(false);
+    return false;
+  }
+
+  if (!results.length) {
+    if (!silent) showToast('⚠️ مفيش أوردرات محملة', '⚠️');
+    return false;
+  }
+
+  const workedResults = results.filter(r => {
+    const status = (r.productStatus || '').trim();
+    return status === 'تم تنفيذ الطلب'
+        || status === 'لم يتم تنفيذ الطلب'
+        || status === 'متابعة'
+        || status === 'تم إرسال ايميل'
+        || status === 'لم يتم الرد';
+  });
+
+  if (!workedResults.length) {
+    if (!silent) showToast('⚠️ مفيش أوردرات اشتغلنا عليها للمزامنة', '⚠️');
+    return false;
+  }
+
+  const btn = document.getElementById('syncNowBtn');
+  if (btn && !silent) {
+    btn.disabled = true;
+    btn.innerHTML = '⏳ جاري المزامنة... <kbd>Ctrl+S</kbd>';
+  }
+  if (!silent) updateSyncChip('', '⏳ جاري المزامنة...');
+
+  const rows = workedResults.map(r => [
+    r.order || '',
+    r.email || '',
+    formatDate(r.createdAt) || '',
+    r.qty || 0,
+    r.name || '',
+    r.sku || '',
+    r.shippingName || '',
+    r.shippingPhone || '',
+    r.shippingProvince || '',
+    r.shopifyPrice || 0,
+    r.stockPrice === '—' ? '' : (r.stockPrice || 0),
+    r.priceDiff || '',
+    r.priceDiffStatus === 'edara' ? 'إدارة أغلى' : (r.priceDiffStatus === 'shopify' ? 'Shopify أغلى' : 'نفس السعر'),
+    r.status === 'seller' ? (r.seller || '') : (r.status === 'available' ? 'متوفر' : (r.status === 'notinbranch' ? 'مش في الهرم' : (r.status === 'oos' ? 'Out of Stock' : (r.status === 'nosku' ? 'ملهوش كود' : 'سعر مختلف')))),
+    r.productStatus || '',
+    r.newOrderNumber || '',
+    r.newOrderDate || '',
+    r.newOrderValue || '',
+    r.notes || '',
+    r.haram === '-' ? '' : (r.haram ?? 0),
+    r.bahary === '-' ? '' : (r.bahary ?? 0),
+    r.suez === '-' ? '' : (r.suez ?? 0),
+    r.nasr === '-' ? '' : (r.nasr ?? 0),
+    r.online === '-' ? '' : (r.online ?? 0),
+    r.total === '-' ? '' : (r.total ?? 0),
+    r.held === '-' ? '' : (r.held ?? 0),
+    r.transfer === '-' ? '' : (r.transfer ?? 0)
+  ]);
+
+  try {
+    await fetch(SYNC_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rows })
+    });
+
+    const now = new Date();
+    metaInfo.lastSync = now.getTime();
+    pendingSyncChanges = false;
+    await saveNow();
+
+    updateSyncChip('ok', '✅ آخر مزامنة: ' + formatDateTimeAr(now.getTime()));
+    updateSyncStatusDot(true);
+    if (!silent) {
+      showToast(`✅ تم إرسال ${workedResults.length} أوردر لـ Google Sheet`, '✅');
+    } else {
+      showToast(`🔄 مزامنة تلقائية: ${workedResults.length} أوردر`, '🔄');
+    }
+    return true;
+  } catch (err) {
+    console.error('Sync error:', err);
+    updateSyncChip('err', '❌ فشل المزامنة');
+    if (!silent) showToast('❌ فشل الاتصال: ' + err.message, '❌');
+    return false;
+  } finally {
+    if (btn && !silent) {
+      btn.disabled = false;
+      btn.innerHTML = '🔄 مزامنة الآن <kbd>Ctrl+S</kbd>';
+    }
+  }
+}
+
+function markSyncPending() {
+  pendingSyncChanges = true;
+}
+
+function startAutoSync() {
+  if (autoSyncInterval) clearInterval(autoSyncInterval);
+  autoSyncInterval = setInterval(async () => {
+    if (!pendingSyncChanges) return;
+    if (!SYNC_URL) return;
+    console.log('🔄 Auto-sync triggered');
+    await syncToGoogleSheets(true);
+  }, 60 * 1000);
+}
+
 // ================== Province ==================
 const PROVINCE_MAP = { 'cairo': 'Cairo', 'giza': 'Giza', '6th of october': 'Giza', 'helwan': 'Cairo' };
 const ALLOWED_PROVINCES = Object.keys(PROVINCE_MAP);
@@ -1013,17 +1192,12 @@ function isAllowedProvince(raw) {
 }
 
 // ================== Helpers ==================
-function normalizeKey(v) {
-  if (v === null || v === undefined) return '';
-  return String(v).trim();
-}
-
+function normalizeKey(v) { if (v === null || v === undefined) return ''; return String(v).trim(); }
 function toNumber(v) {
   if (v === null || v === undefined || v === '') return 0;
   const n = Number(String(v).replace(/,/g, '').trim());
   return isNaN(n) ? 0 : n;
 }
-
 function findCol(headers, ...candidates) {
   const norm = headers.map(h => normalizeKey(h).toLowerCase().replace(/\s+/g, ' '));
   for (const cand of candidates) {
@@ -1038,7 +1212,6 @@ function findCol(headers, ...candidates) {
   }
   return null;
 }
-
 function cleanPhone(phone) {
   if (!phone) return '';
   let p = String(phone).replace(/[^\d+]/g, '');
@@ -1047,7 +1220,6 @@ function cleanPhone(phone) {
   if (p.length === 10 && p.startsWith('1')) p = '0' + p;
   return p;
 }
-
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const s = String(dateStr).trim();
@@ -1055,7 +1227,6 @@ function formatDate(dateStr) {
   if (match) return `${match[3]}/${match[2]}/${match[1]} ${match[4]}:${match[5]}`;
   return s;
 }
-
 function getDateOnly(dateStr) {
   if (!dateStr) return '';
   const s = String(dateStr).trim();
@@ -1082,7 +1253,6 @@ function getDateOnly(dateStr) {
   }
   return '';
 }
-
 function formatDateTimeAr(timestamp) {
   if (!timestamp) return '—';
   const d = new Date(timestamp);
@@ -1095,12 +1265,7 @@ function formatDateTimeAr(timestamp) {
   hours = hours % 12 || 12;
   return `${day}/${month}/${year} - ${String(hours).padStart(2, '0')}:${minutes} ${period}`;
 }
-
-function cleanNewOrderNumber(raw) {
-  if (raw === null || raw === undefined) return '';
-  return String(raw).trim().replace(/\s+/g, ' ');
-}
-
+function cleanNewOrderNumber(raw) { if (raw === null || raw === undefined) return ''; return String(raw).trim().replace(/\s+/g, ' '); }
 function cleanNewOrderValue(raw) {
   if (raw === null || raw === undefined || raw === '') return '';
   let s = String(raw).trim();
@@ -1113,12 +1278,7 @@ function cleanNewOrderValue(raw) {
   const n = Number(s);
   return isNaN(n) ? '' : String(n);
 }
-
-function cleanNotes(raw) {
-  if (raw === null || raw === undefined) return '';
-  return String(raw).trim();
-}
-
+function cleanNotes(raw) { if (raw === null || raw === undefined) return ''; return String(raw).trim(); }
 function getSellerName(sku) {
   if (!sku) return null;
   const s = String(sku).trim().toUpperCase();
@@ -1128,7 +1288,6 @@ function getSellerName(sku) {
   if (s.startsWith('WH'))       return 'White House Seller';
   return null;
 }
-
 function getPriceDiff(shopifyPrice, edaraPrice) {
   if (typeof shopifyPrice !== 'number' || typeof edaraPrice !== 'number') return { diff: '—', status: 'same' };
   if (edaraPrice <= 0 && shopifyPrice <= 0) return { diff: '—', status: 'same' };
@@ -1149,7 +1308,6 @@ function showToast(message, icon = '✅') {
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
 }
-
 let copyToastTimeout;
 function showCopyToast(message) {
   const el = document.getElementById('copyToast');
@@ -1159,7 +1317,6 @@ function showCopyToast(message) {
   clearTimeout(copyToastTimeout);
   copyToastTimeout = setTimeout(() => el.classList.remove('show'), 1500);
 }
-
 function copyToClipboard(text, label) {
   if (!text || text === '—' || text === '-') return;
   navigator.clipboard.writeText(text).then(() => {
@@ -1221,7 +1378,6 @@ function updateInfoBar() {
   if (chip) {
     chip.innerHTML = '📅 آخر تحديث: ' + (metaInfo.lastUpdate ? formatDateTimeAr(metaInfo.lastUpdate) : '—');
   }
-
   const stockChip = document.getElementById('stockDateChip');
   if (stockChip) {
     if (stockLoaded && metaInfo.stockDate) {
@@ -1232,8 +1388,11 @@ function updateInfoBar() {
       stockChip.innerHTML = '⚠️ مفيش مخزون';
     }
   }
+  if (metaInfo.lastSync) {
+    updateSyncChip('ok', '✅ آخر مزامنة: ' + formatDateTimeAr(metaInfo.lastSync));
+  }
+  updateSyncStatusDot(!!SYNC_URL && SYNC_URL.startsWith('https://script.google.com/'));
 }
-
 function updateSavedBadge() {
   const badge = document.getElementById('savedBadge');
   const count = Object.keys(orderActions).length;
@@ -1244,7 +1403,6 @@ function updateSavedBadge() {
     badge.classList.remove('show');
   }
 }
-
 function updateWarnBadge() {
   const badge = document.getElementById('warnBadge');
   if (stockChanged) badge.classList.add('show');
@@ -1274,7 +1432,6 @@ function setupDrop(dropId, inputId, nameId, onLoad) {
     }
   });
 }
-
 function handleFile(file, dropEl, nameEl, onLoad) {
   dropEl.classList.add('has-file');
   nameEl.textContent = file.name;
@@ -1299,19 +1456,15 @@ function handleFile(file, dropEl, nameEl, onLoad) {
 function parsePastedText(text) {
   const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
   if (lines.length < 1) return { rows: [], hasHeader: false, headers: [] };
-
   const firstLine = lines[0];
   const tabCount = (firstLine.match(/\t/g) || []).length;
   const commaCount = (firstLine.match(/,/g) || []).length;
   const delimiter = tabCount >= commaCount ? '\t' : ',';
-
   const firstCells = splitLine(firstLine, delimiter);
   const hasHeader = detectHeader(firstCells);
-
   let headers, dataStartIdx;
   if (hasHeader) { headers = firstCells; dataStartIdx = 1; }
   else { headers = null; dataStartIdx = 0; }
-
   const rows = [];
   for (let i = dataStartIdx; i < lines.length; i++) {
     const cells = splitLine(lines[i], delimiter);
@@ -1323,7 +1476,6 @@ function parsePastedText(text) {
   }
   return { rows, hasHeader, headers, delimiter };
 }
-
 function detectHeader(cells) {
   const keywords = [
     'كود الصنف','الصنف','المحتجز','كود الموديل','سعر البيع','رصيد رهن التحويل',
@@ -1335,7 +1487,6 @@ function detectHeader(cells) {
   for (const kw of keywords) { if (joined.includes(kw.toLowerCase())) matched++; }
   return matched >= 2;
 }
-
 function splitLine(line, delimiter) {
   const result = [];
   let current = '';
@@ -1359,7 +1510,6 @@ const STOCK_DEFAULT_MAP = {
   5:'رصيد رهن التحويل',6:'إجمالي',7:'الهرم',8:'البحر_الاعظم',
   9:'السويس',10:'مدينة_نصر',11:'Online'
 };
-
 function buildDefaultStockRows(rows) {
   return rows.map(cells => {
     const obj = {};
@@ -1374,11 +1524,9 @@ function buildDefaultStockRows(rows) {
 function loadStock(json) {
   stockMap = {};
   if (!json.length) { alert('شيت المخزون فاضي!'); return; }
-
   const headers = Object.keys(json[0]);
   let colSku = findCol(headers, 'كود الصنف', 'كود', 'sku', 'code');
   if (!colSku) colSku = findCol(headers, 'تسلسل الصنف', 'تسلسل');
-
   const colName    = findCol(headers, 'الصنف', 'اسم المنتج', 'name', 'product');
   const colModel   = findCol(headers, 'كود الموديل', 'الموديل', 'model');
   const colPrice   = findCol(headers, 'سعر البيع', 'السعر', 'price');
@@ -1390,13 +1538,10 @@ function loadStock(json) {
   const colSuez    = findCol(headers, 'السويس');
   const colNasr    = findCol(headers, 'مدينة_نصر', 'مدينة نصر');
   const colOnline  = findCol(headers, 'Online', 'أونلاين', 'اونلاين');
-
   if (!colSku) { alert('مش لاقي عمود "كود الصنف" في شيت المخزون.'); return; }
-
   json.forEach(row => {
     const sku = normalizeSku(row[colSku]);
     if (!sku) return;
-
     stockMap[sku] = {
       sku,
       name: normalizeKey(row[colName]),
@@ -1412,20 +1557,16 @@ function loadStock(json) {
       online: toNumber(row[colOnline]),
     };
   });
-
   stockLoaded = Object.keys(stockMap).length > 0;
   metaInfo.stockDate = Date.now();
   stockChanged = false;
-  updateInfoBar();
-  updateWarnBadge();
-  scheduleSave();
+  updateInfoBar(); updateWarnBadge(); scheduleSave();
   console.log('✅ Stock loaded:', Object.keys(stockMap).length, 'products');
 }
 
-// ================== Load Orders (تراكمي) ==================
+// ================== Load Orders ==================
 function loadOrders(json) {
   if (!json.length) { alert('شيت الأوردرات فاضي!'); return; }
-
   const headers = Object.keys(json[0]);
   const colOrder    = findCol(headers, 'Name', 'Id', 'Order', 'الأوردر');
   const colEmail    = findCol(headers, 'Email', 'الإيميل', 'البريد');
@@ -1437,14 +1578,11 @@ function loadOrders(json) {
   const colShipName = findCol(headers, 'Shipping Name', 'اسم العميل');
   const colShipPhone= findCol(headers, 'Shipping Phone', 'Phone', 'الموبايل');
   const colShipProv = findCol(headers, 'Shipping Province Name', 'Shipping Province', 'المحافظة');
-
   if (!colOrder) { alert('مش لاقي عمود "Name" في شيت الأوردرات.'); return; }
 
   const existingOrders = new Set();
   results.forEach(r => { if (r.order && r.order !== '—') existingOrders.add(r.order); });
   processedOrderNumbers.forEach(o => existingOrders.add(o));
-
-  console.log('📋 أوردرات موجودة قبل الرفع:', existingOrders.size);
 
   let lastOrder = '';
   let lastShipProv = '';
@@ -1473,27 +1611,18 @@ function loadOrders(json) {
       const newShipPhone = normalizeKey(row[colShipPhone]);
       if (newShipPhone) lastShipPhone = newShipPhone;
     }
-
     if (!lastOrder) return;
-
-    if (existingOrders.has(lastOrder)) {
-      skippedCount++;
-      return;
-    }
+    if (existingOrders.has(lastOrder)) { skippedCount++; return; }
 
     const sku = normalizeSku(row[colSku]);
     const name = normalizeKey(row[colName]);
     const qty = toNumber(row[colQty]);
     const price = toNumber(row[colPrice]);
-
     if (!name && !sku) return;
     if (!isAllowedProvince(lastShipProv)) return;
 
     const rowKey = lastOrder + '||' + sku + '||' + name;
-    if (seenInThisFile.has(rowKey)) {
-      duplicateInFileCount++;
-      return;
-    }
+    if (seenInThisFile.has(rowKey)) { duplicateInFileCount++; return; }
     seenInThisFile.add(rowKey);
 
     newOrdersRows.push({
@@ -1509,21 +1638,12 @@ function loadOrders(json) {
 
   ordersRows = [...ordersRows, ...newOrdersRows];
   ordersLoaded = ordersRows.length > 0;
-
   const newUniqueOrders = new Set(newOrdersRows.map(o => o.order)).size;
 
   let msg = `✅ اتضاف ${newUniqueOrders} أوردر جديد`;
   if (skippedCount > 0) msg += ` | ⏭️ اتخطى ${skippedCount} صف (أوردر قديم)`;
-  if (duplicateInFileCount > 0) msg += ` | 🔁 اتخطى ${duplicateInFileCount} صف مكرر في نفس الملف`;
+  if (duplicateInFileCount > 0) msg += ` | 🔁 اتخطى ${duplicateInFileCount} صف مكرر`;
   showToast(msg, '📁');
-
-  console.log('✅ Loaded:', {
-    newRows: newOrdersRows.length,
-    newUniqueOrders,
-    skippedOld: skippedCount,
-    duplicateInFile: duplicateInFileCount,
-    totalRows: ordersRows.length
-  });
 }
 
 // ================== Auto Compare ==================
@@ -1533,11 +1653,10 @@ function tryAutoCompare() {
   compare();
 }
 
-// ================== Compare (تراكمي) ==================
+// ================== Compare ==================
 function compare() {
   if (isComparing) return;
   isComparing = true;
-
   showSkeleton();
   showProgress(0, 'جاري بدء التحليل...', 'بيتم تحضير البيانات');
 
@@ -1570,10 +1689,8 @@ function compare() {
     });
 
     const newResults = [];
-
     ordersRows.forEach(item => {
       if (item.order && existingResultOrders.has(item.order)) return;
-
       const sku = item.sku;
       const savedAction = orderActions[item.order] || {};
       const actionFields = {
@@ -1640,7 +1757,6 @@ function compare() {
         });
         return;
       }
-
       if (stock.haram <= 0) {
         newResults.push({
           order: item.order, email: item.email, createdAt: item.createdAt,
@@ -1657,7 +1773,6 @@ function compare() {
         });
         return;
       }
-
       newResults.push({
         order: item.order, email: item.email, createdAt: item.createdAt,
         name: item.name, sku: sku, model: stock.model,
@@ -1675,15 +1790,8 @@ function compare() {
     });
 
     results = [...results, ...newResults];
-
     newResults.forEach(r => {
       if (r.order && r.order !== '—') processedOrderNumbers.add(r.order);
-    });
-
-    console.log('✅ Compare done:', {
-      oldResults: existingResultOrders.size,
-      newResults: newResults.length,
-      totalResults: results.length
     });
   }, 350);
 
@@ -1723,21 +1831,13 @@ function renderStats() {
   document.getElementById('statNosku').textContent = results.filter(r => r.status === 'nosku').length;
   document.getElementById('statPriceMismatch').textContent = results.filter(r => r.priceMismatch).length;
 
-  const statusOrders = {
-    done: new Set(),
-    notdone: new Set(),
-    followup: new Set(),
-    email: new Set(),
-    noanswer: new Set()
-  };
-
+  const statusOrders = { done: new Set(), notdone: new Set(), followup: new Set(), email: new Set(), noanswer: new Set() };
   const allUniqueOrders = new Set();
   const workedOrders = new Set();
 
   results.forEach(r => {
     const orderKey = r.order || '—';
     allUniqueOrders.add(orderKey);
-
     const status = (r.productStatus || '').trim();
     if (status === 'تم تنفيذ الطلب') { statusOrders.done.add(orderKey); workedOrders.add(orderKey); }
     else if (status === 'لم يتم تنفيذ الطلب') { statusOrders.notdone.add(orderKey); workedOrders.add(orderKey); }
@@ -1755,7 +1855,6 @@ function renderStats() {
   const workedCount = workedOrders.size;
   const totalUnique = allUniqueOrders.size;
   const percent = totalUnique > 0 ? (workedCount / totalUnique) * 100 : 0;
-
   document.getElementById('statWorkDone').textContent = workedCount;
   document.getElementById('statWorkTotal').textContent = totalUnique;
   const percentEl = document.getElementById('statWorkPercent');
@@ -1788,7 +1887,6 @@ function renderKPIs() {
     const newNum = (r.newOrderNumber || '').trim();
     if (newNum) uniqueNewNumbers.add(newNum);
   });
-
   let totalNew = 0;
   results.forEach(r => {
     if (r.newOrderNumber && r.newOrderValue) {
@@ -1796,15 +1894,12 @@ function renderKPIs() {
       if (!isNaN(v)) totalNew += v;
     }
   });
-
   document.getElementById('kpiNewOrders').textContent = uniqueNewNumbers.size;
   document.getElementById('kpiNewMoney').textContent = totalNew.toLocaleString('en-US') + ' EGP';
 
   const percentEl = document.getElementById('kpiNewPercent');
   let percent = 0;
-  if (totalMoney > 0) {
-    percent = (totalNew / totalMoney) * 100;
-  }
+  if (totalMoney > 0) { percent = (totalNew / totalMoney) * 100; }
   percentEl.textContent = percent.toFixed(1) + '%';
   percentEl.classList.remove('high', 'low');
   if (percent >= 50) percentEl.classList.add('high');
@@ -1827,26 +1922,17 @@ function renderTopProducts() {
   results.forEach(r => {
     const key = r.sku && r.sku !== '—' ? r.sku : ('NAME:' + (r.name || '—'));
     if (!productMap[key]) {
-      productMap[key] = {
-        sku: r.sku,
-        name: r.name || '—',
-        orders: 0,
-        qty: 0
-      };
+      productMap[key] = { sku: r.sku, name: r.name || '—', orders: 0, qty: 0 };
     }
     productMap[key].orders += 1;
     productMap[key].qty += (r.qty || 0);
   });
-
-  const sorted = Object.values(productMap)
-    .sort((a, b) => b.qty - a.qty || b.orders - a.orders).slice(0, 5);
-
+  const sorted = Object.values(productMap).sort((a, b) => b.qty - a.qty || b.orders - a.orders).slice(0, 5);
   const container = document.getElementById('topProductsList');
   if (!sorted.length) {
     container.innerHTML = '<div style="color:var(--clay-text-soft);text-align:center;padding:10px;font-size:11px;">مفيش بيانات</div>';
     return;
   }
-
   container.innerHTML = sorted.map((p, i) => `
     <div class="top-product-item">
       <div class="top-product-rank rank-${i + 1}">${i + 1}</div>
@@ -1861,35 +1947,35 @@ function renderTopProducts() {
   `).join('');
 }
 
-// ================== Table Header ==================
+// ================== Table Header (مع مجموعات) ==================
 const COLUMNS = [
-  { key: 'idx', label: '#', filterType: 'none' },
-  { key: 'order', label: 'الأوردر', filterType: 'text' },
-  { key: 'email', label: 'الإيميل', filterType: 'text' },
-  { key: 'createdAt', label: 'التاريخ', filterType: 'text' },
-  { key: 'qty', label: 'الكمية', filterType: 'text' },
-  { key: 'product', label: 'المنتج', filterType: 'text' },
-  { key: 'sku', label: 'كود الصنف', filterType: 'text' },
-  { key: 'shippingName', label: 'اسم العميل', filterType: 'text' },
-  { key: 'shippingPhone', label: 'الموبايل', filterType: 'text' },
-  { key: 'shippingProvince', label: 'المحافظة', filterType: 'text' },
-  { key: 'shopifyPrice', label: 'سعر Shopify', filterType: 'text' },
-  { key: 'stockPrice', label: 'سعر Edara', filterType: 'text' },
-  { key: 'priceDiff', label: 'فرق السعر', filterType: 'text' },
-  { key: 'status', label: 'الحالة', filterType: 'select' },
-  { key: 'productStatus', label: 'حالة المنتج', filterType: 'selectProductStatus' },
-  { key: 'newOrderNumber', label: 'رقم الأوردر الجديد', filterType: 'text' },
-  { key: 'newOrderDate', label: 'تاريخ الأوردر الجديد', filterType: 'text' },
-  { key: 'newOrderValue', label: 'قيمة الأوردر الجديد', filterType: 'text' },
-  { key: 'notes', label: '📝 ملاحظات', filterType: 'text' },
-  { key: 'haram', label: 'الهرم', filterType: 'text' },
-  { key: 'bahary', label: 'البحر الأعظم', filterType: 'text' },
-  { key: 'suez', label: 'السويس', filterType: 'text' },
-  { key: 'nasr', label: 'مدينة نصر', filterType: 'text' },
-  { key: 'online', label: 'Online', filterType: 'text' },
-  { key: 'total', label: 'الإجمالي', filterType: 'text' },
-  { key: 'held', label: 'المحتجز', filterType: 'text' },
-  { key: 'transfer', label: 'رهن التحويل', filterType: 'text' },
+  { key: 'idx', label: '#', filterType: 'none', group: 'order' },
+  { key: 'order', label: 'الأوردر', filterType: 'text', group: 'order' },
+  { key: 'email', label: 'الإيميل', filterType: 'text', group: 'order' },
+  { key: 'createdAt', label: 'التاريخ', filterType: 'text', group: 'order' },
+  { key: 'shippingName', label: 'اسم العميل', filterType: 'text', group: 'order' },
+  { key: 'shippingPhone', label: 'الموبايل', filterType: 'text', group: 'order' },
+  { key: 'shippingProvince', label: 'المحافظة', filterType: 'text', group: 'order' },
+  { key: 'qty', label: 'الكمية', filterType: 'text', group: 'product' },
+  { key: 'product', label: 'المنتج', filterType: 'text', group: 'product' },
+  { key: 'sku', label: 'كود الصنف', filterType: 'text', group: 'product' },
+  { key: 'shopifyPrice', label: 'سعر Shopify', filterType: 'text', group: 'product' },
+  { key: 'stockPrice', label: 'سعر Edara', filterType: 'text', group: 'product' },
+  { key: 'priceDiff', label: 'فرق السعر', filterType: 'text', group: 'product' },
+  { key: 'status', label: 'الحالة', filterType: 'select', group: 'product' },
+  { key: 'productStatus', label: 'حالة المنتج', filterType: 'selectProductStatus', group: 'action' },
+  { key: 'newOrderNumber', label: 'رقم الأوردر الجديد', filterType: 'text', group: 'action' },
+  { key: 'newOrderDate', label: 'تاريخ الأوردر الجديد', filterType: 'text', group: 'action' },
+  { key: 'newOrderValue', label: 'قيمة الأوردر الجديد', filterType: 'text', group: 'action' },
+  { key: 'notes', label: '📝 ملاحظات', filterType: 'text', group: 'action' },
+  { key: 'haram', label: 'الهرم', filterType: 'text', group: 'stock' },
+  { key: 'bahary', label: 'البحر الأعظم', filterType: 'text', group: 'stock' },
+  { key: 'suez', label: 'السويس', filterType: 'text', group: 'stock' },
+  { key: 'nasr', label: 'مدينة نصر', filterType: 'text', group: 'stock' },
+  { key: 'online', label: 'Online', filterType: 'text', group: 'stock' },
+  { key: 'total', label: 'الإجمالي', filterType: 'text', group: 'stock' },
+  { key: 'held', label: 'المحتجز', filterType: 'text', group: 'stock' },
+  { key: 'transfer', label: 'رهن التحويل', filterType: 'text', group: 'stock' },
 ];
 
 function buildTableHeader() {
@@ -1924,9 +2010,23 @@ function buildTableHeader() {
         <option value="__empty__" ${v === '__empty__' ? 'selected' : ''}>فاضي</option>
       </select>`;
     }
-    html += `<th><div class="th-content"><div class="th-label">${col.label}</div>${filterHtml}</div></th>`;
+    html += `<th class="th-${col.group}"><div class="th-content"><div class="th-label">${col.label}</div>${filterHtml}</div></th>`;
   });
   row.innerHTML = html;
+  updateColumnGroupsBar();
+}
+
+function updateColumnGroupsBar() {
+  const counts = { order: 0, product: 0, action: 0, stock: 0 };
+  COLUMNS.forEach(c => { if (counts[c.group] !== undefined) counts[c.group]++; });
+  const orderEl = document.getElementById('grpOrder');
+  const productEl = document.getElementById('grpProduct');
+  const actionEl = document.getElementById('grpActions');
+  const stockEl = document.getElementById('grpStock');
+  if (orderEl) orderEl.style.flex = String(counts.order * 1.4);
+  if (productEl) productEl.style.flex = String(counts.product * 1.4);
+  if (actionEl) actionEl.style.flex = String(counts.action * 1.4);
+  if (stockEl) stockEl.style.flex = String(counts.stock * 1.4);
 }
 
 function onColumnFilter(el) {
@@ -1952,21 +2052,17 @@ function onProductStatusChange(order, value) {
       else if (value === 'لم يتم الرد') sel.classList.add('status-noanswer');
     }
   });
-
   scheduleSave();
-  renderStats();
-  renderKPIs();
-  applyActionHighlight();
+  renderStats(); renderKPIs(); applyActionHighlight();
+  markSyncPending();
 }
 
 function onNewOrderNumberChange(order, value) {
   if (!order || order === '—') return;
   const cleaned = cleanNewOrderNumber(value);
   if (!orderActions[order]) orderActions[order] = {};
-
   const oldNumber = orderActions[order].newOrderNumber || '';
   orderActions[order].newOrderNumber = cleaned;
-
   let dateValue = orderActions[order].newOrderDate || '';
   if (cleaned && cleaned !== oldNumber) {
     dateValue = formatDateTimeAr(Date.now());
@@ -1975,30 +2071,21 @@ function onNewOrderNumberChange(order, value) {
     dateValue = '';
     orderActions[order].newOrderDate = '';
   }
-
   results.forEach(r => {
-    if (r.order === order) {
-      r.newOrderNumber = cleaned;
-      r.newOrderDate = dateValue;
-    }
+    if (r.order === order) { r.newOrderNumber = cleaned; r.newOrderDate = dateValue; }
   });
-
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
     const inputs = tr.querySelectorAll('.action-input');
     const numInput = inputs[0];
     const dateInput = inputs[1];
-    if (numInput && document.activeElement !== numInput && numInput.value !== cleaned) {
-      numInput.value = cleaned;
-    }
+    if (numInput && document.activeElement !== numInput && numInput.value !== cleaned) numInput.value = cleaned;
     if (dateInput) {
       dateInput.value = dateValue;
       dateInput.classList.toggle('auto-filled-date', !!dateValue);
     }
   });
-
-  scheduleSave();
-  renderKPIs();
-  applyActionHighlight();
+  scheduleSave(); renderKPIs(); applyActionHighlight();
+  markSyncPending();
 }
 
 function onNewOrderValueChange(order, value) {
@@ -2007,16 +2094,13 @@ function onNewOrderValueChange(order, value) {
   if (!orderActions[order]) orderActions[order] = {};
   orderActions[order].newOrderValue = cleaned;
   results.forEach(r => { if (r.order === order) r.newOrderValue = cleaned; });
-
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
     const inputs = tr.querySelectorAll('.action-input');
     const inp = inputs[2];
     if (inp && document.activeElement !== inp && inp.value !== cleaned) inp.value = cleaned;
   });
-
-  scheduleSave();
-  renderKPIs();
-  applyActionHighlight();
+  scheduleSave(); renderKPIs(); applyActionHighlight();
+  markSyncPending();
 }
 
 function onNotesChange(order, value) {
@@ -2025,7 +2109,6 @@ function onNotesChange(order, value) {
   if (!orderActions[order]) orderActions[order] = {};
   orderActions[order].notes = cleaned;
   results.forEach(r => { if (r.order === order) r.notes = cleaned; });
-
   document.querySelectorAll(`#resultBody tr[data-order="${CSS.escape(order)}"]`).forEach(tr => {
     const inputs = tr.querySelectorAll('.action-input');
     const notesInp = inputs[3];
@@ -2034,9 +2117,8 @@ function onNotesChange(order, value) {
       notesInp.classList.toggle('has-value', !!cleaned);
     }
   });
-
-  scheduleSave();
-  applyActionHighlight();
+  scheduleSave(); applyActionHighlight();
+  markSyncPending();
 }
 
 function applyActionHighlight() {
@@ -2167,12 +2249,12 @@ function renderTable() {
       <td><span class="order-link">${r.order || '—'}</span></td>
       <td>${emailCell}</td>
       <td><span class="date-cell">${formatDate(r.createdAt) || '—'}</span></td>
-      <td>${r.qty}</td>
-      <td class="product-name">${r.name || '—'}</td>
-      <td>${r.sku}</td>
       <td>${r.shippingName || '—'}</td>
       <td>${phoneCell}</td>
       <td>${r.shippingProvince || '—'}</td>
+      <td>${r.qty}</td>
+      <td class="product-name">${r.name || '—'}</td>
+      <td>${r.sku}</td>
       <td>${shopCell}</td>
       <td>${stockCell}</td>
       <td>${diffBadge}</td>
@@ -2202,10 +2284,8 @@ function exportCSV(type = 'all') {
     'اسم العميل','الموبايل','المحافظة','سعر Shopify','سعر Edara','فرق السعر','حالة الفرق','الحالة',
     'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد','ملاحظات',
     'الهرم','البحر الأعظم','السويس','مدينة نصر','Online','الإجمالي','المحتجز','رهن التحويل'];
-
   const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'Out of Stock', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
   const diffStatusAr = { edara:'إدارة أغلى', shopify:'Shopify أغلى', same:'نفس السعر' };
-
   let filtered, fileName;
   if (type === 'all') { filtered = results; fileName = 'الأوردرات_المتروكة_الكامل'; }
   else if (type === 'pricemismatch') { filtered = results.filter(r => r.priceMismatch); fileName = 'سعر_غير_مطابق'; }
@@ -2216,9 +2296,7 @@ function exportCSV(type = 'all') {
     const names = { oos:'Out_of_Stock', nosku:'ملهوش_كود', notinbranch:'غير_متوفر_في_الهرم' };
     fileName = names[type] || type;
   }
-
   if (!filtered.length) { showToast('مفيش بيانات للتحميل', '⚠️'); return; }
-
   const rows = filtered.map(r => [
     r.order, r.email, formatDate(r.createdAt), r.qty, r.name, r.sku,
     r.shippingName, r.shippingPhone, r.shippingProvince,
@@ -2229,11 +2307,7 @@ function exportCSV(type = 'all') {
     r.haram, r.bahary, r.suez, r.nasr, r.online,
     r.total, r.held, r.transfer
   ]);
-
-  const csv = [headers, ...rows]
-    .map(row => row.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
-    .join('\n');
-
+  const csv = [headers, ...rows].map(row => row.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
@@ -2249,10 +2323,8 @@ function buildExcelSheet(filteredResults, fileName) {
     'اسم العميل','الموبايل','المحافظة','سعر Shopify','سعر Edara','فرق السعر','حالة الفرق','الحالة',
     'حالة المنتج','رقم الأوردر الجديد','تاريخ الأوردر الجديد','قيمة الأوردر الجديد','ملاحظات',
     'الهرم','البحر الأعظم','السويس','مدينة نصر','Online','الإجمالي','المحتجز','رهن التحويل'];
-
   const statusAr = { available:'متوفر', notinbranch:'مش في الهرم', oos:'Out of Stock', nosku:'ملهوش كود', pricemismatch:'سعر مختلف' };
   const diffStatusAr = { edara:'إدارة أغلى', shopify:'Shopify أغلى', same:'نفس السعر' };
-
   const aoa = [headers];
   filteredResults.forEach(r => {
     aoa.push([
@@ -2266,11 +2338,9 @@ function buildExcelSheet(filteredResults, fileName) {
       r.total, r.held, r.transfer
     ]);
   });
-
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   ws['!cols'] = headers.map(() => ({ wch: 18 }));
   const range = XLSX.utils.decode_range(ws['!ref']);
-
   for (let R = 1; R <= range.e.r; R++) {
     const resRow = filteredResults[R - 1];
     if (resRow && resRow.haramHighlight) {
@@ -2285,7 +2355,6 @@ function buildExcelSheet(filteredResults, fileName) {
       }
     }
   }
-
   for (let C = range.s.c; C <= range.e.c; C++) {
     const cellAddr = XLSX.utils.encode_cell({ r: 0, c: C });
     if (!ws[cellAddr]) ws[cellAddr] = { t: 's', v: headers[C] };
@@ -2295,7 +2364,6 @@ function buildExcelSheet(filteredResults, fileName) {
       alignment: { horizontal: 'center', vertical: 'center' }
     };
   }
-
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Data');
   const dateStr = new Date().toISOString().slice(0,10);
@@ -2308,11 +2376,8 @@ function exportAllExcel() {
   buildExcelSheet(results, 'الأوردرات_المتروكة_الكامل');
 }
 
-// ✅ تصدير اللي اشتغلنا عليه (اللي اتحطله حالة منتج)
 function exportWorkedExcel() {
   if (!results.length) { showToast('مفيش بيانات', '⚠️'); return; }
-
-  // ✅ ناخد الصفوف اللي فيها حالة منتج مطلوبة فقط
   const workedResults = results.filter(r => {
     const status = (r.productStatus || '').trim();
     return status === 'تم تنفيذ الطلب'
@@ -2321,12 +2386,7 @@ function exportWorkedExcel() {
         || status === 'تم إرسال ايميل'
         || status === 'لم يتم الرد';
   });
-
-  if (!workedResults.length) {
-    showToast('مفيش أوردرات اشتغلنا عليها بعد', '⚠️');
-    return;
-  }
-
+  if (!workedResults.length) { showToast('مفيش أوردرات اشتغلنا عليها بعد', '⚠️'); return; }
   buildExcelSheet(workedResults, 'الأوردرات_اللي_اشتغلنا_عليها');
 }
 
@@ -2360,11 +2420,9 @@ async function importBackup(event) {
     if (!backup.orderActions) { showToast('ملف غير صالح', '⚠️'); return; }
     orderActions = backup.orderActions || {};
     metaInfo = backup.metaInfo || { lastUpdate: null, stockDate: null };
-
     if (backup.processedOrders && Array.isArray(backup.processedOrders)) {
       processedOrderNumbers = new Set(backup.processedOrders);
     }
-
     if (backup.resultsSnapshot && backup.resultsSnapshot.data) {
       results = backup.resultsSnapshot.data;
       stockChanged = backup.resultsSnapshot.stockChanged || false;
@@ -2376,7 +2434,6 @@ async function importBackup(event) {
       document.getElementById('tableWrap').style.display = 'block';
       document.getElementById('emptyState').style.display = 'none';
     }
-
     await saveNow();
     updateInfoBar(); updateSavedBadge(); updateWarnBadge();
     showToast('تم استيراد النسخة', '📥');
@@ -2394,25 +2451,19 @@ function clearStock() {
   document.getElementById('stockName').textContent = '';
   document.getElementById('stockDrop').classList.remove('has-file');
   stockChanged = true;
-  updateWarnBadge();
-  updateInfoBar();
-  scheduleSave();
+  updateWarnBadge(); updateInfoBar(); scheduleSave();
   showToast('تم إزالة الاستوك — الشغل محفوظ', '🗑️');
 }
 
 async function clearOrders() {
   if (!confirm('متأكد من مسح كل الأوردرات؟ (الجدول + الأكشنز + الأوردرات المعالجة)')) return;
-
-  ordersRows = [];
-  results = [];
+  ordersRows = []; results = [];
   processedOrderNumbers = new Set();
   orderActions = {};
-
   document.getElementById('ordersPaste').value = '';
   document.getElementById('ordersFile').value = '';
   document.getElementById('ordersName').textContent = '';
   document.getElementById('ordersDrop').classList.remove('has-file');
-
   document.getElementById('kpiRow').style.display = 'none';
   document.getElementById('stats').style.display = 'none';
   document.getElementById('topProductsRow').style.display = 'none';
@@ -2420,11 +2471,9 @@ async function clearOrders() {
   document.getElementById('emptyState').style.display = 'block';
   hideProgress(); hideSkeleton();
   isComparing = false;
-
   await idbRemove('orderActions');
   await idbRemove('resultsSnapshot');
   await idbRemove('processedOrders');
-
   updateSavedBadge();
   showToast('تم مسح كل الأوردرات والأكشنز', '🗑️');
 }
@@ -2447,13 +2496,11 @@ async function clearAll() {
   results = []; orderActions = {};
   processedOrderNumbers = new Set();
   stockChanged = false;
-  metaInfo = { lastUpdate: null, stockDate: null };
-
+  metaInfo = { lastUpdate: null, stockDate: null, lastSync: null };
   ['stockPaste','ordersPaste'].forEach(id => document.getElementById(id).value = '');
   ['stockFile','ordersFile'].forEach(id => document.getElementById(id).value = '');
   ['stockName','ordersName'].forEach(id => document.getElementById(id).textContent = '');
   ['stockDrop','ordersDrop'].forEach(id => document.getElementById(id).classList.remove('has-file'));
-
   columnFilters = {
     order:'', email:'', createdAt:'', qty:'', product:'', sku:'',
     shippingName:'', shippingPhone:'', shippingProvince:'',
@@ -2467,14 +2514,13 @@ async function clearAll() {
   document.getElementById('topProductsRow').style.display = 'none';
   document.getElementById('tableWrap').style.display = 'none';
   document.getElementById('emptyState').style.display = 'block';
+  document.getElementById('syncChip').style.display = 'none';
   hideProgress(); hideSkeleton();
   isComparing = false;
-
   await idbRemove('orderActions');
   await idbRemove('metaInfo');
   await idbRemove('resultsSnapshot');
   await idbRemove('processedOrders');
-
   updateInfoBar(); updateSavedBadge(); updateWarnBadge();
   showToast('تم مسح كل البيانات', '🗑️');
 }
@@ -2484,28 +2530,20 @@ async function loadSavedState() {
   try {
     const savedActions = await idbGet('orderActions');
     if (savedActions) orderActions = savedActions;
-
     const savedMeta = await idbGet('metaInfo');
     if (savedMeta) metaInfo = savedMeta;
-
     const savedProcessed = await idbGet('processedOrders');
     if (savedProcessed && Array.isArray(savedProcessed)) {
       processedOrderNumbers = new Set(savedProcessed);
     }
-
-    if (!stockLoaded) {
-      metaInfo.stockDate = null;
-    }
-
+    if (!stockLoaded) { metaInfo.stockDate = null; }
     const savedSnapshot = await idbGet('resultsSnapshot');
     if (savedSnapshot && savedSnapshot.data && savedSnapshot.data.length) {
       results = savedSnapshot.data;
       stockChanged = savedSnapshot.stockChanged || false;
-
       results.forEach(r => {
         if (r.order && r.order !== '—') processedOrderNumbers.add(r.order);
       });
-
       renderStats(); renderKPIs(); renderTopProducts();
       buildTableHeader(); renderTable();
       document.getElementById('kpiRow').style.display = 'grid';
@@ -2515,7 +2553,6 @@ async function loadSavedState() {
       document.getElementById('emptyState').style.display = 'none';
       showToast('تم استرجاع آخر تحليل', '💾');
     }
-
     updateInfoBar(); updateSavedBadge(); updateWarnBadge();
   } catch (err) {
     console.error('Load saved state error:', err);
@@ -2548,6 +2585,25 @@ document.getElementById('ordersPaste').addEventListener('input', e => {
   if (parsed.rows.length) { loadOrders(parsed.rows); tryAutoCompare(); }
 });
 
+// ================== Keyboard Shortcuts ==================
+document.addEventListener('keydown', (e) => {
+  // Ctrl+S = مزامنة
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !e.shiftKey) {
+    e.preventDefault();
+    e.stopPropagation();
+    syncToGoogleSheets();
+    return;
+  }
+  // Ctrl+Shift+S = تصدير Excel
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    e.stopPropagation();
+    exportAllExcel();
+    return;
+  }
+});
+
+// ================== Initialize ==================
 window.addEventListener('load', async function() {
   if (localStorage.getItem('theme') === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -2556,10 +2612,20 @@ window.addEventListener('load', async function() {
   }
   await openDB();
   await loadSavedState();
+  
+  startAutoSync();
+  
+  if (SYNC_URL && SYNC_URL.startsWith('https://script.google.com/')) {
+    updateSyncStatusDot(true);
+  } else {
+    updateSyncStatusDot(false);
+    console.warn('⚠️ SYNC_URL مش متظبط في الكود — المزامنة مش هتشتغل');
+  }
 });
 
 window.addEventListener('beforeunload', () => {
   if (saveTimeout) clearTimeout(saveTimeout);
+  if (autoSyncInterval) clearInterval(autoSyncInterval);
   try { saveNow(); } catch (e) {}
 });
 </script>
