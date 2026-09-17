@@ -72,6 +72,32 @@
     --grp-stock-border: rgba(255, 168, 82, 0.6);
   }
 
+  /* ✅ في الوضع الليلي: كل النصوص في الإحصائيات تبقى بيضاء */
+  [data-theme="dark"] .stat-badge {
+    color: #ffffff !important;
+  }
+  [data-theme="dark"] .stat-badge .num {
+    color: #ffffff !important;
+  }
+  [data-theme="dark"] .stat-badge.total .num,
+  [data-theme="dark"] .stat-badge.available .num,
+  [data-theme="dark"] .stat-badge.notinbranch .num,
+  [data-theme="dark"] .stat-badge.seller .num,
+  [data-theme="dark"] .stat-badge.oos .num,
+  [data-theme="dark"] .stat-badge.nosku .num,
+  [data-theme="dark"] .stat-badge.pricemismatch .num,
+  [data-theme="dark"] .stat-badge.status-done .num,
+  [data-theme="dark"] .stat-badge.status-notdone .num,
+  [data-theme="dark"] .stat-badge.status-followup .num,
+  [data-theme="dark"] .stat-badge.status-email .num,
+  [data-theme="dark"] .stat-badge.status-noanswer .num {
+    color: #ffffff !important;
+  }
+  [data-theme="dark"] .stat-badge.work-progress .num,
+  [data-theme="dark"] .stat-badge.work-progress .total-num {
+    color: #ffffff !important;
+  }
+
   .container { max-width: 1900px; margin: 0 auto; }
 
   /* HEADER */
@@ -156,11 +182,6 @@
   }
   .sync-btn:hover { transform: translateY(-2px); box-shadow: 4px 4px 12px rgba(125, 155, 122, 0.5); }
   .sync-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .sync-btn kbd {
-    display: inline-block; padding: 1px 5px; border-radius: 4px;
-    background: rgba(255,255,255,0.25); font-family: inherit;
-    font-size: 9px; font-weight: 700;
-  }
 
   /* HEADER DROPDOWNS */
   .header-actions { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
@@ -451,7 +472,7 @@
   .skeleton-cell.short { flex: 0.5; }
   .skeleton-cell.med { flex: 0.8; }
 
-  /* ✅ TABLE — بعد الإصلاح */
+  /* TABLE */
   .table-wrap {
     background: var(--clay-card); border-radius: var(--clay-radius);
     overflow: hidden; box-shadow: var(--clay-shadow);
@@ -465,7 +486,6 @@
     position: relative;
   }
 
-  /* ✅ شريط المجموعات — جوه .table-scroll */
   .column-groups-bar {
     display: flex;
     background: var(--clay-bg);
@@ -513,7 +533,6 @@
 
   table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
 
-  /* ✅ رأس الجدول — sticky تحت شريط المجموعات */
   thead {
     position: sticky;
     top: 33px;
@@ -529,7 +548,6 @@
     padding: 6px 5px 5px 5px; vertical-align: top;
     position: relative;
   }
-  /* ✅ تلوين خلفية رأس الجدول حسب المجموعة */
   thead th.th-order { background: linear-gradient(180deg, var(--grp-order) 0%, var(--clay-card) 100%) !important; }
   thead th.th-product { background: linear-gradient(180deg, var(--grp-product) 0%, var(--clay-card) 100%) !important; }
   thead th.th-action { background: linear-gradient(180deg, var(--grp-action) 0%, var(--clay-card) 100%) !important; }
@@ -554,7 +572,13 @@
     color: var(--clay-text); font-weight: 700;
   }
   [data-theme="dark"] tbody td { border-left: 1px solid rgba(74, 69, 64, 0.4); }
-  tbody tr:hover { background: rgba(166, 124, 107, 0.06); }
+
+  /* ✅ أي صف أقف عليه ينور برتقالي */
+  tbody tr:hover {
+    background: var(--clay-orange-soft) !important;
+    box-shadow: inset 0 0 0 2px var(--clay-orange);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
 
   tbody tr.row-enter { animation: rowFadeIn 0.3s ease backwards; }
   @keyframes rowFadeIn {
@@ -562,10 +586,6 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  tbody tr.haram-highlight {
-    background: var(--clay-orange-soft) !important;
-    border-right: 3px solid var(--clay-orange);
-  }
   tbody tr.has-action { box-shadow: inset 3px 0 0 0 var(--clay-success); }
 
   .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 700; }
@@ -710,6 +730,15 @@
     </div>
 
     <div class="header-actions">
+      <div class="sync-info" style="margin-left:8px;">
+        <span id="syncStatusText">🔗 المزامنة معدة ومفعّلة</span>
+        <span class="status-dot" id="syncStatusDot"></span>
+      </div>
+      <button class="sync-btn" id="syncNowBtn" onclick="syncToGoogleSheets()" 
+              title="مزامنة الآن">
+        🔄 مزامنة الآن
+      </button>
+
       <div class="dd-wrap" id="ddActions">
         <button class="dd-toggle primary" onclick="toggleDD('ddActions', event)">
           ⚙️ الإجراءات <span class="arrow">▼</span>
@@ -741,18 +770,6 @@
 
       <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
     </div>
-  </div>
-
-  <!-- SYNC SECTION -->
-  <div class="sync-section">
-    <div class="sync-info">
-      <span id="syncStatusText">🔗 المزامنة معدة ومفعّلة</span>
-      <span class="status-dot" id="syncStatusDot"></span>
-    </div>
-    <button class="sync-btn" id="syncNowBtn" onclick="syncToGoogleSheets()" 
-            title="مزامنة الآن (Ctrl+S)">
-      🔄 مزامنة الآن <kbd>Ctrl+S</kbd>
-    </button>
   </div>
 
   <!-- UPLOAD -->
@@ -870,7 +887,7 @@
     <div class="skeleton-row"><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell med"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell short"></div><div class="skeleton skeleton-cell"></div><div class="skeleton skeleton-cell med"></div></div>
   </div>
 
-  <!-- ✅ TABLE — بعد الإصلاح: شريط المجموعات جوه .table-scroll -->
+  <!-- TABLE -->
   <div class="table-wrap" id="tableWrap" style="display:none;">
     <div class="table-scroll">
       <div class="column-groups-bar" id="columnGroupsBar">
@@ -914,6 +931,7 @@ let metaInfo = { lastUpdate: null, stockDate: null, lastSync: null };
 let processedOrderNumbers = new Set();
 
 let autoSyncInterval = null;
+let autoSaveInterval = null;
 let pendingSyncChanges = false;
 
 let columnFilters = {
@@ -1095,7 +1113,7 @@ async function syncToGoogleSheets(silent = false) {
   const btn = document.getElementById('syncNowBtn');
   if (btn && !silent) {
     btn.disabled = true;
-    btn.innerHTML = '⏳ جاري المزامنة... <kbd>Ctrl+S</kbd>';
+    btn.innerHTML = '⏳ جاري المزامنة...';
   }
   if (!silent) updateSyncChip('', '⏳ جاري المزامنة...');
 
@@ -1158,7 +1176,7 @@ async function syncToGoogleSheets(silent = false) {
   } finally {
     if (btn && !silent) {
       btn.disabled = false;
-      btn.innerHTML = '🔄 مزامنة الآن <kbd>Ctrl+S</kbd>';
+      btn.innerHTML = '🔄 مزامنة الآن';
     }
   }
 }
@@ -1167,6 +1185,7 @@ function markSyncPending() {
   pendingSyncChanges = true;
 }
 
+// ✅ مزامنة تلقائية كل دقيقة
 function startAutoSync() {
   if (autoSyncInterval) clearInterval(autoSyncInterval);
   autoSyncInterval = setInterval(async () => {
@@ -1174,6 +1193,16 @@ function startAutoSync() {
     if (!SYNC_URL) return;
     console.log('🔄 Auto-sync triggered');
     await syncToGoogleSheets(true);
+  }, 60 * 1000);
+}
+
+// ✅ حفظ تلقائي كل دقيقة
+function startAutoSave() {
+  if (autoSaveInterval) clearInterval(autoSaveInterval);
+  autoSaveInterval = setInterval(async () => {
+    if (!results.length && !Object.keys(orderActions).length) return;
+    console.log('💾 Auto-save triggered');
+    await saveNow();
   }, 60 * 1000);
 }
 
@@ -2204,7 +2233,6 @@ function renderTable() {
       ? `<span class="phone-link" onclick="copyToClipboard('${r.shippingPhone}','الموبايل')">📱 ${r.shippingPhone}</span>`
       : '<span class="stock-zero">—</span>';
 
-    const rowClass = r.haramHighlight ? ' haram-highlight' : '';
     const a = orderActions[r.order];
     const hasAction = a && (a.newOrderNumber || a.newOrderValue || a.productStatus || a.notes);
     const actionClass = hasAction ? ' has-action' : '';
@@ -2244,7 +2272,7 @@ function renderTable() {
         value="${(r.notes || '').replace(/"/g, '&quot;')}"
         onchange="onNotesChange('${(r.order || '').replace(/'/g, "\\'")}', this.value)">`;
 
-    html += `<tr class="row-enter${rowClass}${actionClass}" data-order="${(r.order || '').replace(/"/g, '&quot;')}">
+    html += `<tr class="row-enter${actionClass}" data-order="${(r.order || '').replace(/"/g, '&quot;')}">
       <td>${i + 1}</td>
       <td><span class="order-link">${r.order || '—'}</span></td>
       <td>${emailCell}</td>
@@ -2587,13 +2615,6 @@ document.getElementById('ordersPaste').addEventListener('input', e => {
 
 // ================== Keyboard Shortcuts ==================
 document.addEventListener('keydown', (e) => {
-  // Ctrl+S = مزامنة
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !e.shiftKey) {
-    e.preventDefault();
-    e.stopPropagation();
-    syncToGoogleSheets();
-    return;
-  }
   // Ctrl+Shift+S = تصدير Excel
   if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 's') {
     e.preventDefault();
@@ -2614,6 +2635,7 @@ window.addEventListener('load', async function() {
   await loadSavedState();
   
   startAutoSync();
+  startAutoSave();
   
   if (SYNC_URL && SYNC_URL.startsWith('https://script.google.com/')) {
     updateSyncStatusDot(true);
@@ -2626,6 +2648,7 @@ window.addEventListener('load', async function() {
 window.addEventListener('beforeunload', () => {
   if (saveTimeout) clearTimeout(saveTimeout);
   if (autoSyncInterval) clearInterval(autoSyncInterval);
+  if (autoSaveInterval) clearInterval(autoSaveInterval);
   try { saveNow(); } catch (e) {}
 });
 </script>
