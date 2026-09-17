@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Account transfers - Claymorphism</title>
+<title>Account transfers - Neumorphism 2.0</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -22,94 +22,73 @@ body {
     direction: rtl;
     padding: 25px;
     min-height: 100vh;
-    background: #e8e0d5;
+    background: #e0e5ec;
     transition: all 0.4s ease;
 }
 
 /* ==========================================
-   ROOT VARIABLES (Light - Clay)
+   ROOT VARIABLES (Light - Neumorphism)
    ========================================== */
 :root {
-    --clay-bg: #e8e0d5;
-    --clay-card: #eae3d8;
-    --clay-shadow: 8px 8px 16px #cbc3b8,
-        -8px -8px 16px #fffff2;
-    --clay-inset: inset 3px 3px 8px #cbc3b8,
-        inset -3px -3px 8px #fffff2;
-    --clay-inset-deep: inset 6px 6px 14px #cbc3b8,
-        inset -6px -6px 14px #fffff2;
-    --clay-border: #d5cec3;
-    --clay-text: #3d3a36;
-    --clay-text-soft: #6b6560;
-    --clay-accent: #a67c6b;
-    --clay-accent-hover: #8f6b5a;
-    --clay-success: #7d9b7a;
-    --clay-danger: #b57a7a;
-    --clay-gold: #b8956e;
-    --clay-blue: #7a8fa6;
-    --clay-purple: #9b7ab5;
-    --clay-teal: #7a9f9f;
-    --clay-radius: 24px;
-    --clay-radius-sm: 14px;
-    --table-header: var(--clay-accent);
-    --table-even: #e8e0d5;
-    --table-hover: #ddd5c8;
-    --totals-bg: #ddd5c8;
-    --collected-bg: #d4e0c8;
-    --collected-color: #3d5a3a;
+    --neu-bg: #e0e5ec;
+    --neu-card: #e0e5ec;
+    --neu-shadow: 9px 9px 16px #a3b1c6,
+        -9px -9px 16px #ffffff;
+    --neu-shadow-sm: 5px 5px 10px #a3b1c6,
+        -5px -5px 10px #ffffff;
+    --neu-inset: inset 5px 5px 10px #a3b1c6,
+        inset -5px -5px 10px #ffffff;
+    --neu-inset-deep: inset 8px 8px 16px #a3b1c6,
+        inset -8px -8px 16px #ffffff;
+    --neu-text: #4a5568;
+    --neu-text-soft: #8a95a5;
+    --neu-accent: #6d5dfc;
+    --neu-accent-hover: #5a4ae0;
+    --neu-success: #38b2ac;
+    --neu-danger: #e53e3e;
+    --neu-blue: #4299e1;
+    --neu-gold: #d69e2e;
+    --neu-radius: 20px;
+    --neu-radius-sm: 12px;
+    --table-even: #e0e5ec;
+    --table-hover: #d8dfe8;
+    --totals-bg: #d8dfe8;
+    --collected-bg: #d4e8e0;
+    --collected-color: #2c7a6b;
 }
 
 /* ==========================================
-   DARK THEME (Clay Dark)
+   DARK THEME (Neumorphism Dark)
    ========================================== */
 [data-theme="dark"] {
-    --clay-bg: #2a2724;
-    --clay-card: #36322e;
-    --clay-shadow: 8px 8px 16px #1e1b19,
-        -8px -8px 16px #4e4943;
-    --clay-inset: inset 3px 3px 8px #1e1b19,
-        inset -3px -3px 8px #4e4943;
-    --clay-inset-deep: inset 6px 6px 14px #1e1b19,
-        inset -6px -6px 14px #4e4943;
-    --clay-border: #4a4540;
-    --clay-text: #ede8e2;
-    --clay-text-soft: #b5aea6;
-    --clay-accent: #b8956e;
-    --clay-accent-hover: #d4ae84;
-    --clay-success: #8aaa87;
-    --clay-danger: #c48a8a;
-    --clay-gold: #d4ae84;
-    --clay-blue: #8aa3ba;
-    --clay-purple: #b59ac9;
-    --clay-teal: #8ab5b5;
-    --table-even: #2a2724;
-    --table-hover: #3d3833;
-    --totals-bg: #3d3833;
-    --collected-bg: #1a3a2a;
-    --collected-color: #7ddfb8;
+    --neu-bg: #2b2f3a;
+    --neu-card: #2b2f3a;
+    --neu-shadow: 9px 9px 16px #1e222b,
+        -9px -9px 16px #383e4d;
+    --neu-shadow-sm: 5px 5px 10px #1e222b,
+        -5px -5px 10px #383e4d;
+    --neu-inset: inset 5px 5px 10px #1e222b,
+        inset -5px -5px 10px #383e4d;
+    --neu-inset-deep: inset 8px 8px 16px #1e222b,
+        inset -8px -8px 16px #383e4d;
+    --neu-text: #e2e8f0;
+    --neu-text-soft: #8a95a5;
+    --neu-accent: #8b7cfc;
+    --neu-accent-hover: #a394ff;
+    --neu-success: #4fd1c5;
+    --neu-danger: #fc8181;
+    --neu-blue: #63b3ed;
+    --neu-gold: #f6ad55;
+    --table-even: #2b2f3a;
+    --table-hover: #353a47;
+    --totals-bg: #353a47;
+    --collected-bg: #1e3a35;
+    --collected-color: #7de8d8;
 }
 
 body {
-    background: var(--clay-bg);
+    background: var(--neu-bg);
     transition: all 0.4s ease;
-}
-
-/* ==========================================
-   CLAY UTILITY
-   ========================================== */
-.clay {
-    background: var(--clay-card);
-    border-radius: var(--clay-radius);
-    box-shadow: var(--clay-shadow);
-    border: 1px solid var(--clay-border);
-    transition: all 0.3s ease;
-}
-
-.clay-inset {
-    background: var(--clay-card);
-    border-radius: var(--clay-radius-sm);
-    box-shadow: var(--clay-inset);
-    border: 1px solid var(--clay-border);
 }
 
 /* ==========================================
@@ -131,10 +110,9 @@ body {
     flex-wrap: wrap;
     gap: 15px;
     padding: 18px 24px;
-    background: var(--clay-card);
-    border-radius: var(--clay-radius);
-    box-shadow: var(--clay-shadow);
-    border: 1px solid var(--clay-border);
+    background: var(--neu-card);
+    border-radius: var(--neu-radius);
+    box-shadow: var(--neu-shadow);
 }
 
 .header-left {
@@ -148,15 +126,9 @@ body {
     height: 55px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--clay-accent);
-    box-shadow: 6px 6px 14px #cbc3b8,
-        -6px -6px 14px #fffff2;
+    border: 3px solid var(--neu-accent);
+    box-shadow: var(--neu-shadow-sm);
     transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .header-logo {
-    box-shadow: 6px 6px 14px #1e1b19,
-        -6px -6px 14px #4e4943;
 }
 
 .header-logo:hover {
@@ -171,18 +143,17 @@ body {
 .header-title {
     font-size: 24px;
     font-weight: 800;
-    color: var(--clay-text);
-    transition: color 0.3s ease;
+    color: var(--neu-text);
 }
 
 .header-title span {
-    color: var(--clay-accent);
+    color: var(--neu-accent);
 }
 
 .header-subtitle {
-    color: var(--clay-text-soft);
+    color: var(--neu-text-soft);
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.3px;
 }
 
@@ -193,71 +164,65 @@ body {
 }
 
 /* ==========================================
-   BUTTONS - Clay Style
+   BUTTONS - Neumorphism Style
    ========================================== */
 .btn {
-    padding: 10px 20px;
+    padding: 12px 22px;
     border: none;
-    border-radius: var(--clay-radius-sm);
+    border-radius: var(--neu-radius-sm);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--clay-text);
-    background: var(--clay-card);
-    box-shadow: 4px 4px 10px #cbc3b8,
-        -4px -4px 10px #fffff2;
-    border: 1px solid var(--clay-border);
-}
-
-[data-theme="dark"] .btn {
-    box-shadow: 4px 4px 10px #1e1b19,
-        -4px -4px 10px #4e4943;
+    color: var(--neu-text);
+    background: var(--neu-card);
+    box-shadow: var(--neu-shadow-sm);
 }
 
 .btn:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 6px 6px 16px #cbc3b8,
-        -6px -6px 16px #fffff2;
+    color: var(--neu-accent);
+    transform: translateY(-1px);
+    box-shadow: 7px 7px 14px #a3b1c6,
+        -7px -7px 14px #ffffff;
 }
 
 [data-theme="dark"] .btn:hover {
-    box-shadow: 6px 6px 16px #1e1b19,
-        -6px -6px 16px #4e4943;
+    box-shadow: 7px 7px 14px #1e222b,
+        -7px -7px 14px #383e4d;
 }
 
 .btn:active {
-    transform: translateY(1px) scale(0.98);
-    box-shadow: var(--clay-inset);
+    box-shadow: var(--neu-inset);
+    transform: translateY(0);
 }
 
 .btn-copy {
-    color: var(--clay-success);
+    color: var(--neu-success);
 }
 .btn-copy:hover {
-    color: #6a8a67;
+    color: var(--neu-success);
 }
 
 .btn-export {
-    color: var(--clay-blue);
+    color: var(--neu-blue);
 }
 .btn-export:hover {
-    color: #6a7f96;
+    color: var(--neu-blue);
 }
 
 .btn-reset {
-    color: var(--clay-danger);
+    color: var(--neu-danger);
 }
 .btn-reset:hover {
-    color: #a06565;
+    color: var(--neu-danger);
 }
 
 .btn-theme {
-    background: var(--clay-card);
-    border: 1px solid var(--clay-border);
+    background: var(--neu-card);
+    border: none;
     border-radius: 50%;
     width: 48px;
     height: 48px;
@@ -267,36 +232,28 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--clay-text);
-    box-shadow: 6px 6px 14px #cbc3b8,
-        -6px -6px 14px #fffff2;
-}
-
-[data-theme="dark"] .btn-theme {
-    box-shadow: 6px 6px 14px #1e1b19,
-        -6px -6px 14px #4e4943;
+    color: var(--neu-text);
+    box-shadow: var(--neu-shadow-sm);
 }
 
 .btn-theme:hover {
     transform: rotate(30deg) scale(1.1);
+    color: var(--neu-accent);
+}
+
+.btn-theme:active {
+    box-shadow: var(--neu-inset);
 }
 
 /* ==========================================
    INPUT SECTION
    ========================================== */
 .input-section {
-    background: var(--clay-card);
-    border-radius: var(--clay-radius);
+    background: var(--neu-card);
+    border-radius: var(--neu-radius);
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: var(--clay-shadow);
-    border: 1px solid var(--clay-border);
-    transition: all 0.3s ease;
-}
-
-.input-section:focus-within {
-    box-shadow: var(--clay-shadow);
-    border-color: var(--clay-accent);
+    box-shadow: var(--neu-shadow);
 }
 
 textarea {
@@ -304,25 +261,26 @@ textarea {
     height: 120px;
     padding: 16px 18px;
     border: none;
-    border-radius: var(--clay-radius-sm);
-    background: var(--clay-card);
-    color: var(--clay-text);
+    border-radius: var(--neu-radius-sm);
+    background: var(--neu-card);
+    color: var(--neu-text);
     font-size: 14px;
     font-family: inherit;
+    font-weight: 600;
     resize: vertical;
     transition: all 0.3s ease;
-    box-shadow: var(--clay-inset-deep);
-    border: 1px solid var(--clay-border);
+    box-shadow: var(--neu-inset-deep);
 }
 
 textarea:focus {
     outline: none;
-    box-shadow: var(--clay-inset-deep), 0 0 0 3px var(--clay-accent);
+    box-shadow: var(--neu-inset-deep), 0 0 0 2px var(--neu-accent);
 }
 
 textarea::placeholder {
-    color: var(--clay-text-soft);
+    color: var(--neu-text-soft);
     opacity: 0.7;
+    font-weight: 500;
 }
 
 /* ==========================================
@@ -341,75 +299,70 @@ textarea::placeholder {
 }
 
 .stats-badge {
-    background: var(--clay-card);
-    padding: 6px 18px;
+    background: var(--neu-card);
+    padding: 8px 20px;
     border-radius: 20px;
     font-size: 13px;
-    font-weight: 600;
-    color: var(--clay-text);
-    border: 1px solid var(--clay-border);
+    font-weight: 700;
+    color: var(--neu-text);
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: var(--clay-inset);
+    box-shadow: var(--neu-inset);
 }
 
 .stats-badge .num {
-    color: var(--clay-accent);
+    color: var(--neu-accent);
     font-weight: 800;
 }
 
-[data-theme="dark"] .stats-badge .num {
-    color: var(--clay-success);
-}
-
 /* ==========================================
-   TABLE - Clay Style
+   TABLE - Neumorphism Style
    ========================================== */
 #capture {
-    background: var(--clay-card);
-    border-radius: var(--clay-radius);
-    padding: 5px;
-    box-shadow: var(--clay-shadow);
-    border: 1px solid var(--clay-border);
+    background: var(--neu-card);
+    border-radius: var(--neu-radius);
+    padding: 8px;
+    box-shadow: var(--neu-shadow);
     overflow: hidden;
-    transition: all 0.3s ease;
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
-    background: var(--clay-card);
-    border-radius: var(--clay-radius-sm);
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--neu-card);
+    border-radius: var(--neu-radius-sm);
     overflow: hidden;
 }
 
 th {
-    background: var(--clay-card);
-    color: var(--clay-text);
+    background: var(--neu-card);
+    color: var(--neu-text);
     padding: 14px 12px;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 800;
     white-space: nowrap;
     text-align: center;
-    border-bottom: 2px solid var(--clay-border);
+    border-bottom: 2px solid rgba(163,177,198,0.4);
 }
 
-th:first-child {
-    border-radius: 0 0 0 0;
-}
-th:last-child {
-    border-radius: 0 0 0 0;
+[data-theme="dark"] th {
+    border-bottom: 2px solid rgba(30,34,43,0.6);
 }
 
 td {
-    border-bottom: 1px solid var(--clay-border);
+    border-bottom: 1px solid rgba(163,177,198,0.25);
     padding: 11px 10px;
     text-align: center;
     font-size: 13px;
     font-weight: 700;
-    color: var(--clay-text);
+    color: var(--neu-text);
     transition: background 0.2s ease;
+}
+
+[data-theme="dark"] td {
+    border-bottom: 1px solid rgba(30,34,43,0.4);
 }
 
 tbody tr:nth-child(even) {
@@ -422,11 +375,11 @@ tbody tr:hover {
 
 /* editable cells */
 .editable {
-    background: var(--clay-card);
+    background: var(--neu-card);
     cursor: text;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.2s ease;
-    box-shadow: var(--clay-inset);
+    box-shadow: var(--neu-inset);
 }
 
 .editable:hover {
@@ -434,8 +387,8 @@ tbody tr:hover {
 }
 
 .editable:focus {
-    outline: 2px solid var(--clay-accent);
-    background: var(--clay-card);
+    outline: 2px solid var(--neu-accent);
+    background: var(--neu-card);
     outline-offset: -2px;
 }
 
@@ -444,18 +397,12 @@ tbody tr:hover {
    ========================================== */
 .totals td {
     background: var(--totals-bg);
-    font-weight: 800;
+    font-weight: 900;
     font-size: 14px;
-    color: var(--clay-text);
+    color: var(--neu-text);
     border-bottom: none;
-    padding: 12px 10px;
-}
-
-.totals td:first-child {
-    border-radius: 0 0 0 0;
-}
-.totals td:last-child {
-    border-radius: 0 0 0 0;
+    padding: 14px 10px;
+    box-shadow: var(--neu-inset);
 }
 
 .totals.collected td {
@@ -467,31 +414,26 @@ tbody tr:hover {
    DELETE BUTTON
    ========================================== */
 .del-btn {
-    background: var(--clay-card);
-    border: 1px solid var(--clay-border);
-    color: var(--clay-danger);
-    padding: 5px 10px;
-    border-radius: var(--clay-radius-sm);
+    background: var(--neu-card);
+    border: none;
+    color: var(--neu-danger);
+    padding: 6px 12px;
+    border-radius: var(--neu-radius-sm);
     cursor: pointer;
-    font-size: 12px;
-    transition: all 0.3s ease;
-    box-shadow: 3px 3px 8px #cbc3b8,
-        -3px -3px 8px #fffff2;
-}
-
-[data-theme="dark"] .del-btn {
-    box-shadow: 3px 3px 8px #1e1b19,
-        -3px -3px 8px #4e4943;
+    font-size: 13px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+    box-shadow: var(--neu-shadow-sm);
 }
 
 .del-btn:hover {
     transform: scale(1.1);
-    color: #a06565;
+    color: var(--neu-danger);
 }
 
 .del-btn:active {
     transform: scale(0.95);
-    box-shadow: var(--clay-inset);
+    box-shadow: var(--neu-inset);
 }
 
 /* hide delete column in image */
@@ -506,14 +448,13 @@ tbody tr:hover {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background: var(--clay-card);
-    color: var(--clay-text);
+    background: var(--neu-card);
+    color: var(--neu-text);
     padding: 16px 28px;
-    border-radius: var(--clay-radius);
-    box-shadow: 12px 12px 24px #cbc3b8,
-        -12px -12px 24px #fffff2;
-    border: 1px solid var(--clay-border);
+    border-radius: var(--neu-radius);
+    box-shadow: var(--neu-shadow);
     font-size: 14px;
+    font-weight: 700;
     transform: translateY(100px);
     opacity: 0;
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
@@ -522,11 +463,6 @@ tbody tr:hover {
     align-items: center;
     gap: 12px;
     max-width: 90%;
-}
-
-[data-theme="dark"] .toast {
-    box-shadow: 12px 12px 24px #1e1b19,
-        -12px -12px 24px #4e4943;
 }
 
 .toast.show {
@@ -764,7 +700,6 @@ function createRow(cols) {
     // 6: ديبوزت | 7: تحويل | 8: تاريخ ديبوزت | 9: تحويل | 10: تاريخ تحويل
     const editableIndexes = [2, 3, 4, 6, 9];
 
-    // عدد الأعمدة الكلي (بدون عمود الحذف)
     const totalCols = 11;
 
     for (let i = 0; i < totalCols; i++) {
@@ -890,10 +825,10 @@ async function copyImage() {
     try {
         const canvas = await html2canvas(capture, {
             scale: 2.5,
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--clay-card').trim() || '#eae3d8',
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--neu-bg').trim() || '#e0e5ec',
             useCORS: true,
             logging: false,
-            borderRadius: '24px'
+            borderRadius: '20px'
         });
 
         try {
@@ -986,7 +921,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-console.log('⌨️ Account transfers - Keyboard Shortcuts:');
+console.log('⌨️ Account transfers - Neumorphism 2.0');
 console.log('  Ctrl+Enter     : نسخ الصورة');
 console.log('  Ctrl+Shift+E   : تصدير Excel');
 console.log('  Ctrl+Shift+C   : مسح الكل');
