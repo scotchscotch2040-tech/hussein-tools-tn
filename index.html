@@ -92,9 +92,7 @@
     z-index: 1;
   }
 
-  #login-screen.lamp-on .darkness-overlay {
-    opacity: 0;
-  }
+  #login-screen.lamp-on .darkness-overlay { opacity: 0; }
 
   .login-wrapper {
     display: flex;
@@ -211,14 +209,8 @@
     z-index: -1;
   }
 
-  .lamp-cord.dragging {
-    cursor: grabbing;
-    transition: none;
-  }
-
-  .lamp-cord.releasing {
-    transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+  .lamp-cord.dragging { cursor: grabbing; transition: none; }
+  .lamp-cord.releasing { transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
   .lamp-cord::before {
     content: '';
@@ -1292,6 +1284,14 @@
       <span class="item-icon">🏠</span>
       الرئيسية
     </div>
+
+    <!-- ✅ 3PL DASHBOARD TAB -->
+    <div class="menu-item" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <span class="item-icon">📊</span>
+      3PL Dashboard
+      <span class="item-badge">KPIs</span>
+    </div>
+
     <div class="menu-item" data-tab="refund" onclick="switchTab('refund')">
       <span class="item-icon">📋</span>
       Refund
@@ -1364,6 +1364,17 @@
 
             <!-- ✅ التطبيقات المتاحة — unified-card -->
             <div class="unified-cards-grid">
+              <!-- ✅ 3PL DASHBOARD CARD -->
+              <div class="unified-card" data-tab-card="dashboard" onclick="switchTab('dashboard')">
+                <span class="preview-icon">📊</span>
+                <div class="card-title">
+                  <span class="title-emoji">📊</span>
+                  3PL Dashboard
+                </div>
+                <div class="card-desc">متابعة أداء شركات الشحن والمؤشرات الرئيسية</div>
+                <span class="card-badge">📊 KPIs</span>
+              </div>
+
               <div class="unified-card" data-tab-card="refund" onclick="switchTab('refund')">
                 <span class="preview-icon">📋</span>
                 <div class="card-title">
@@ -1523,6 +1534,13 @@
           </div>
         </div>
 
+        <!-- ✅ 3PL DASHBOARD IFRAME -->
+        <div class="tab-pane" id="tab-dashboard">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-dashboard" src="3pl-dashboard.html"></iframe>
+          </div>
+        </div>
+
         <div class="tab-pane" id="tab-refund">
           <div class="iframe-wrapper">
             <iframe id="iframe-refund" src="refund-formatter.html"></iframe>
@@ -1572,37 +1590,37 @@
         username: 'Hussein',
         password: '1129+',
         role: 'Admin',
-        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Saher',
         password: '123456',
         role: 'Customer Service Manager',
-        allowedTabs: ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Walaa',
         password: '11995',
         role: 'Team Leader CS',
-        allowedTabs: ['home', 'refund', 'orders', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Maryaim',
         password: '271997',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Nehad',
         password: '1482000',
         role: 'Agent Confirmation',
-        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Mai',
         password: 'mai2003',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
       }
     ];
 
@@ -1838,7 +1856,7 @@
        ========================================== */
     function applyPermissions(user) {
       const allowed = (user && user.allowedTabs) ? user.allowedTabs : 
-                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
+                      ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
 
       document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
         const tab = item.dataset.tab;
@@ -1862,7 +1880,7 @@
     function isTabAllowed(tabId) {
       if (!currentUser) return false;
       const allowed = currentUser.allowedTabs || 
-                      ['home', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
+                      ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
       return allowed.includes(tabId);
     }
 
@@ -2135,6 +2153,27 @@
         showToast('Night mode', '🌙');
         addAuditLog('theme', '🌙', 'تبديل إلى الوضع الليلي');
       }
+      // ✅ مزامنة الثيم مع الـ Dashboard iframe
+      syncThemeToIframe();
+    }
+
+    /* ==========================================
+       SYNC THEME WITH IFRAME (3PL Dashboard)
+       ========================================== */
+    function syncThemeToIframe() {
+      const iframe = document.getElementById('iframe-dashboard');
+      if (!iframe || !iframe.contentWindow) return;
+      
+      const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      
+      try {
+        iframe.contentWindow.postMessage({ 
+          type: 'THEME_CHANGE', 
+          theme: currentTheme 
+        }, '*');
+      } catch (e) {
+        console.warn('Cannot sync theme to iframe:', e);
+      }
     }
 
     /* ==========================================
@@ -2173,7 +2212,7 @@
 
       const compactHeader = document.getElementById('compactHeader');
       const container = document.querySelector('.container');
-      const isTool = ['refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'].includes(tabId);
+      const isTool = ['dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'].includes(tabId);
 
       compactHeader.classList.toggle('visible', isTool);
       container.classList.toggle('tool-active', isTool);
@@ -2189,6 +2228,11 @@
 
       if (tabId === 'audit') renderAuditLog();
 
+      // ✅ مزامنة الثيم مع الـ Dashboard
+      if (tabId === 'dashboard') {
+        setTimeout(syncThemeToIframe, 300);
+      }
+
       showToast('📂 ' + getTabName(tabId));
       addAuditLog('tab', '📂', 'فتح تبويب: ' + getTabName(tabId));
     }
@@ -2196,6 +2240,7 @@
     function getTabName(tabId) {
       const names = {
         'home': 'الرئيسية',
+        'dashboard': '3PL Dashboard',
         'refund': 'Refund Formatter',
         'orders': 'تقسيم الأوردرات',
         'transfers': 'Account Transfers',
@@ -2289,7 +2334,17 @@
     document.addEventListener('keydown', function(e) {
       if (loginScreen.classList.contains('hidden')) {
         if (e.ctrlKey && !e.shiftKey) {
-          const tabMap = { '1': 'home', '2': 'refund', '3': 'orders', '4': 'transfers', '5': 'discount', '6': 'stock', '7': 'abandoned', '8': 'audit' };
+          const tabMap = { 
+            '1': 'home', 
+            '2': 'dashboard', 
+            '3': 'refund', 
+            '4': 'orders', 
+            '5': 'transfers', 
+            '6': 'discount', 
+            '7': 'stock', 
+            '8': 'abandoned', 
+            '9': 'audit' 
+          };
           const tabId = tabMap[e.key];
           if (tabId) {
             e.preventDefault();
@@ -2305,10 +2360,8 @@
     });
 
     console.log('🏠 Hussein Gamal Suite - Unified Card Style 💡');
-    console.log('  ✅ All cards now share the same style');
-    console.log('  🖼️ Large images preserved in quick links');
-    console.log('  📦 Stock-Edara added successfully');
-    console.log('  🛒 Abandoned Checkouts added successfully');
+    console.log('  ✅ 3PL Dashboard integrated successfully');
+    console.log('  🎨 Theme sync enabled with Dashboard');
     console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
     console.log('  🔒 Permissions system enabled');
   </script>
