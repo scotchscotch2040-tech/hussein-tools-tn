@@ -649,6 +649,9 @@
   .top-header .menu-toggle-wrapper .menu-icon { font-size: 14px; }
   .top-header .menu-toggle-wrapper .menu-label { font-size: 6px; }
 
+  /* ==========================================
+     ✨ NEW: COMPACT HEADER WITH STYLE 11 MENU BUTTON
+     ========================================== */
   .compact-header {
     position: fixed;
     top: 8px;
@@ -660,23 +663,66 @@
     direction: rtl;
   }
   .compact-header.visible { display: flex; }
+
+  /* Style 11 — Double Line Menu Button */
   .compact-menu-btn {
-    width: 34px;
-    height: 34px;
-    border: 1px solid var(--clay-border);
-    border-radius: 10px;
-    background: var(--clay-card);
-    color: var(--clay-text);
-    box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
-    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 16px;
+    gap: 10px;
+    padding: 8px 16px;
+    background: var(--clay-card);
+    border: 1px solid var(--clay-border);
+    border-radius: 14px;
+    box-shadow: 4px 4px 10px #cbc3b8, -4px -4px 10px #fffff2;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    color: var(--clay-text);
     transition: all 0.25s ease;
   }
-  [data-theme="dark"] .compact-menu-btn { box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943; }
-  .compact-menu-btn:active { transform: scale(0.92); box-shadow: var(--clay-inset); }
+  [data-theme="dark"] .compact-menu-btn {
+    box-shadow: 4px 4px 10px #1e1b19, -4px -4px 10px #4e4943;
+  }
+
+  .compact-menu-btn .double-line {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 20px;
+    flex-shrink: 0;
+  }
+  .compact-menu-btn .double-line span {
+    display: block;
+    height: 2.5px;
+    background: var(--clay-accent);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+
+  .compact-menu-btn .menu-text {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--clay-text);
+  }
+
+  .compact-menu-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--clay-accent);
+  }
+  .compact-menu-btn:hover .double-line span:first-child {
+    transform: rotate(45deg) translateY(3.5px);
+  }
+  .compact-menu-btn:hover .double-line span:last-child {
+    transform: rotate(-45deg) translateY(-3.5px);
+  }
+  .compact-menu-btn:active {
+    transform: scale(0.96);
+    box-shadow: var(--clay-inset);
+  }
+
+  /* Hide the toggle on tool-active */
   .container.tool-active .menu-toggle-wrapper { display: none; }
 
   /* ==========================================
@@ -1165,6 +1211,8 @@
     .period { font-size: 15px; margin-right: 5px; }
     .date-display { font-size: 11px; letter-spacing: 1px; gap: 5px; }
     .date-chip { padding: 4px 8px; border-radius: 8px; }
+    .compact-menu-btn { padding: 7px 12px; gap: 8px; }
+    .compact-menu-btn .menu-text { font-size: 11.5px; }
   }
 
   @media(max-width:480px) {
@@ -1190,6 +1238,10 @@
     .top-controls { top: 10px; left: 10px; gap: 6px; }
     .theme-float-btn, .logout-float-btn { width: 38px; height: 38px; font-size: 17px; }
     .logout-float-btn { font-size: 16px; }
+
+    .compact-menu-btn { padding: 6px 10px; gap: 6px; }
+    .compact-menu-btn .menu-text { font-size: 10.5px; letter-spacing: 0.3px; }
+    .compact-menu-btn .double-line { width: 16px; }
   }
 </style>
 </head>
@@ -1251,9 +1303,15 @@
     </div>
   </div>
 
-  <!-- ===== COMPACT HEADER ===== -->
+  <!-- ===== COMPACT HEADER (STYLE 11 — DOUBLE LINE) ===== -->
   <div class="compact-header" id="compactHeader">
-    <button class="compact-menu-btn" onclick="toggleMenu()" aria-label="فتح القائمة">✦</button>
+    <button class="compact-menu-btn" onclick="toggleMenu()" aria-label="فتح القائمة">
+      <span class="double-line">
+        <span></span>
+        <span></span>
+      </span>
+      <span class="menu-text">Menu</span>
+    </button>
   </div>
 
   <!-- ===== OVERLAY ===== -->
@@ -1614,13 +1672,13 @@
         username: 'Nehad',
         password: '1482000',
         role: 'Agent Confirmation',
-        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
       },
       {
         username: 'Mai',
         password: 'mai2003',
         role: 'Customer Service',
-        allowedTabs: ['home', 'orders', 'stock', 'abandoned', 'audit']
+        allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
       }
     ];
 
@@ -2359,8 +2417,10 @@
       }
     });
 
-    console.log('🏠 Hussein Gamal Suite - Unified Card Style 💡');
-    console.log('  ✅ 3PL Dashboard integrated successfully');
+    console.log('🏠 Hussein Gamal Suite - Style 11 Menu ✨');
+    console.log('  ✅ Double Line menu button (Style 11)');
+    console.log('  ✅ 3PL Dashboard integrated');
+    console.log('  ✅ Account Transfers integrated');
     console.log('  🎨 Theme sync enabled with Dashboard');
     console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
     console.log('  🔒 Permissions system enabled');
