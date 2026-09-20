@@ -305,8 +305,6 @@
   .ms-status-card:hover { transform: translateY(-3px); }
   .ms-status-card:hover .ms-status-pct { transform: scale(1.05); }
 
-  .ms-status-icon { font-size: 16px; line-height: 1; }
-
   /* ✅ الليبل — أكبر */
   .ms-status-label {
     font-size: 12px;
@@ -457,19 +455,16 @@
   <!-- ===== STATUS CARDS ===== -->
   <div class="ms-status-grid" id="statusGrid">
     <div class="ms-status-card c-delivered">
-      <div class="ms-status-icon">✅</div>
       <div class="ms-status-label">Delivered</div>
       <div class="ms-status-value">—</div>
       <div class="ms-status-pct">—</div>
     </div>
     <div class="ms-status-card c-rto">
-      <div class="ms-status-icon">❌</div>
       <div class="ms-status-label">RTO</div>
       <div class="ms-status-value">—</div>
       <div class="ms-status-pct">—</div>
     </div>
     <div class="ms-status-card c-voided">
-      <div class="ms-status-icon">🚫</div>
       <div class="ms-status-label">voided</div>
       <div class="ms-status-value">—</div>
       <div class="ms-status-pct">—</div>
@@ -498,9 +493,9 @@ const CONFIG = {
   },
 
   targetStatuses: [
-    { key: 'Delivered', label: 'Delivered', icon: '✅', cls: 'c-delivered' },
-    { key: 'RTO',       label: 'RTO',       icon: '❌', cls: 'c-rto' },
-    { key: 'voided',    label: 'voided',    icon: '🚫', cls: 'c-voided' }
+    { key: 'Delivered', label: 'Delivered', cls: 'c-delivered' },
+    { key: 'RTO',       label: 'RTO',       cls: 'c-rto' },
+    { key: 'voided',    label: 'voided',    cls: 'c-voided' }
   ],
 
   monthOrder: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
@@ -659,7 +654,6 @@ function render(month) {
     const pct   = entry ? entry.pct   : 0;
     return `
       <div class="ms-status-card ${s.cls}">
-        <div class="ms-status-icon">${s.icon}</div>
         <div class="ms-status-label">${s.label}</div>
         <div class="ms-status-value">${fmtNum(count)}</div>
         <div class="ms-status-pct">${pct.toFixed(2)}%</div>
