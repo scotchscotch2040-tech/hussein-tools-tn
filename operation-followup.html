@@ -17,6 +17,7 @@
     --clay-gold: #b8956e;
     --clay-success: #7d9b7a;
     --clay-danger: #b57a7a;
+    --clay-blue: #7a8fa6;
   }
   [data-theme="dark"] {
     --clay-bg: #2a2724;
@@ -30,6 +31,7 @@
     --clay-gold: #d4ae84;
     --clay-success: #8aaa87;
     --clay-danger: #c48a8a;
+    --clay-blue: #8aa3ba;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
@@ -53,7 +55,7 @@
     padding: 4px;
   }
 
-  /* ===== BOX — أعرض + 3D ===== */
+  /* ===== BOX ===== */
   .month-summary-box {
     width: 100%;
     max-width: 100%;
@@ -269,10 +271,10 @@
   .ms-delta-arrow { font-size: 11px; display: inline-block; }
   .ms-delta-vs { font-size: 10px; font-weight: 600; color: var(--clay-text-soft); }
 
-  /* STATUS CARDS */
+  /* STATUS CARDS — ✅ 4 كروت */
   .ms-status-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);   /* ← 4 بدل 3 */
     gap: 8px;
   }
   .ms-status-card {
@@ -280,12 +282,12 @@
     border-radius: 10px;
     border: 1px solid var(--clay-border);
     box-shadow: var(--clay-inset);
-    padding: 10px 8px;              /* ← اتقلل من 14px 12px */
+    padding: 10px 8px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;                       /* ← اتقلل من 6px */
+    gap: 4px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -301,23 +303,23 @@
   .ms-status-card.c-delivered::before { background: var(--clay-success); }
   .ms-status-card.c-rto::before { background: var(--clay-danger); }
   .ms-status-card.c-voided::before { background: var(--clay-gold); }
+  .ms-status-card.c-unfulfilled::before { background: var(--clay-blue); }
 
   .ms-status-card:hover { transform: translateY(-3px); }
   .ms-status-card:hover .ms-status-pct { transform: scale(1.05); }
 
-  /* ✅ الليبل */
   .ms-status-label {
-    font-size: 11px;                /* ← اتقلل من 12px */
+    font-size: 11px;
     font-weight: 900;
     color: var(--clay-text-soft);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-top: 1px;
+    white-space: nowrap;
   }
 
-  /* ✅ الرقم — اتقلل شوية */
   .ms-status-value {
-    font-size: 26px;                /* ← اتقلل من 32px */
+    font-size: 26px;
     font-weight: 900;
     color: var(--clay-text);
     line-height: 1.1;
@@ -328,17 +330,17 @@
   .ms-status-card.c-delivered .ms-status-value { color: var(--clay-success); }
   .ms-status-card.c-rto .ms-status-value { color: var(--clay-danger); }
   .ms-status-card.c-voided .ms-status-value { color: var(--clay-gold); }
+  .ms-status-card.c-unfulfilled .ms-status-value { color: var(--clay-blue); }
 
-  /* ✅ النسبة المئوية — Badge بارز */
   .ms-status-pct {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
     margin-top: 3px;
-    padding: 4px 12px;              /* ← اتقلل من 5px 14px */
+    padding: 4px 12px;
     border-radius: 20px;
-    font-size: 13px;                /* ← اتقلل من 14px */
+    font-size: 13px;
     font-weight: 900;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.3px;
@@ -362,6 +364,12 @@
     background: rgba(184, 149, 110, 0.18);
     border-color: rgba(184, 149, 110, 0.4);
     box-shadow: 0 0 0 1px rgba(184, 149, 110, 0.1), 0 2px 6px rgba(184, 149, 110, 0.18);
+  }
+  .ms-status-card.c-unfulfilled .ms-status-pct {
+    color: var(--clay-blue);
+    background: rgba(122, 143, 166, 0.18);
+    border-color: rgba(122, 143, 166, 0.4);
+    box-shadow: 0 0 0 1px rgba(122, 143, 166, 0.1), 0 2px 6px rgba(122, 143, 166, 0.18);
   }
 
   /* STATES */
@@ -390,6 +398,9 @@
   .ms-loading .ms-filter-wrapper { opacity: 0.4; pointer-events: none; }
 
   /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .ms-status-grid { grid-template-columns: repeat(2, 1fr); }  /* 2×2 على التابلت */
+  }
   @media (max-width: 480px) {
     body { padding: 2px; }
     .month-summary-box { padding: 10px 12px; border-radius: 14px; gap: 8px; }
@@ -409,7 +420,6 @@
 
 <div class="month-summary-box" id="monthSummaryBox">
 
-  <!-- ===== HEADER ===== -->
   <div class="ms-header">
     <div class="ms-title">📦 إجمالي الأوردرات</div>
 
@@ -437,7 +447,6 @@
     </button>
   </div>
 
-  <!-- ===== TOTAL ===== -->
   <div class="ms-total-card">
     <div class="ms-total-left">
       <div class="ms-total-label">📦 إجمالي الأوردرات</div>
@@ -452,7 +461,6 @@
     </div>
   </div>
 
-  <!-- ===== STATUS CARDS ===== -->
   <div class="ms-status-grid" id="statusGrid">
     <div class="ms-status-card c-delivered">
       <div class="ms-status-label">Delivered</div>
@@ -469,9 +477,13 @@
       <div class="ms-status-value">—</div>
       <div class="ms-status-pct">—</div>
     </div>
+    <div class="ms-status-card c-unfulfilled">
+      <div class="ms-status-label">unfulfilled</div>
+      <div class="ms-status-value">—</div>
+      <div class="ms-status-pct">—</div>
+    </div>
   </div>
 
-  <!-- ===== STATE ===== -->
   <div class="ms-state hidden" id="msState">
     <div class="spinner" id="msSpinner"></div>
     <div id="msStateText">جاري التحميل...</div>
@@ -489,13 +501,46 @@ const CONFIG = {
   columns: {
     month:  "Month",
     status: "Status",
-    orders: "Order ID"
+    orders: "Name"
   },
 
+  // ✅ 4 حالات (unfulfilled كارت لوحدها)
   targetStatuses: [
-    { key: 'Delivered', label: 'Delivered', cls: 'c-delivered' },
-    { key: 'RTO',       label: 'RTO',       cls: 'c-rto' },
-    { key: 'voided',    label: 'voided',    cls: 'c-voided' }
+    {
+      key: 'Delivered',
+      label: 'Delivered',
+      cls: 'c-delivered',
+      aliases: ['Delivered', 'delivered', 'DELIVERED', 'Done', 'Completed']
+    },
+    {
+      key: 'RTO',
+      label: 'RTO',
+      cls: 'c-rto',
+      aliases: ['RTO', 'rto', 'Return', 'Returned', 'returned']
+    },
+    {
+      key: 'voided',
+      label: 'voided',
+      cls: 'c-voided',
+      aliases: [
+        'voided', 'Voided', 'VOIDED',
+        'void', 'Void', 'VOID',
+        'Cancelled', 'Canceled',
+        'cancelled', 'canceled',
+        'CANCELLED', 'CANCELED',
+        'Cancel', 'cancel'
+      ]
+    },
+    {
+      key: 'unfulfilled',
+      label: 'unfulfilled',
+      cls: 'c-unfulfilled',
+      aliases: [
+        'unfulfilled', 'Unfulfilled', 'UNFULFILLED',
+        'unfulfill', 'Unfulfill',
+        'pending', 'Pending', 'PENDING'
+      ]
+    }
   ],
 
   monthOrder: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
@@ -576,21 +621,46 @@ function monthSortKey(monthStr) {
 }
 
 /* ============================================================
+   ✅ aliasMap
+   ============================================================ */
+function buildAliasMap() {
+  const map = {};
+  CONFIG.targetStatuses.forEach(s => {
+    const aliases = s.aliases && s.aliases.length ? s.aliases : [s.key];
+    aliases.forEach(a => {
+      map[String(a).toLowerCase().trim()] = s.key;
+    });
+  });
+  return map;
+}
+const ALIAS_MAP = buildAliasMap();
+
+/* ============================================================
    Build index
    ============================================================ */
 function buildIndex(rows) {
   const idx = {};
   rows.forEach(row => {
-    const month = formatMonth(row[CONFIG.columns.month]);
-    const status = String(row[CONFIG.columns.status] || '').trim();
-    if (!month || !status) return;
+    const month     = formatMonth(row[CONFIG.columns.month]);
+    const statusRaw = String(row[CONFIG.columns.status] || '').trim();
+    const name      = String(row[CONFIG.columns.orders] || '').trim();
+
+    if (!month) return;
 
     if (!idx[month]) idx[month] = { total: 0, statuses: {} };
-    idx[month].total += 1;
-    if (!idx[month].statuses[status]) idx[month].statuses[status] = 0;
-    idx[month].statuses[status] += 1;
+
+    // ✅ الإجمالي: كل صف فيه Name (بغض النظر عن Status)
+    if (name) idx[month].total += 1;
+
+    // ✅ الحالات: بالـ alias
+    if (statusRaw) {
+      const key = ALIAS_MAP[statusRaw.toLowerCase()] || statusRaw;
+      if (!idx[month].statuses[key]) idx[month].statuses[key] = 0;
+      idx[month].statuses[key] += 1;
+    }
   });
 
+  // حساب النسب
   Object.keys(idx).forEach(m => {
     const total = idx[m].total;
     Object.keys(idx[m].statuses).forEach(s => {
