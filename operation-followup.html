@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Month Summary Box</title>
+<style>
+  :root {
+    --clay-bg: #e8e0d5;
+    --clay-card: #eae3d8;
+    --clay-shadow: 8px 8px 16px #cbc3b8, -8px -8px 16px #fffff2;
+    --clay-inset: inset 3px 3px 8px #cbc3b8, inset -3px -3px 8px #fffff2;
+    --clay-border: #d5cec3;
+    --clay-text: #3d3a36;
+    --clay-text-soft: #6b6560;
+    --clay-accent: #a67c6b;
+    --clay-gold: #b8956e;
+    --clay-success: #7d9b7a;
+    --clay-danger: #b57a7a;
+  }
+  [data-theme="dark"] {
+    --clay-bg: #2a2724;
+    --clay-card: #36322e;
+    --clay-shadow: 8px 8px 16px #1e1b19, -8px -8px 16px #4e4943;
+    --clay-inset: inset 3px 3px 8px #1e1b19, inset -3px -3px 8px #4e4943;
+    --clay-border: #4a4540;
+    --clay-text: #ede8e2;
+    --clay-text-soft: #b5aea6;
+    --clay-accent: #b8956e;
+    --clay-gold: #d4ae84;
+    --clay-success: #8aaa87;
+    --clay-danger: #c48a8a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+  html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  body {
+    background: transparent;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4px;
+  }
+
+  /* ===== BOX — أعرض + 3D ===== */
+  .month-summary-box {
+    width: 100%;
+    max-width: 100%;
+    background: linear-gradient(145deg, #ece5da, #e1d9cc);
+    border-radius: 18px;
+    border: 1px solid var(--clay-border);
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  [data-theme="dark"] .month-summary-box {
+    background: linear-gradient(145deg, #3d3833, #332f2b);
+  }
+
+  /* ===== HEADER ===== */
+  .ms-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--clay-border);
+    flex-wrap: wrap;
+  }
+
+  /* ✅ العنوان الجديد: إجمالي الأوردرات */
+  .ms-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--clay-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .ms-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--clay-accent);
+    border-radius: 2px;
+  }
+
+  /* LIVE */
+  .ms-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--clay-text-soft);
+    border: 1px solid var(--clay-border);
+    flex-shrink: 0;
+  }
+  .ms-live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--clay-success);
+    box-shadow: 0 0 6px var(--clay-success);
+    animation: livePulse 1.6s ease-in-out infinite;
+  }
+  .ms-live.syncing .ms-live-dot {
+    background: var(--clay-gold);
+    box-shadow: 0 0 6px var(--clay-gold);
+    animation: liveSpin 0.9s linear infinite;
+  }
+  .ms-live.offline .ms-live-dot {
+    background: var(--clay-danger);
+    box-shadow: 0 0 6px var(--clay-danger);
+    animation: none;
+  }
+  @keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @keyframes liveSpin { to { transform: rotate(360deg); } }
+
+  /* Timer */
+  .ms-timer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--clay-text-soft);
+    border: 1px solid var(--clay-border);
+    font-variant-numeric: tabular-nums;
+    min-width: 50px;
+    flex-shrink: 0;
+  }
+  .ms-timer.urgent { color: var(--clay-danger); }
+
+  /* Filter */
+  .ms-filter-wrapper {
+    position: relative;
+    flex: 1 1 140px;
+    min-width: 120px;
+    margin-right: auto;
+  }
+  .ms-filter-wrapper::after {
+    content: '▼';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--clay-text-soft);
+    font-size: 9px;
+    pointer-events: none;
+  }
+  select.ms-filter {
+    width: 100%;
+    padding: 7px 32px 7px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--clay-border);
+    background: var(--clay-bg);
+    box-shadow: var(--clay-inset);
+    color: var(--clay-text);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select.ms-filter:focus { border-color: var(--clay-accent); }
+  select.ms-filter option { background: var(--clay-card); color: var(--clay-text); }
+
+  /* Buttons */
+  .ms-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--clay-border);
+    background: var(--clay-card);
+    box-shadow: 2px 2px 5px #cbc3b8, -2px -2px 5px #fffff2;
+    color: var(--clay-text-soft);
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  [data-theme="dark"] .ms-btn { box-shadow: 2px 2px 5px #1e1b19, -2px -2px 5px #4e4943; }
+  .ms-btn:hover {
+    color: var(--clay-accent);
+    border-color: var(--clay-accent);
+    transform: translateY(-1px);
+  }
+  .ms-btn:active {
+    box-shadow: var(--clay-inset);
+    transform: translateY(0) scale(0.97);
+  }
+  .ms-btn .btn-icon {
+    font-size: 13px;
+    display: inline-block;
+    line-height: 1;
+  }
+  .ms-btn.spinning .btn-icon { animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TOTAL CARD */
+  .ms-total-card {
+    background: var(--clay-bg);
+    border-radius: 14px;
+    border: 1px solid var(--clay-border);
+    box-shadow: var(--clay-inset);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .ms-total-left { display: flex; flex-direction: column; gap: 2px; text-align: right; }
+  .ms-total-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--clay-text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .ms-total-value {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--clay-accent);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+  }
+  .ms-total-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .ms-delta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+  .ms-delta.up { background: rgba(125, 155, 122, 0.18); color: var(--clay-success); }
+  .ms-delta.down { background: rgba(181, 122, 122, 0.18); color: var(--clay-danger); }
+  .ms-delta.neutral { background: rgba(166, 124, 107, 0.12); color: var(--clay-text-soft); }
+  .ms-delta-arrow { font-size: 11px; display: inline-block; }
+  .ms-delta-vs { font-size: 10px; font-weight: 600; color: var(--clay-text-soft); }
+
+  /* STATUS CARDS */
+  .ms-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .ms-status-card {
+    background: var(--clay-bg);
+    border-radius: 10px;
+    border: 1px solid var(--clay-border);
+    box-shadow: var(--clay-inset);
+    padding: 10px 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ms-status-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px; height: 100%;
+    background: var(--clay-accent);
+    opacity: 0.7;
+  }
+  .ms-status-card.c-delivered::before { background: var(--clay-success); }
+  .ms-status-card.c-rto::before { background: var(--clay-danger); }
+  .ms-status-card.c-voided::before { background: var(--clay-gold); }
+  .ms-status-icon { font-size: 14px; line-height: 1; }
+  .ms-status-label {
+    font-size: 9px;
+    font-weight: 900;
+    color: var(--clay-text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .ms-status-value {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--clay-text);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .ms-status-card.c-delivered .ms-status-value { color: var(--clay-success); }
+  .ms-status-card.c-rto .ms-status-value { color: var(--clay-danger); }
+  .ms-status-card.c-voided .ms-status-value { color: var(--clay-gold); }
+  .ms-status-pct { font-size: 10px; font-weight: 800; color: var(--clay-text-soft); }
+
+  /* STATES */
+  .ms-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 10px;
+    text-align: center;
+    color: var(--clay-text-soft);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .ms-state.hidden { display: none; }
+  .ms-state .spinner {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 3px solid var(--clay-border);
+    border-top-color: var(--clay-accent);
+    animation: spin 0.9s linear infinite;
+  }
+  .ms-state.error { color: var(--clay-danger); }
+  .ms-loading .ms-total-card,
+  .ms-loading .ms-status-grid,
+  .ms-loading .ms-filter-wrapper { opacity: 0.4; pointer-events: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 480px) {
+    body { padding: 2px; }
+    .month-summary-box { padding: 10px 12px; border-radius: 14px; gap: 8px; }
+    .ms-header { gap: 6px; padding-bottom: 8px; }
+    .ms-title { font-size: 12px; }
+    .ms-btn { font-size: 10px; padding: 6px 10px; }
+    .ms-total-value { font-size: 22px; }
+    .ms-status-value { font-size: 15px; }
+    .ms-status-label { font-size: 8px; }
+    .ms-status-pct { font-size: 9px; }
+    .ms-total-card { padding: 10px 14px; }
+    .ms-status-card { padding: 8px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="month-summary-box" id="monthSummaryBox">
+
+  <!-- ===== HEADER ===== -->
+  <div class="ms-header">
+    <!-- ✅ العنوان الجديد -->
+    <div class="ms-title">📦 إجمالي الأوردرات</div>
+
+    <span class="ms-live" id="liveIndicator">
+      <span class="ms-live-dot"></span>
+      <span id="liveText">LIVE</span>
+    </span>
+
+    <span class="ms-timer" id="syncTimer">2:00</span>
+
+    <div class="ms-filter-wrapper">
+      <select class="ms-filter" id="monthSelect" onchange="onMonthChange()">
+        <option value="">جاري التحميل...</option>
+      </select>
+    </div>
+
+    <button class="ms-btn" id="syncBtn" onclick="manualSync()" title="جلب أحدث البيانات">
+      <span class="btn-icon">🔄</span>
+      <span>مزامنة</span>
+    </button>
+
+    <button class="ms-btn" onclick="resetFilter()" title="الرجوع لآخر شهر">
+      <span class="btn-icon">⟲</span>
+      <span>الأحدث</span>
+    </button>
+  </div>
+
+  <!-- ===== TOTAL ===== -->
+  <div class="ms-total-card">
+    <div class="ms-total-left">
+      <div class="ms-total-label">📦 إجمالي الأوردرات</div>
+      <div class="ms-total-value" id="totalValue">—</div>
+    </div>
+    <div class="ms-total-right">
+      <div class="ms-delta neutral" id="totalDelta">
+        <span class="ms-delta-arrow">●</span>
+        <span>—</span>
+      </div>
+      <div class="ms-delta-vs" id="totalVs">—</div>
+    </div>
+  </div>
+
+  <!-- ===== STATUS CARDS ===== -->
+  <div class="ms-status-grid" id="statusGrid">
+    <div class="ms-status-card c-delivered">
+      <div class="ms-status-icon">✅</div>
+      <div class="ms-status-label">Delivered</div>
+      <div class="ms-status-value">—</div>
+      <div class="ms-status-pct">—</div>
+    </div>
+    <div class="ms-status-card c-rto">
+      <div class="ms-status-icon">❌</div>
+      <div class="ms-status-label">RTO</div>
+      <div class="ms-status-value">—</div>
+      <div class="ms-status-pct">—</div>
+    </div>
+    <div class="ms-status-card c-voided">
+      <div class="ms-status-icon">🚫</div>
+      <div class="ms-status-label">voided</div>
+      <div class="ms-status-value">—</div>
+      <div class="ms-status-pct">—</div>
+    </div>
+  </div>
+
+  <!-- ===== STATE ===== -->
+  <div class="ms-state hidden" id="msState">
+    <div class="spinner" id="msSpinner"></div>
+    <div id="msStateText">جاري التحميل...</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ⚙️ الإعدادات
+   ============================================================ */
+const CONFIG = {
+  apiUrl: "https://script.google.com/macros/s/AKfycbwSBX6AyQc7FABp3hufvXSyrYawGUZm7_Yjo8mk818awvhVVdU34D18liQWfnd6h-wHSw/exec",
+
+  columns: {
+    month:  "Month",
+    status: "Status",
+    orders: "Order ID"
+  },
+
+  targetStatuses: [
+    { key: 'Delivered', label: 'Delivered', icon: '✅', cls: 'c-delivered' },
+    { key: 'RTO',       label: 'RTO',       icon: '❌', cls: 'c-rto' },
+    { key: 'voided',    label: 'voided',    icon: '🚫', cls: 'c-voided' }
+  ],
+
+  monthOrder: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+
+  autoRefreshMs: 120000,
+  minFetchGapMs: 5000
+};
+
+let allRows = [];
+let monthIndex = {};
+let lastHash = null;
+let isFetching = false;
+let lastFetchTime = 0;
+let countdownTimer = null;
+let countdownRemaining = 0;
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+function $(id) { return document.getElementById(id); }
+function fmtNum(n) { return (n || 0).toLocaleString('ar-EG'); }
+
+function setLiveState(state, text) {
+  const el = $('liveIndicator');
+  el.classList.remove('syncing', 'offline');
+  if (state) el.classList.add(state);
+  $('liveText').textContent = text || 'LIVE';
+}
+
+function showState(text, type = 'loading') {
+  const box = $('monthSummaryBox');
+  const state = $('msState');
+  const spinner = $('msSpinner');
+  $('msStateText').textContent = text;
+
+  state.classList.remove('hidden', 'error');
+  if (type === 'error') {
+    state.classList.add('error');
+    spinner.style.display = 'none';
+    box.classList.remove('ms-loading');
+  } else {
+    spinner.style.display = 'block';
+    box.classList.add('ms-loading');
+  }
+}
+function hideState() {
+  $('msState').classList.add('hidden');
+  $('monthSummaryBox').classList.remove('ms-loading');
+}
+
+/* ============================================================
+   Month formatting
+   ============================================================ */
+function formatMonth(value) {
+  if (!value && value !== 0) return null;
+  const s = String(value).trim();
+  if (!s) return null;
+
+  let m = s.match(/^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?/);
+  if (m) return `${CONFIG.monthOrder[+m[2] - 1]} ${m[1]}`;
+
+  m = s.match(/^(\d{1,2})[\/\-](\d{4})$/);
+  if (m) return `${CONFIG.monthOrder[+m[1] - 1]} ${m[2]}`;
+
+  m = s.match(/^([A-Za-z]+)[\s\-\/]+(\d{4})$/);
+  if (m) {
+    const idx = CONFIG.monthOrder.findIndex(x => x.toLowerCase() === m[1].slice(0,3).toLowerCase());
+    if (idx >= 0) return `${CONFIG.monthOrder[idx]} ${m[2]}`;
+  }
+  return s;
+}
+
+function monthSortKey(monthStr) {
+  const m = String(monthStr).match(/^([A-Za-z]+)\s+(\d{4})$/);
+  if (!m) return monthStr;
+  const idx = CONFIG.monthOrder.findIndex(x => x.toLowerCase() === m[1].slice(0,3).toLowerCase());
+  return `${m[2]}${String(idx + 1).padStart(2, '0')}`;
+}
+
+/* ============================================================
+   Build index
+   ============================================================ */
+function buildIndex(rows) {
+  const idx = {};
+  rows.forEach(row => {
+    const month = formatMonth(row[CONFIG.columns.month]);
+    const status = String(row[CONFIG.columns.status] || '').trim();
+    if (!month || !status) return;
+
+    if (!idx[month]) idx[month] = { total: 0, statuses: {} };
+    idx[month].total += 1;
+    if (!idx[month].statuses[status]) idx[month].statuses[status] = 0;
+    idx[month].statuses[status] += 1;
+  });
+
+  Object.keys(idx).forEach(m => {
+    const total = idx[m].total;
+    Object.keys(idx[m].statuses).forEach(s => {
+      idx[m].statuses[s] = {
+        count: idx[m].statuses[s],
+        pct: total > 0 ? (idx[m].statuses[s] / total) * 100 : 0
+      };
+    });
+  });
+  return idx;
+}
+
+/* ============================================================
+   Populate + Render
+   ============================================================ */
+function populateFilter() {
+  const months = Object.keys(monthIndex).sort((a, b) =>
+    monthSortKey(a).localeCompare(monthSortKey(b))
+  );
+  const select = $('monthSelect');
+  if (months.length === 0) {
+    select.innerHTML = '<option value="">لا توجد بيانات</option>';
+    return;
+  }
+  const current = select.value;
+  select.innerHTML = months.map(m => `<option value="${m}">${m}</option>`).join('');
+  if (current && months.includes(current)) select.value = current;
+  else select.value = months[months.length - 1];
+}
+
+function render(month) {
+  const months = Object.keys(monthIndex).sort((a, b) =>
+    monthSortKey(a).localeCompare(monthSortKey(b))
+  );
+  if (!month || !monthIndex[month]) month = months[months.length - 1];
+  if (!month) return;
+
+  const current = monthIndex[month];
+  const prevMonthName = months[months.indexOf(month) - 1] || null;
+  const prev = prevMonthName ? monthIndex[prevMonthName] : null;
+
+  $('totalValue').textContent = fmtNum(current.total);
+
+  let deltaPct = 0;
+  if (prev && prev.total > 0) deltaPct = ((current.total - prev.total) / prev.total) * 100;
+
+  const cls = deltaPct > 0 ? 'up' : deltaPct < 0 ? 'down' : 'neutral';
+  const arrow = deltaPct > 0 ? '▲' : deltaPct < 0 ? '▼' : '●';
+
+  const deltaEl = $('totalDelta');
+  deltaEl.className = 'ms-delta ' + cls;
+  deltaEl.innerHTML = `
+    <span class="ms-delta-arrow">${arrow}</span>
+    <span>${deltaPct >= 0 ? '+' : ''}${deltaPct.toFixed(1)}%</span>
+  `;
+  $('totalVs').textContent = prevMonthName ? `مقارنة بـ ${prevMonthName}` : 'لا يوجد شهر سابق';
+
+  $('statusGrid').innerHTML = CONFIG.targetStatuses.map(s => {
+    const entry = current.statuses[s.key];
+    const count = entry ? entry.count : 0;
+    const pct   = entry ? entry.pct   : 0;
+    return `
+      <div class="ms-status-card ${s.cls}">
+        <div class="ms-status-icon">${s.icon}</div>
+        <div class="ms-status-label">${s.label}</div>
+        <div class="ms-status-value">${fmtNum(count)}</div>
+        <div class="ms-status-pct">${pct.toFixed(2)}%</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function onMonthChange() {
+  const month = $('monthSelect').value;
+  if (month) render(month);
+}
+
+function resetFilter() {
+  const months = Object.keys(monthIndex).sort((a, b) =>
+    monthSortKey(a).localeCompare(monthSortKey(b))
+  );
+  if (months.length === 0) return;
+  $('monthSelect').value = months[months.length - 1];
+  render(months[months.length - 1]);
+}
+
+/* ============================================================
+   Fetch
+   ============================================================ */
+async function fetchMeta() {
+  const res = await fetch(CONFIG.apiUrl + "?action=meta&t=" + Date.now(), {
+    method: 'GET', redirect: 'follow', cache: 'no-store'
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
+}
+
+async function fetchData() {
+  const res = await fetch(CONFIG.apiUrl + "?action=data&t=" + Date.now(), {
+    method: 'GET', redirect: 'follow', cache: 'no-store'
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  return Array.isArray(json) ? json : (json.data || []);
+}
+
+async function loadFromGoogleSheets(silent = false) {
+  if (!CONFIG.apiUrl) {
+    showState('⚠️ لم يتم ضبط رابط Google Sheets', 'error');
+    return;
+  }
+  if (isFetching) return;
+  if (Date.now() - lastFetchTime < CONFIG.minFetchGapMs && silent) return;
+
+  isFetching = true;
+  lastFetchTime = Date.now();
+  setLiveState('syncing', 'SYNC...');
+
+  if (!silent) showState('جاري تحميل البيانات...', 'loading');
+
+  try {
+    const rows = await fetchData();
+    if (!rows.length) {
+      if (!silent) showState('📭 لا توجد بيانات', 'error');
+      setLiveState('offline', 'EMPTY');
+      isFetching = false;
+      return;
+    }
+
+    allRows = rows;
+    monthIndex = buildIndex(allRows);
+    populateFilter();
+    hideState();
+    onMonthChange();
+    setLiveState('', 'LIVE');
+
+  } catch (err) {
+    console.error(err);
+    if (!silent) showState('❌ فشل التحميل: ' + err.message, 'error');
+    setLiveState('offline', 'OFFLINE');
+  } finally {
+    isFetching = false;
+  }
+}
+
+/* ============================================================
+   Auto-Refresh + Countdown
+   ============================================================ */
+async function checkForUpdates() {
+  if (!CONFIG.apiUrl || isFetching) return;
+  try {
+    const meta = await fetchMeta();
+    if (!meta || !meta.hash) return;
+
+    if (lastHash === null) { lastHash = meta.hash; return; }
+
+    if (meta.hash !== lastHash) {
+      lastHash = meta.hash;
+      await loadFromGoogleSheets(true);
+    }
+  } catch (e) {}
+}
+
+function updateTimerUI() {
+  const timerEl = $('syncTimer');
+  if (!timerEl) return;
+  const m = Math.floor(countdownRemaining / 60);
+  const s = countdownRemaining % 60;
+  timerEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
+  if (countdownRemaining <= 10) timerEl.classList.add('urgent');
+  else timerEl.classList.remove('urgent');
+}
+
+function startCountdown() {
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownRemaining = CONFIG.autoRefreshMs / 1000;
+  updateTimerUI();
+
+  countdownTimer = setInterval(() => {
+    countdownRemaining--;
+    if (countdownRemaining <= 0) {
+      countdownRemaining = CONFIG.autoRefreshMs / 1000;
+      updateTimerUI();
+      checkForUpdates();
+    } else {
+      updateTimerUI();
+    }
+  }, 1000);
+}
+
+function stopCountdown() {
+  if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+}
+
+function startAutoRefresh() { stopCountdown(); startCountdown(); }
+function stopAutoRefresh() { stopCountdown(); }
+
+async function manualSync() {
+  const btn = $('syncBtn');
+  if (btn) btn.classList.add('spinning');
+  try {
+    await loadFromGoogleSheets(true);
+    try {
+      const meta = await fetchMeta();
+      if (meta && meta.hash) lastHash = meta.hash;
+    } catch(e) {}
+    countdownRemaining = CONFIG.autoRefreshMs / 1000;
+    updateTimerUI();
+  } finally {
+    setTimeout(() => { if (btn) btn.classList.remove('spinning'); }, 600);
+  }
+}
+
+/* ============================================================
+   Theme Sync from parent
+   ============================================================ */
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || data.type !== 'THEME_CHANGE') return;
+  if (data.theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+});
+
+try {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'REQUEST_THEME' }, '*');
+  }
+} catch (e) {}
+
+try {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+} catch (e) {}
+
+/* ============================================================
+   Init
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadFromGoogleSheets();
+  try {
+    const meta = await fetchMeta();
+    if (meta && meta.hash) lastHash = meta.hash;
+  } catch(e) {}
+  startAutoRefresh();
+});
+
+window.addEventListener('beforeunload', stopAutoRefresh);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    checkForUpdates();
+    countdownRemaining = CONFIG.autoRefreshMs / 1000;
+    updateTimerUI();
+  }
+});
+</script>
+
+</body>
+</html>
