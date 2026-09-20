@@ -277,15 +277,15 @@
   }
   .ms-status-card {
     background: var(--clay-bg);
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid var(--clay-border);
     box-shadow: var(--clay-inset);
-    padding: 14px 12px;
+    padding: 10px 8px;              /* ← اتقلل من 14px 12px */
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;                       /* ← اتقلل من 6px */
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -305,25 +305,25 @@
   .ms-status-card:hover { transform: translateY(-3px); }
   .ms-status-card:hover .ms-status-pct { transform: scale(1.05); }
 
-  /* ✅ الليبل — أكبر */
+  /* ✅ الليبل */
   .ms-status-label {
-    font-size: 12px;
+    font-size: 11px;                /* ← اتقلل من 12px */
     font-weight: 900;
     color: var(--clay-text-soft);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-top: 2px;
+    letter-spacing: 0.5px;
+    margin-top: 1px;
   }
 
-  /* ✅ الرقم — أكبر بكتير */
+  /* ✅ الرقم — اتقلل شوية */
   .ms-status-value {
-    font-size: 32px;
+    font-size: 26px;                /* ← اتقلل من 32px */
     font-weight: 900;
     color: var(--clay-text);
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.5px;
-    margin: 2px 0;
+    margin: 1px 0;
   }
   .ms-status-card.c-delivered .ms-status-value { color: var(--clay-success); }
   .ms-status-card.c-rto .ms-status-value { color: var(--clay-danger); }
@@ -335,10 +335,10 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    margin-top: 4px;
-    padding: 5px 14px;
+    margin-top: 3px;
+    padding: 4px 12px;              /* ← اتقلل من 5px 14px */
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 13px;                /* ← اتقلل من 14px */
     font-weight: 900;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.3px;
@@ -349,19 +349,19 @@
     color: var(--clay-success);
     background: rgba(125, 155, 122, 0.18);
     border-color: rgba(125, 155, 122, 0.4);
-    box-shadow: 0 0 0 1px rgba(125, 155, 122, 0.1), 0 2px 8px rgba(125, 155, 122, 0.2);
+    box-shadow: 0 0 0 1px rgba(125, 155, 122, 0.1), 0 2px 6px rgba(125, 155, 122, 0.18);
   }
   .ms-status-card.c-rto .ms-status-pct {
     color: var(--clay-danger);
     background: rgba(181, 122, 122, 0.18);
     border-color: rgba(181, 122, 122, 0.4);
-    box-shadow: 0 0 0 1px rgba(181, 122, 122, 0.1), 0 2px 8px rgba(181, 122, 122, 0.2);
+    box-shadow: 0 0 0 1px rgba(181, 122, 122, 0.1), 0 2px 6px rgba(181, 122, 122, 0.18);
   }
   .ms-status-card.c-voided .ms-status-pct {
     color: var(--clay-gold);
     background: rgba(184, 149, 110, 0.18);
     border-color: rgba(184, 149, 110, 0.4);
-    box-shadow: 0 0 0 1px rgba(184, 149, 110, 0.1), 0 2px 8px rgba(184, 149, 110, 0.2);
+    box-shadow: 0 0 0 1px rgba(184, 149, 110, 0.1), 0 2px 6px rgba(184, 149, 110, 0.18);
   }
 
   /* STATES */
@@ -397,11 +397,11 @@
     .ms-title { font-size: 12px; }
     .ms-btn { font-size: 10px; padding: 6px 10px; }
     .ms-total-value { font-size: 22px; }
-    .ms-status-value { font-size: 26px; }
-    .ms-status-label { font-size: 11px; }
-    .ms-status-pct { font-size: 12px; padding: 4px 10px; }
+    .ms-status-value { font-size: 22px; }
+    .ms-status-label { font-size: 10px; }
+    .ms-status-pct { font-size: 12px; padding: 3px 9px; }
     .ms-total-card { padding: 10px 14px; }
-    .ms-status-card { padding: 12px 8px; }
+    .ms-status-card { padding: 8px 6px; }
   }
 </style>
 </head>
