@@ -1222,6 +1222,15 @@
     align-items: center;
     gap: 10px;
     z-index: 100;
+    transition: opacity 0.35s ease, visibility 0.35s ease, transform 0.35s ease;
+  }
+
+  /* ✅ كلاس إخفاء السوشيال منيو (بيظهر في الرئيسية بس) */
+  .social-menu.hidden-social {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(20px);
   }
 
   .social-items {
@@ -2410,11 +2419,29 @@
   }
 
   /* ==========================================
+     ✅ SOCIAL MENU VISIBILITY (يظهر في الرئيسية بس)
+     ========================================== */
+  function updateSocialMenuVisibility(tabId) {
+    const socialMenu = document.getElementById('socialMenu');
+    if (!socialMenu) return;
+
+    if (tabId === 'home') {
+      socialMenu.classList.remove('hidden-social');
+    } else {
+      socialMenu.classList.add('hidden-social');
+      socialMenu.classList.remove('open'); // اقفلها لو مفتوحة
+    }
+  }
+
+  /* ==========================================
      INIT
      ========================================== */
   window.addEventListener('load', () => {
     populateUsers();
     updateAuditBadge();
+
+    // ✅ تأكد إن السوشيال منيو ظاهرة في الرئيسية
+    updateSocialMenuVisibility('home');
 
     const session = checkSession();
     if (session) {
@@ -2534,6 +2561,9 @@
       item.classList.toggle('active', item.dataset.tab === tabId);
     });
 
+    // ✅ إظهار/إخفاء السوشيال منيو حسب التبويب
+    updateSocialMenuVisibility(tabId);
+
     // Lazy load iframe
     if (IFRAME_TABS.includes(tabId)) {
       const iframe = document.getElementById('iframe-' + tabId);
@@ -2652,7 +2682,7 @@
   console.log('  ✅ Header: Menu (right) | Clock (center) | Theme+Logout (left)');
   console.log('  ✅ 5 cards top + 2 cards bottom');
   console.log('  ✅ Operation Followup iframe');
-  console.log('  ✅ Social Menu (Hyperlinks) on LEFT with SVG icons');
+  console.log('  ✅ Social Menu (Hyperlinks) on LEFT — HOME ONLY');
   console.log('  ✅ No scrollbars anywhere');
   console.log('  ✅ Theme sync enabled with iframes');
   console.log('  ⏰ Auto Logout: 120 minutes of inactivity');
