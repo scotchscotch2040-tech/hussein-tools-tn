@@ -2704,7 +2704,7 @@ function exportFollowupExcel() {
 // ================== Backup ==================
 async function exportBackup() {
   const backup = {
-    version: 6, exportedAt: Date.now(), metaInfo, orderActions,
+    version: 7, exportedAt: Date.now(), metaInfo, orderActions,
     processedOrders: Array.from(processedOrderNumbers),
     resultsSnapshot: results.length ? { data: results, stockChanged, savedAt: Date.now() } : null
   };
