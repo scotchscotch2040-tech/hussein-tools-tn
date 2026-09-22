@@ -101,7 +101,6 @@
     background: var(--clay-bg); color: var(--clay-text);
     white-space: nowrap;
   }
-  .h-chip.user { background: rgba(155, 122, 166, 0.15); color: var(--clay-purple); border-color: var(--clay-purple); cursor: pointer; }
   .h-chip.saved { background: rgba(125, 155, 122, 0.15); color: var(--clay-success); border-color: var(--clay-success); display: none; }
   .h-chip.saved.show { display: inline-flex; }
   .h-chip.warn { background: rgba(212, 163, 115, 0.22); color: var(--clay-warning); border-color: var(--clay-warning); display: none; }
@@ -112,6 +111,159 @@
   .h-chip.sync-chip { background: rgba(122, 143, 166, 0.15); color: var(--clay-blue); border-color: var(--clay-blue); }
   .h-chip.sync-chip.ok { background: rgba(125, 155, 122, 0.2); color: var(--clay-success); border-color: var(--clay-success); }
   .h-chip.sync-chip.err { background: rgba(181, 122, 122, 0.2); color: var(--clay-danger); border-color: var(--clay-danger); }
+
+  /* ==================== User Dropdown ==================== */
+  .user-dd-wrap { position: relative; display: inline-block; }
+  .user-dd-toggle {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 800; font-family: inherit;
+    border: 1px solid var(--clay-purple);
+    background: rgba(155, 122, 166, 0.15);
+    color: var(--clay-purple);
+    cursor: pointer; transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .user-dd-toggle:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(155, 122, 166, 0.3); }
+  .user-dd-toggle .u-arrow { font-size: 8px; transition: transform 0.2s ease; }
+  .user-dd-wrap.open .user-dd-toggle .u-arrow { transform: rotate(180deg); }
+  .user-dd-menu {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 220px; background: var(--clay-card);
+    border-radius: var(--clay-radius-sm);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border: 1px solid var(--clay-border);
+    padding: 5px; z-index: 300;
+    animation: ddFadeIn 0.18s ease;
+    max-height: 400px; overflow-y: auto;
+  }
+  .user-dd-wrap.open .user-dd-menu { display: block; }
+  .user-dd-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 7px 10px; border-radius: 8px;
+    font-size: 11px; font-weight: 700; color: var(--clay-text);
+    cursor: pointer; transition: all 0.15s ease;
+    border: none; background: transparent; width: 100%;
+    font-family: inherit; text-align: right;
+  }
+  .user-dd-item:hover { background: var(--clay-bg); }
+  .user-dd-item.active {
+    background: linear-gradient(135deg, rgba(155, 122, 166, 0.2) 0%, rgba(184, 149, 110, 0.2) 100%);
+    color: var(--clay-purple); font-weight: 800;
+  }
+  .user-dd-item.active::before { content: "✅ "; }
+  .user-dd-sep {
+    height: 1px; background: var(--clay-border); margin: 4px 8px;
+  }
+  .user-dd-admin {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 10px; border-radius: 8px;
+    font-size: 10px; font-weight: 800; color: var(--clay-gold);
+    cursor: pointer; transition: all 0.15s ease;
+    border: none; background: transparent; width: 100%;
+    font-family: inherit; text-align: right;
+    border-top: 1px dashed var(--clay-border);
+    margin-top: 4px; padding-top: 10px;
+  }
+  .user-dd-admin:hover { background: rgba(184, 149, 110, 0.15); }
+
+  /* ==================== Admin Modal ==================== */
+  .admin-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 2000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .admin-modal-overlay.show { display: flex; }
+  .admin-modal {
+    background: var(--clay-card); border-radius: var(--clay-radius);
+    padding: 18px 22px; max-width: 480px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    border: 2px solid var(--clay-gold);
+    max-height: 85vh; overflow-y: auto;
+  }
+  .admin-modal h3 {
+    color: var(--clay-gold); font-size: 15px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .admin-field {
+    margin-bottom: 12px;
+  }
+  .admin-field label {
+    display: block; font-size: 10px; font-weight: 800;
+    color: var(--clay-text-soft); margin-bottom: 4px;
+  }
+  .admin-input {
+    width: 100%; padding: 8px 10px;
+    border: 1px solid var(--clay-border); border-radius: 8px;
+    background: var(--clay-bg); color: var(--clay-text);
+    font-family: inherit; font-size: 12px; font-weight: 600;
+  }
+  .admin-input:focus { outline: none; border-color: var(--clay-gold); }
+  .admin-actions-row {
+    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .admin-btn {
+    flex: 1; min-width: 120px;
+    padding: 9px 14px; border-radius: 10px;
+    font-family: inherit; font-weight: 800; font-size: 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+  .admin-btn.primary {
+    background: linear-gradient(135deg, var(--clay-gold) 0%, #8a6d4a 100%);
+    color: #fff;
+  }
+  .admin-btn.danger {
+    background: linear-gradient(135deg, var(--clay-danger) 0%, #8a5a5a 100%);
+    color: #fff;
+  }
+  .admin-btn.secondary {
+    background: var(--clay-bg);
+    color: var(--clay-text);
+    border-color: var(--clay-border);
+  }
+  .admin-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+
+  .admin-users-list {
+    margin-top: 14px;
+    border-top: 1px solid var(--clay-border);
+    padding-top: 14px;
+  }
+  .admin-users-list h4 {
+    font-size: 11px; font-weight: 800; color: var(--clay-text-soft);
+    margin-bottom: 8px;
+  }
+  .admin-user-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 8px 10px;
+    background: var(--clay-bg); border-radius: 8px;
+    margin-bottom: 6px; border: 1px solid var(--clay-border);
+  }
+  .admin-user-name {
+    font-size: 12px; font-weight: 800; color: var(--clay-text);
+    flex: 1;
+  }
+  .admin-user-actions { display: flex; gap: 4px; }
+  .admin-user-btn {
+    width: 26px; height: 26px; border-radius: 6px;
+    border: 1px solid var(--clay-border);
+    background: var(--clay-card); cursor: pointer;
+    font-size: 12px; transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .admin-user-btn:hover { transform: scale(1.1); }
+  .admin-user-btn.edit:hover { border-color: var(--clay-blue); background: rgba(122, 143, 166, 0.15); }
+  .admin-user-btn.delete:hover { border-color: var(--clay-danger); background: rgba(181, 122, 122, 0.15); }
+
+  .admin-warning {
+    background: rgba(181, 122, 122, 0.15);
+    border: 1px solid var(--clay-danger);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 10px; font-weight: 700; color: var(--clay-danger);
+    margin-bottom: 12px;
+  }
 
   .theme-toggle {
     background: var(--clay-card); border: 1px solid var(--clay-border);
@@ -697,7 +849,20 @@
     </div>
 
     <div class="header-chips">
-      <span class="h-chip user" id="userChip" onclick="changeUserName()" title="اضغط لتغيير الاسم">👤 —</span>
+      <!-- User Dropdown -->
+      <div class="user-dd-wrap" id="userDDWrap">
+        <button class="user-dd-toggle" onclick="toggleUserDD(event)">
+          <span id="userChipText">👤 —</span>
+          <span class="u-arrow">▼</span>
+        </button>
+        <div class="user-dd-menu" id="userDDMenu">
+          <div id="userListContainer"></div>
+          <div class="user-dd-sep"></div>
+          <button class="user-dd-admin" onclick="openAdminModal(event)">
+            ⚙️ إدارة اليوزرز (Admin)
+          </button>
+        </div>
+      </div>
       <span class="h-chip saved" id="savedBadge">💾 0 محفوظ</span>
       <span class="h-chip warn" id="warnBadge">⚠️ الاستوك اتغير</span>
       <span class="h-chip time" id="lastUpdateChip">📅 آخر تحديث: —</span>
@@ -904,6 +1069,42 @@
 
 </div>
 
+<!-- Admin Modal -->
+<div class="admin-modal-overlay" id="adminModalOverlay">
+  <div class="admin-modal">
+    <h3 id="adminModalTitle">⚙️ إدارة اليوزرز</h3>
+    <div id="adminPasswordSection">
+      <div class="admin-field">
+        <label>🔐 باسورد الأدمن</label>
+        <input type="password" class="admin-input" id="adminPasswordInput" placeholder="اكتب الباسورد..." onkeypress="if(event.key==='Enter') checkAdminPassword()">
+      </div>
+      <div class="admin-actions-row">
+        <button class="admin-btn primary" onclick="checkAdminPassword()">🔓 دخول</button>
+        <button class="admin-btn secondary" onclick="closeAdminModal()">إلغاء</button>
+      </div>
+    </div>
+
+    <div id="adminManageSection" style="display:none;">
+      <div class="admin-field">
+        <label>➕ إضافة يوزر جديد</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" class="admin-input" id="newUserNameInput" placeholder="اسم اليوزر..." style="flex:1;" onkeypress="if(event.key==='Enter') addNewUser()">
+          <button class="admin-btn primary" style="flex:0; min-width:80px;" onclick="addNewUser()">➕ إضافة</button>
+        </div>
+      </div>
+
+      <div class="admin-users-list">
+        <h4>📋 اليوزرز الحاليين (<span id="userCountDisplay">0</span>)</h4>
+        <div id="adminUsersList"></div>
+      </div>
+
+      <div class="admin-actions-row" style="margin-top:14px;">
+        <button class="admin-btn secondary" onclick="closeAdminModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="copyToast" class="copy-toast"><span>📋</span><span id="copyToastMessage">تم النسخ</span></div>
 <div id="toast" class="toast"><span class="toast-icon">✅</span><span id="toastMessage">تم</span></div>
 
@@ -914,7 +1115,10 @@
 const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwgPQ-_CY1JL-X3QME8v1UM9fqZ6rXmFGh1NSBaZQcvzIcazk7XofoXJ0SO3r8xjTq68Q/exec';
 
 const USER_STORAGE_KEY = 'abandonedCheckoutsUserName';
+const USERS_LIST_KEY = 'abandonedCheckoutsUsersList';
 const THEME_KEY = 'theme';
+const ADMIN_PASSWORD = '1129+';
+const DEFAULT_USERS = ['Hussein', 'Ahmed', 'Mohamed'];
 
 // ================== Globals ==================
 let stockMap = {};
@@ -936,6 +1140,7 @@ let autoSyncInterval = null;
 let autoSaveInterval = null;
 let pendingSyncChanges = false;
 let USER_NAME = '';
+let usersList = [];
 
 let columnFilters = {
   order: '', email: '', createdAt: '', qty: '', product: '', sku: '',
@@ -957,36 +1162,6 @@ const PRODUCT_STATUS_OPTIONS = [
 
 const ORDER_STATUS_OPTIONS = ['Delivered', 'RTO', 'Out for delivery', 'Cancelled'];
 
-// ================== User Name ==================
-function initUserName() {
-  USER_NAME = localStorage.getItem(USER_STORAGE_KEY) || '';
-  if (!USER_NAME) {
-    const name = prompt('👋 أهلاً! اكتب اسمك (مثلاً: Hussein, Ahmed, Mohamed)');
-    if (name && name.trim()) {
-      USER_NAME = name.trim();
-      localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
-    } else {
-      USER_NAME = 'Unknown User';
-    }
-  }
-  updateUserChip();
-}
-
-function updateUserChip() {
-  const chip = document.getElementById('userChip');
-  if (chip) chip.textContent = '👤 ' + USER_NAME;
-}
-
-function changeUserName() {
-  const name = prompt('اكتب اسمك الجديد:', USER_NAME);
-  if (name && name.trim()) {
-    USER_NAME = name.trim();
-    localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
-    updateUserChip();
-    showToast('تم تحديث الاسم: ' + USER_NAME, '👤');
-  }
-}
-
 // ================== Safe Helpers ==================
 function safeStr(v) {
   if (v === null || v === undefined) return '';
@@ -997,6 +1172,167 @@ function escapeHtml(v) {
 }
 function escapeJs(v) {
   return safeStr(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// ================== Users Management ==================
+function loadUsersList() {
+  try {
+    const saved = localStorage.getItem(USERS_LIST_KEY);
+    if (saved) {
+      usersList = JSON.parse(saved);
+      if (!Array.isArray(usersList) || usersList.length === 0) {
+        usersList = [...DEFAULT_USERS];
+      }
+    } else {
+      usersList = [...DEFAULT_USERS];
+      localStorage.setItem(USERS_LIST_KEY, JSON.stringify(usersList));
+    }
+  } catch (e) {
+    usersList = [...DEFAULT_USERS];
+  }
+  renderUserDropdown();
+}
+
+function saveUsersList() {
+  localStorage.setItem(USERS_LIST_KEY, JSON.stringify(usersList));
+}
+
+function initUserName() {
+  USER_NAME = localStorage.getItem(USER_STORAGE_KEY) || '';
+  if (!USER_NAME || !usersList.includes(USER_NAME)) {
+    USER_NAME = usersList[0] || '';
+    localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
+  }
+  updateUserChip();
+}
+
+function updateUserChip() {
+  const chipText = document.getElementById('userChipText');
+  if (chipText) chipText.textContent = '👤 ' + (USER_NAME || '—');
+}
+
+function toggleUserDD(event) {
+  if (event) event.stopPropagation();
+  const wrap = document.getElementById('userDDWrap');
+  const wasOpen = wrap.classList.contains('open');
+  document.querySelectorAll('.dd-wrap.open, .user-dd-wrap.open').forEach(el => el.classList.remove('open'));
+  if (!wasOpen) wrap.classList.add('open');
+}
+
+function renderUserDropdown() {
+  const container = document.getElementById('userListContainer');
+  if (!container) return;
+  container.innerHTML = usersList.map(name => `
+    <button class="user-dd-item ${name === USER_NAME ? 'active' : ''}" onclick="selectUser('${escapeJs(name)}')">
+      ${escapeHtml(name)}
+    </button>
+  `).join('');
+}
+
+function selectUser(name) {
+  if (!usersList.includes(name)) return;
+  USER_NAME = name;
+  localStorage.setItem(USER_STORAGE_KEY, name);
+  updateUserChip();
+  renderUserDropdown();
+  document.getElementById('userDDWrap').classList.remove('open');
+  showToast('تم اختيار: ' + name, '👤');
+}
+
+// ================== Admin Modal ==================
+function openAdminModal(event) {
+  if (event) event.stopPropagation();
+  document.getElementById('userDDWrap').classList.remove('open');
+  document.getElementById('adminPasswordSection').style.display = 'block';
+  document.getElementById('adminManageSection').style.display = 'none';
+  document.getElementById('adminPasswordInput').value = '';
+  document.getElementById('adminModalOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('adminPasswordInput').focus(), 100);
+}
+
+function closeAdminModal() {
+  document.getElementById('adminModalOverlay').classList.remove('show');
+}
+
+function checkAdminPassword() {
+  const pass = document.getElementById('adminPasswordInput').value;
+  if (pass === ADMIN_PASSWORD) {
+    document.getElementById('adminPasswordSection').style.display = 'none';
+    document.getElementById('adminManageSection').style.display = 'block';
+    renderAdminUsersList();
+  } else {
+    showToast('❌ باسورد غلط', '❌');
+    document.getElementById('adminPasswordInput').value = '';
+    document.getElementById('adminPasswordInput').focus();
+  }
+}
+
+function renderAdminUsersList() {
+  const list = document.getElementById('adminUsersList');
+  const countEl = document.getElementById('userCountDisplay');
+  if (countEl) countEl.textContent = usersList.length;
+  if (!list) return;
+  if (usersList.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--clay-text-soft);font-size:10px;padding:10px;">مفيش يوزرز</div>';
+    return;
+  }
+  list.innerHTML = usersList.map((name, idx) => `
+    <div class="admin-user-row">
+      <div class="admin-user-name">${escapeHtml(name)} ${name === USER_NAME ? '(أنت)' : ''}</div>
+      <div class="admin-user-actions">
+        <button class="admin-user-btn edit" title="تعديل" onclick="editUser(${idx})">✏️</button>
+        <button class="admin-user-btn delete" title="حذف" onclick="deleteUser(${idx})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addNewUser() {
+  const input = document.getElementById('newUserNameInput');
+  const name = input.value.trim();
+  if (!name) { showToast('⚠️ اكتب اسم اليوزر', '⚠️'); return; }
+  if (usersList.includes(name)) { showToast('⚠️ الاسم موجود بالفعل', '⚠️'); return; }
+  usersList.push(name);
+  saveUsersList();
+  input.value = '';
+  renderAdminUsersList();
+  renderUserDropdown();
+  showToast('✅ تم إضافة: ' + name, '✅');
+}
+
+function editUser(idx) {
+  const oldName = usersList[idx];
+  const newName = prompt('عدّل الاسم:', oldName);
+  if (!newName || !newName.trim()) return;
+  const trimmed = newName.trim();
+  if (trimmed === oldName) return;
+  if (usersList.includes(trimmed)) { showToast('⚠️ الاسم موجود بالفعل', '⚠️'); return; }
+  usersList[idx] = trimmed;
+  saveUsersList();
+  if (USER_NAME === oldName) {
+    USER_NAME = trimmed;
+    localStorage.setItem(USER_STORAGE_KEY, trimmed);
+    updateUserChip();
+  }
+  renderAdminUsersList();
+  renderUserDropdown();
+  showToast('✅ تم التعديل إلى: ' + trimmed, '✅');
+}
+
+function deleteUser(idx) {
+  const name = usersList[idx];
+  if (usersList.length <= 1) { showToast('⚠️ لازم يفضل يوزر واحد على الأقل', '⚠️'); return; }
+  if (!confirm(`متأكد من حذف "${name}"؟`)) return;
+  usersList.splice(idx, 1);
+  saveUsersList();
+  if (USER_NAME === name) {
+    USER_NAME = usersList[0];
+    localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
+    updateUserChip();
+  }
+  renderAdminUsersList();
+  renderUserDropdown();
+  showToast('🗑️ تم حذف: ' + name, '🗑️');
 }
 
 // ================== SKU Normalizer ==================
@@ -1015,16 +1351,16 @@ function toggleDD(id, event) {
   if (event) event.stopPropagation();
   const el = document.getElementById(id);
   const wasOpen = el.classList.contains('open');
-  closeAllDD();
+  document.querySelectorAll('.dd-wrap.open, .user-dd-wrap.open').forEach(el2 => el2.classList.remove('open'));
   if (!wasOpen) el.classList.add('open');
 }
 function closeAllDD() {
-  document.querySelectorAll('.dd-wrap.open').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.dd-wrap.open, .user-dd-wrap.open').forEach(el => el.classList.remove('open'));
 }
 document.addEventListener('click', () => closeAllDD());
 
 // ================== IndexedDB ==================
-const DB_NAME = 'abandoned_checkouts_db_v3';
+const DB_NAME = 'abandoned_checkouts_db_v4';
 const DB_VERSION = 1;
 const STORE_NAME = 'app_state';
 let db = null;
@@ -1239,7 +1575,7 @@ function mapStatusAr(statusAr) {
   return map[statusAr] || 'available';
 }
 
-// ================== Merge Sheet Data (بدون conflicts) ==================
+// ================== Merge Sheet Data ==================
 function mergeSheetData(sheetOrders) {
   if (!sheetOrders || !sheetOrders.length) return { updated: 0 };
 
@@ -1256,18 +1592,18 @@ function mergeSheetData(sheetOrders) {
     const sheetRow = sheetByKey[localKey];
     if (!sheetRow) return;
 
-    // ✅ Order Status من الشيت دايمًا
+    // Order Status من الشيت دايمًا
     const sheetOrderStatus = safeStr(sheetRow.orderStatus);
     if (sheetOrderStatus !== safeStr(r.orderStatus)) {
       r.orderStatus = sheetOrderStatus;
       updated++;
     }
 
-    // ✅ لو الأوردر ده dirty (أنا اللي عدّلته) → سيب نسختي، مش هاخد من الشيت
+    // لو الأوردر ده dirty → سيب نسختي
     const localDirty = dirtyOrders.has(r.order);
     if (localDirty) return;
 
-    // ✅ مش dirty → خد أحدث نسخة من الشيت
+    // مش dirty → خد أحدث نسخة من الشيت
     const sheetMod = sheetRow.lastModified
       ? (new Date(sheetRow.lastModified).getTime() || 0)
       : 0;
@@ -1303,11 +1639,11 @@ async function syncToGoogleSheets(silent = false) {
   if (!silent) updateSyncChip('', '⏳ جاري السحب من الشيت...');
 
   try {
-    // ============ 1) PULL ============
+    // 1) PULL
     const pulled = await pullFromSheet();
 
     if (pulled && pulled.orders && pulled.orders.length) {
-      // ============ 2) MERGE ============
+      // 2) MERGE
       if (results.length === 0) {
         const added = addOrdersFromSheet(pulled.orders);
         if (added > 0) {
@@ -1336,7 +1672,7 @@ async function syncToGoogleSheets(silent = false) {
       return false;
     }
 
-    // ============ 3) PUSH — بس الأوردرات اللي اتعدلت من اليوزر الحالي ============
+    // 3) PUSH — بس الـ dirty
     if (!results.length) {
       syncing = false;
       if (btn && !silent) { btn.disabled = false; btn.innerHTML = '🔄 مزامنة الآن'; }
@@ -1346,7 +1682,6 @@ async function syncToGoogleSheets(silent = false) {
 
     if (!silent) updateSyncChip('', '⏳ جاري الرفع للشيت...');
 
-    // ✅ بنبعت بس الأوردرات اللي اتعدلت من اليوزر الحالي (dirty)
     const workedResults = results.filter(r => dirtyOrders.has(r.order));
 
     if (!workedResults.length) {
@@ -2704,8 +3039,9 @@ function exportFollowupExcel() {
 // ================== Backup ==================
 async function exportBackup() {
   const backup = {
-    version: 6, exportedAt: Date.now(), metaInfo, orderActions,
+    version: 8, exportedAt: Date.now(), metaInfo, orderActions,
     processedOrders: Array.from(processedOrderNumbers),
+    usersList: usersList,
     resultsSnapshot: results.length ? { data: results, stockChanged, savedAt: Date.now() } : null
   };
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
@@ -2728,6 +3064,11 @@ async function importBackup(event) {
     metaInfo = backup.metaInfo || { lastUpdate: null, stockDate: null };
     if (backup.processedOrders && Array.isArray(backup.processedOrders)) {
       processedOrderNumbers = new Set(backup.processedOrders);
+    }
+    if (backup.usersList && Array.isArray(backup.usersList) && backup.usersList.length > 0) {
+      usersList = backup.usersList;
+      saveUsersList();
+      renderUserDropdown();
     }
     if (backup.resultsSnapshot && backup.resultsSnapshot.data) {
       results = backup.resultsSnapshot.data;
@@ -2906,6 +3247,10 @@ document.addEventListener('keydown', (e) => {
     exportAllExcel();
     return;
   }
+  if (e.key === 'Escape') {
+    closeAdminModal();
+    closeAllDD();
+  }
 });
 
 window.addEventListener('load', async function() {
@@ -2914,6 +3259,7 @@ window.addEventListener('load', async function() {
     const btn = document.querySelector('.theme-toggle');
     if (btn) btn.textContent = '☀️';
   }
+  loadUsersList();
   initUserName();
   await openDB();
   await loadSavedState();
