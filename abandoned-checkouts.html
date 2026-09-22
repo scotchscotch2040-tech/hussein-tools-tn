@@ -668,119 +668,6 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast .toast-icon { font-size: 16px; }
 
-  /* ==================== User Modal ==================== */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5); z-index: 2000;
-    align-items: center; justify-content: center;
-    padding: 20px;
-  }
-  .modal-overlay.show { display: flex; }
-  .user-modal {
-    background: var(--clay-card); border-radius: var(--clay-radius);
-    padding: 22px 26px; max-width: 420px; width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    border: 2px solid var(--clay-purple);
-  }
-  .user-modal h3 {
-    color: var(--clay-purple); font-size: 16px; margin-bottom: 14px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .user-modal .user-hint {
-    font-size: 11px; color: var(--clay-text-soft);
-    margin-bottom: 12px; font-weight: 600;
-  }
-  .user-modal select {
-    width: 100%; padding: 10px 12px;
-    font-family: inherit; font-size: 13px; font-weight: 700;
-    background: var(--clay-bg); color: var(--clay-text);
-    border: 2px solid var(--clay-border); border-radius: 10px;
-    cursor: pointer;
-  }
-  .user-modal select:focus {
-    outline: none; border-color: var(--clay-purple);
-  }
-  .user-modal .user-actions {
-    display: flex; gap: 8px; margin-top: 16px;
-  }
-  .user-modal .user-btn {
-    flex: 1; padding: 10px 16px;
-    border-radius: 10px; font-family: inherit;
-    font-weight: 800; font-size: 12px; cursor: pointer;
-    border: none; transition: all 0.2s ease;
-  }
-  .user-modal .user-btn.confirm {
-    background: linear-gradient(135deg, var(--clay-purple) 0%, #7a5a8a 100%);
-    color: #fff;
-  }
-  .user-modal .user-btn.confirm:disabled {
-    opacity: 0.5; cursor: not-allowed;
-  }
-  .user-modal .user-btn.cancel {
-    background: var(--clay-bg); color: var(--clay-text);
-    border: 1px solid var(--clay-border);
-  }
-  .user-modal .user-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-  }
-
-  /* ==================== Conflict Modal ==================== */
-  .conflict-modal {
-    background: var(--clay-card); border-radius: var(--clay-radius);
-    padding: 18px 22px; max-width: 520px; width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    border: 2px solid var(--clay-danger);
-    max-height: 85vh; overflow-y: auto;
-  }
-  .conflict-modal h3 {
-    color: var(--clay-danger); font-size: 15px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .conflict-item {
-    background: var(--clay-bg); border-radius: 10px;
-    padding: 10px 12px; margin-bottom: 8px;
-    border: 1px solid var(--clay-border);
-  }
-  .conflict-order-num {
-    font-weight: 800; color: var(--clay-text); font-size: 12px;
-    margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
-  }
-  .conflict-side {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    margin-top: 6px;
-  }
-  .conflict-box {
-    background: var(--clay-card); border-radius: 8px;
-    padding: 8px; font-size: 10px;
-  }
-  .conflict-box.sheet-side { border-right: 3px solid var(--clay-blue); }
-  .conflict-box.local-side { border-right: 3px solid var(--clay-purple); }
-  .conflict-box .who { font-weight: 800; font-size: 11px; margin-bottom: 4px; }
-  .conflict-box.sheet-side .who { color: var(--clay-blue); }
-  .conflict-box.local-side .who { color: var(--clay-purple); }
-  .conflict-box .field { margin-bottom: 2px; color: var(--clay-text-soft); font-weight: 600; }
-  .conflict-box .field strong { color: var(--clay-text); }
-  .conflict-actions {
-    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
-  }
-  .conflict-btn {
-    flex: 1; min-width: 140px;
-    padding: 9px 14px; border-radius: 10px;
-    font-family: inherit; font-weight: 800; font-size: 11px;
-    cursor: pointer; transition: all 0.2s ease;
-    border: 1px solid transparent;
-  }
-  .conflict-btn.sheet {
-    background: linear-gradient(135deg, var(--clay-blue) 0%, #5a7090 100%);
-    color: #fff;
-  }
-  .conflict-btn.local {
-    background: linear-gradient(135deg, var(--clay-purple) 0%, #7a5a8a 100%);
-    color: #fff;
-  }
-  .conflict-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
-
   @media (max-width: 820px) {
     body { padding: 8px; }
     .header-top { flex-direction: column; align-items: flex-start; padding: 6px 10px; }
@@ -810,7 +697,7 @@
     </div>
 
     <div class="header-chips">
-      <span class="h-chip user" id="userChip" onclick="openUserModal()" title="اضغط لتغيير الاسم">👤 —</span>
+      <span class="h-chip user" id="userChip" onclick="changeUserName()" title="اضغط لتغيير الاسم">👤 —</span>
       <span class="h-chip saved" id="savedBadge">💾 0 محفوظ</span>
       <span class="h-chip warn" id="warnBadge">⚠️ الاستوك اتغير</span>
       <span class="h-chip time" id="lastUpdateChip">📅 آخر تحديث: —</span>
@@ -1017,39 +904,6 @@
 
 </div>
 
-<!-- ==================== User Modal ==================== -->
-<div class="modal-overlay" id="userModal">
-  <div class="user-modal">
-    <h3>👤 اختر اسمك</h3>
-    <div class="user-hint">اختر اسمك من القائمة لتسجيل كل تعديلاتك في Google Sheet</div>
-    <select id="userSelect">
-      <option value="">— اختر اسمك —</option>
-      <option value="Hussein">Hussein</option>
-      <option value="Walaa">Walaa</option>
-      <option value="Maryaim">Maryaim</option>
-      <option value="Mai">Mai</option>
-      <option value="Nehad">Nehad</option>
-      <option value="Nourhan">Nourhan</option>
-      <option value="Saher">Saher</option>
-    </select>
-    <div class="user-actions">
-      <button class="user-btn confirm" id="userConfirmBtn" onclick="confirmUserSelection()" disabled>✅ تأكيد</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== Conflict Modal ==================== -->
-<div class="modal-overlay" id="conflictModal">
-  <div class="conflict-modal">
-    <h3>⚠️ تعارض في البيانات</h3>
-    <div id="conflictList"></div>
-    <div class="conflict-actions">
-      <button class="conflict-btn sheet" onclick="resolveAllConflicts('sheet')">📥 اعتمد الشيت للكل</button>
-      <button class="conflict-btn local" onclick="resolveAllConflicts('local')">💾 احتفظ بنسختي للكل</button>
-    </div>
-  </div>
-</div>
-
 <div id="copyToast" class="copy-toast"><span>📋</span><span id="copyToastMessage">تم النسخ</span></div>
 <div id="toast" class="toast"><span class="toast-icon">✅</span><span id="toastMessage">تم</span></div>
 
@@ -1061,8 +915,6 @@ const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwgPQ-_CY1JL-X3QME8v1U
 
 const USER_STORAGE_KEY = 'abandonedCheckoutsUserName';
 const THEME_KEY = 'theme';
-
-const USERS_LIST = ['Hussein', 'Walaa', 'Maryaim', 'Mai', 'Nehad', 'Nourhan', 'Saher'];
 
 // ================== Globals ==================
 let stockMap = {};
@@ -1079,7 +931,6 @@ let metaInfo = { lastUpdate: null, stockDate: null, lastSync: null };
 let processedOrderNumbers = new Set();
 
 let dirtyOrders = new Set();
-let conflicts = [];
 
 let autoSyncInterval = null;
 let autoSaveInterval = null;
@@ -1106,79 +957,47 @@ const PRODUCT_STATUS_OPTIONS = [
 
 const ORDER_STATUS_OPTIONS = ['Delivered', 'RTO', 'Out for delivery', 'Cancelled'];
 
+// ================== User Name ==================
+function initUserName() {
+  USER_NAME = localStorage.getItem(USER_STORAGE_KEY) || '';
+  if (!USER_NAME) {
+    const name = prompt('👋 أهلاً! اكتب اسمك (مثلاً: Hussein, Ahmed, Mohamed)');
+    if (name && name.trim()) {
+      USER_NAME = name.trim();
+      localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
+    } else {
+      USER_NAME = 'Unknown User';
+    }
+  }
+  updateUserChip();
+}
+
+function updateUserChip() {
+  const chip = document.getElementById('userChip');
+  if (chip) chip.textContent = '👤 ' + USER_NAME;
+}
+
+function changeUserName() {
+  const name = prompt('اكتب اسمك الجديد:', USER_NAME);
+  if (name && name.trim()) {
+    USER_NAME = name.trim();
+    localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
+    updateUserChip();
+    showToast('تم تحديث الاسم: ' + USER_NAME, '👤');
+  }
+}
+
 // ================== Safe Helpers ==================
 function safeStr(v) {
   if (v === null || v === undefined) return '';
   return String(v);
 }
 function escapeHtml(v) {
-  return safeStr(v).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return safeStr(v).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 function escapeJs(v) {
   return safeStr(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
 }
-
-// ================== User Selection ==================
-function initUserName() {
-  USER_NAME = localStorage.getItem(USER_STORAGE_KEY) || '';
-  
-  // ✅ لو الاسم محفوظ ومش في القائمة، نعرض المودال
-  if (USER_NAME && USERS_LIST.includes(USER_NAME)) {
-    updateUserChip();
-  } else {
-    USER_NAME = '';
-    openUserModal();
-  }
-}
-
-function updateUserChip() {
-  const chip = document.getElementById('userChip');
-  if (chip) chip.textContent = '👤 ' + (USER_NAME || '—');
-}
-
-function openUserModal() {
-  const modal = document.getElementById('userModal');
-  const select = document.getElementById('userSelect');
-  const confirmBtn = document.getElementById('userConfirmBtn');
-  
-  // حدد الاسم الحالي لو موجود
-  if (USER_NAME && USERS_LIST.includes(USER_NAME)) {
-    select.value = USER_NAME;
-    confirmBtn.disabled = false;
-  } else {
-    select.value = '';
-    confirmBtn.disabled = true;
-  }
-  
-  modal.classList.add('show');
-}
-
-function confirmUserSelection() {
-  const select = document.getElementById('userSelect');
-  const value = select.value;
-  
-  if (!value || !USERS_LIST.includes(value)) {
-    showToast('⚠️ لازم تختار اسم', '⚠️');
-    return;
-  }
-  
-  USER_NAME = value;
-  localStorage.setItem(USER_STORAGE_KEY, USER_NAME);
-  updateUserChip();
-  document.getElementById('userModal').classList.remove('show');
-  showToast('أهلاً ' + USER_NAME + ' 👋', '👤');
-}
-
-// ربط الـ select بالـ confirm
-document.addEventListener('DOMContentLoaded', () => {
-  const select = document.getElementById('userSelect');
-  const confirmBtn = document.getElementById('userConfirmBtn');
-  if (select && confirmBtn) {
-    select.addEventListener('change', () => {
-      confirmBtn.disabled = !select.value || !USERS_LIST.includes(select.value);
-    });
-  }
-});
 
 // ================== SKU Normalizer ==================
 function normalizeSku(sku) {
@@ -1274,6 +1093,7 @@ function scheduleSave() {
       await idbSet('resultsSnapshot', { data: results, stockChanged, savedAt: Date.now() });
     }
     await idbSet('processedOrders', Array.from(processedOrderNumbers));
+    await idbSet('dirtyOrders', Array.from(dirtyOrders));
     updateSavedBadge();
   }, 300);
 }
@@ -1285,6 +1105,7 @@ async function saveNow() {
     await idbSet('resultsSnapshot', { data: results, stockChanged, savedAt: Date.now() });
   }
   await idbSet('processedOrders', Array.from(processedOrderNumbers));
+  await idbSet('dirtyOrders', Array.from(dirtyOrders));
   updateSavedBadge();
 }
 
@@ -1357,7 +1178,7 @@ function addOrdersFromSheet(sheetOrders) {
       shippingPhone: safeStr(r[7]),
       shippingProvince: safeStr(r[8]),
       shopifyPrice: Number(r[9]) || 0,
-      stockPrice: (r[10] === '' || r[10] === undefined || r[10] === null) ? '—' : (Number(r[10]) || '—'),
+      stockPrice: r[10] === '' || r[10] === undefined || r[10] === null ? '—' : (Number(r[10]) || '—'),
       priceDiff: safeStr(r[11]) || '—',
       priceDiffStatus: r[12] === 'إدارة أغلى' ? 'edara' : (r[12] === 'Shopify أغلى' ? 'shopify' : 'same'),
       status: mapStatusAr(safeStr(r[13])),
@@ -1369,15 +1190,16 @@ function addOrdersFromSheet(sheetOrders) {
       newOrderValue: safeStr(r[17]),
       notes: safeStr(r[18]),
       orderStatus: safeStr(so.orderStatus),
-      haram: (r[19] === '' || r[19] === undefined || r[19] === null) ? '-' : Number(r[19]),
-      bahary: (r[20] === '' || r[20] === undefined || r[20] === null) ? '-' : Number(r[20]),
-      suez: (r[21] === '' || r[21] === undefined || r[21] === null) ? '-' : Number(r[21]),
-      nasr: (r[22] === '' || r[22] === undefined || r[22] === null) ? '-' : Number(r[22]),
-      online: (r[23] === '' || r[23] === undefined || r[23] === null) ? '-' : Number(r[23]),
-      total: (r[24] === '' || r[24] === undefined || r[24] === null) ? '-' : Number(r[24]),
-      held: (r[25] === '' || r[25] === undefined || r[25] === null) ? '-' : Number(r[25]),
-      transfer: (r[26] === '' || r[26] === undefined || r[26] === null) ? '-' : Number(r[26]),
+      haram: r[19] === '' || r[19] === undefined ? '-' : Number(r[19]),
+      bahary: r[20] === '' || r[20] === undefined ? '-' : Number(r[20]),
+      suez: r[21] === '' || r[21] === undefined ? '-' : Number(r[21]),
+      nasr: r[22] === '' || r[22] === undefined ? '-' : Number(r[22]),
+      online: r[23] === '' || r[23] === undefined ? '-' : Number(r[23]),
+      total: r[24] === '' || r[24] === undefined ? '-' : Number(r[24]),
+      held: r[25] === '' || r[25] === undefined ? '-' : Number(r[25]),
+      transfer: r[26] === '' || r[26] === undefined ? '-' : Number(r[26]),
       lastModified: Number(so.lastModified) || 0,
+      syncedBy: safeStr(so.syncedBy),
       haramHighlight: false
     };
 
@@ -1391,6 +1213,7 @@ function addOrdersFromSheet(sheetOrders) {
       orderActions[newRow.order].newOrderDate = newRow.newOrderDate;
       orderActions[newRow.order].newOrderValue = newRow.newOrderValue;
       orderActions[newRow.order].notes = newRow.notes;
+      orderActions[newRow.order].lastModified = newRow.lastModified;
     }
 
     added++;
@@ -1412,15 +1235,14 @@ function mapStatusAr(statusAr) {
     'ملهوش كود': 'nosku',
     'سعر مختلف': 'pricemismatch'
   };
-  if (statusAr && statusAr.includes('Seller')) return 'seller';
+  if (statusAr && (statusAr.includes('Seller'))) return 'seller';
   return map[statusAr] || 'available';
 }
 
-// ================== Merge Sheet Data ==================
+// ================== Merge Sheet Data (بدون conflicts) ==================
 function mergeSheetData(sheetOrders) {
-  if (!sheetOrders || !sheetOrders.length) return { conflicts: [], updated: 0 };
+  if (!sheetOrders || !sheetOrders.length) return { updated: 0 };
 
-  const foundConflicts = [];
   let updated = 0;
 
   const sheetByKey = {};
@@ -1434,54 +1256,33 @@ function mergeSheetData(sheetOrders) {
     const sheetRow = sheetByKey[localKey];
     if (!sheetRow) return;
 
+    // ✅ Order Status من الشيت دايمًا
     const sheetOrderStatus = safeStr(sheetRow.orderStatus);
-    const localOrderStatus = safeStr(r.orderStatus);
-
-    if (sheetOrderStatus !== localOrderStatus) {
+    if (sheetOrderStatus !== safeStr(r.orderStatus)) {
       r.orderStatus = sheetOrderStatus;
       updated++;
     }
 
+    // ✅ لو الأوردر ده dirty (أنا اللي عدّلته) → سيب نسختي، مش هاخد من الشيت
+    const localDirty = dirtyOrders.has(r.order);
+    if (localDirty) return;
+
+    // ✅ مش dirty → خد أحدث نسخة من الشيت
     const sheetMod = sheetRow.lastModified
       ? (new Date(sheetRow.lastModified).getTime() || 0)
       : 0;
     const localMod = Number(r.lastModified) || 0;
-    const sheetBy = safeStr(sheetRow.syncedBy).trim();
-    const localDirty = dirtyOrders.has(r.order);
 
-    if (sheetBy && sheetBy !== USER_NAME && sheetBy !== 'Manual (Sheet)' && sheetBy !== 'Manual (Formula)' && localDirty && sheetMod > localMod) {
-      foundConflicts.push({
-        key: localKey,
-        order: safeStr(r.order),
-        sheet: {
-          who: sheetBy,
-          newOrderNumber: safeStr(sheetRow.newOrderNumber),
-          productStatus: safeStr(sheetRow.productStatus),
-          orderStatus: sheetOrderStatus,
-          lastModified: sheetMod
-        },
-        local: {
-          who: USER_NAME,
-          newOrderNumber: safeStr(r.newOrderNumber),
-          productStatus: safeStr(r.productStatus),
-          orderStatus: localOrderStatus,
-          lastModified: localMod
-        }
-      });
-    }
-    else if (sheetBy === USER_NAME && sheetMod > localMod) {
-      r.productStatus = safeStr(sheetRow.productStatus) || safeStr(r.productStatus);
-      r.newOrderNumber = safeStr(sheetRow.newOrderNumber) || safeStr(r.newOrderNumber);
-      updated++;
-    }
-    else if (!localDirty && sheetMod > localMod) {
-      r.productStatus = safeStr(sheetRow.productStatus) || safeStr(r.productStatus);
-      r.newOrderNumber = safeStr(sheetRow.newOrderNumber) || safeStr(r.newOrderNumber);
+    if (sheetMod > localMod) {
+      r.productStatus = safeStr(sheetRow.productStatus || r.productStatus);
+      r.newOrderNumber = safeStr(sheetRow.newOrderNumber || r.newOrderNumber);
+      r.lastModified = sheetMod;
+      r.syncedBy = safeStr(sheetRow.syncedBy);
       updated++;
     }
   });
 
-  return { conflicts: foundConflicts, updated };
+  return { updated };
 }
 
 // ================== Sync (Pull + Merge + Push) ==================
@@ -1490,14 +1291,6 @@ async function syncToGoogleSheets(silent = false) {
   if (!SYNC_URL || !SYNC_URL.startsWith('https://script.google.com/')) {
     if (!silent) showToast('⚠️ رابط المزامنة مش متظبط', '⚠️');
     updateSyncStatusDot(false);
-    return false;
-  }
-
-  if (!USER_NAME) {
-    if (!silent) {
-      showToast('⚠️ اختر اسمك أولاً', '⚠️');
-      openUserModal();
-    }
     return false;
   }
 
@@ -1529,14 +1322,11 @@ async function syncToGoogleSheets(silent = false) {
           if (!silent) showToast(`📥 تم استرداد ${added} أوردر من الشيت`, '📥');
         }
       } else {
-        const { conflicts: foundConflicts, updated } = mergeSheetData(pulled.orders);
+        const { updated } = mergeSheetData(pulled.orders);
         if (updated > 0) {
           renderTable();
           renderKPIs();
           renderOrderStatusKPIs();
-        }
-        if (foundConflicts.length > 0) {
-          showConflictModal(foundConflicts);
         }
       }
     } else if (results.length === 0) {
@@ -1546,8 +1336,7 @@ async function syncToGoogleSheets(silent = false) {
       return false;
     }
 
-    // ============ 3) PUSH ============
-    // ✅ نرفع كل الأوردرات (مش بس اللي اشتغلنا عليها)
+    // ============ 3) PUSH — بس الأوردرات اللي اتعدلت من اليوزر الحالي ============
     if (!results.length) {
       syncing = false;
       if (btn && !silent) { btn.disabled = false; btn.innerHTML = '🔄 مزامنة الآن'; }
@@ -1557,10 +1346,21 @@ async function syncToGoogleSheets(silent = false) {
 
     if (!silent) updateSyncChip('', '⏳ جاري الرفع للشيت...');
 
-    const rows = results.map(r => [
+    // ✅ بنبعت بس الأوردرات اللي اتعدلت من اليوزر الحالي (dirty)
+    const workedResults = results.filter(r => dirtyOrders.has(r.order));
+
+    if (!workedResults.length) {
+      syncing = false;
+      if (btn && !silent) { btn.disabled = false; btn.innerHTML = '🔄 مزامنة الآن'; }
+      updateSyncChip('ok', '✅ تم السحب (مفيش شغل جديد)');
+      if (!silent) showToast('📥 تم السحب — مفيش أوردرات جديدة عدلتها', '📥');
+      return true;
+    }
+
+    const rows = workedResults.map(r => [
       safeStr(r.order),
       safeStr(r.email),
-      formatDate(r.createdAt),
+      formatDate(r.createdAt) || '',
       r.qty || 0,
       safeStr(r.name),
       safeStr(r.sku),
@@ -1586,7 +1386,7 @@ async function syncToGoogleSheets(silent = false) {
       r.held === '-' ? '' : (r.held ?? 0),
       r.transfer === '-' ? '' : (r.transfer ?? 0),
       safeStr(r.orderStatus),
-      Date.now(),
+      r.lastModified || 0,
       USER_NAME
     ]);
 
@@ -1606,7 +1406,7 @@ async function syncToGoogleSheets(silent = false) {
     updateSyncChip('ok', '✅ آخر مزامنة: ' + formatDateTimeAr(now.getTime()));
     updateSyncStatusDot(true);
     if (!silent) {
-      showToast(`✅ تمت المزامنة (${rows.length} أوردر)`, '✅');
+      showToast(`✅ تمت المزامنة (${workedResults.length} أوردر)`, '✅');
     }
     return true;
 
@@ -1631,7 +1431,6 @@ function startAutoSync() {
   autoSyncInterval = setInterval(async () => {
     if (syncing) return;
     if (!SYNC_URL) return;
-    if (!USER_NAME) return;
     await syncToGoogleSheets(true);
   }, 60 * 1000);
 }
@@ -1642,58 +1441,6 @@ function startAutoSave() {
     if (!results.length && !Object.keys(orderActions).length) return;
     await saveNow();
   }, 60 * 1000);
-}
-
-// ================== Conflict Modal ==================
-function showConflictModal(conflictList) {
-  conflicts = conflictList;
-  const list = document.getElementById('conflictList');
-  list.innerHTML = conflictList.map(c => `
-    <div class="conflict-item">
-      <div class="conflict-order-num">📦 الأوردر: ${escapeHtml(c.order || c.key)}</div>
-      <div class="conflict-side">
-        <div class="conflict-box sheet-side">
-          <div class="who">👤 ${escapeHtml(c.sheet.who)} (الشيت)</div>
-          <div class="field">رقم جديد: <strong>${escapeHtml(c.sheet.newOrderNumber || '—')}</strong></div>
-          <div class="field">حالة المنتج: <strong>${escapeHtml(c.sheet.productStatus || '—')}</strong></div>
-          <div class="field">Order Status: <strong>${escapeHtml(c.sheet.orderStatus || '—')}</strong></div>
-        </div>
-        <div class="conflict-box local-side">
-          <div class="who">👤 ${escapeHtml(c.local.who)} (عندك)</div>
-          <div class="field">رقم جديد: <strong>${escapeHtml(c.local.newOrderNumber || '—')}</strong></div>
-          <div class="field">حالة المنتج: <strong>${escapeHtml(c.local.productStatus || '—')}</strong></div>
-          <div class="field">Order Status: <strong>${escapeHtml(c.local.orderStatus || '—')}</strong></div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-  document.getElementById('conflictModal').classList.add('show');
-}
-
-async function resolveAllConflicts(choice) {
-  conflicts.forEach(c => {
-    results.forEach(r => {
-      const localKey = safeStr(r.newOrderNumber).trim() || safeStr(r.order).trim();
-      if (localKey !== c.key) return;
-      if (choice === 'sheet') {
-        r.newOrderNumber = c.sheet.newOrderNumber;
-        r.productStatus = c.sheet.productStatus;
-        r.orderStatus = c.sheet.orderStatus;
-        dirtyOrders.delete(r.order);
-      }
-    });
-  });
-  document.getElementById('conflictModal').classList.remove('show');
-  conflicts = [];
-  renderTable();
-  renderKPIs();
-  renderOrderStatusKPIs();
-  if (choice === 'local') {
-    await syncToGoogleSheets(false);
-  } else {
-    await saveNow();
-    showToast('تم اعتماد نسخة الشيت', '📥');
-  }
 }
 
 // ================== Helpers ==================
@@ -2196,12 +1943,12 @@ function compare() {
       const sku = item.sku;
       const savedAction = orderActions[item.order] || {};
       const actionFields = {
-        newOrderNumber: safeStr(savedAction.newOrderNumber),
-        newOrderDate: safeStr(savedAction.newOrderDate),
-        newOrderValue: safeStr(savedAction.newOrderValue),
-        notes: safeStr(savedAction.notes),
-        productStatus: safeStr(savedAction.productStatus),
-        orderStatus: safeStr(savedAction.orderStatus),
+        newOrderNumber: savedAction.newOrderNumber || '',
+        newOrderDate: savedAction.newOrderDate || '',
+        newOrderValue: savedAction.newOrderValue || '',
+        notes: savedAction.notes || '',
+        productStatus: savedAction.productStatus || '',
+        orderStatus: savedAction.orderStatus || '',
         lastModified: savedAction.lastModified || 0
       };
 
@@ -2343,7 +2090,7 @@ function renderStats() {
   results.forEach(r => {
     const orderKey = r.order || '—';
     allUniqueOrders.add(orderKey);
-    const status = safeStr(r.productStatus).trim();
+    const status = (r.productStatus || '').trim();
     if (status === 'تم تنفيذ الطلب') { statusOrders.done.add(orderKey); workedOrders.add(orderKey); }
     else if (status === 'لم يتم تنفيذ الطلب') { statusOrders.notdone.add(orderKey); workedOrders.add(orderKey); }
     else if (status === 'متابعة') { statusOrders.followup.add(orderKey); workedOrders.add(orderKey); }
@@ -2370,25 +2117,18 @@ function renderStats() {
   else percentEl.classList.add('low');
 }
 
-// ================== Order Status KPIs (العدّ على newOrderNumber الفريد) ==================
+// ================== Order Status KPIs ==================
 function renderOrderStatusKPIs() {
-  const uniqueNewOrders = {}; // { "HM26-34782": "Delivered", ... }
-
+  const uniqueNewOrders = {};
   results.forEach(r => {
     const key = safeStr(r.newOrderNumber).trim();
     if (!key) return;
-    
-    const status = safeStr(r.orderStatus).trim();
-    
-    // ✅ لو الرقم مش موجود → ضيفه. لو موجود → متغيّرش (بناخد الأول)
     if (!uniqueNewOrders[key]) {
-      uniqueNewOrders[key] = status;
+      uniqueNewOrders[key] = safeStr(r.orderStatus);
     }
   });
 
-  // عدّ الحالات (كل newOrderNumber = 1)
   const counts = { Delivered: 0, RTO: 0, 'Out for delivery': 0, Cancelled: 0, none: 0 };
-
   Object.values(uniqueNewOrders).forEach(status => {
     const s = safeStr(status).trim();
     if (s === 'Delivered') counts.Delivered++;
@@ -2438,9 +2178,8 @@ function renderKPIs() {
   });
   let totalNew = 0;
   results.forEach(r => {
-    const nv = safeStr(r.newOrderValue);
-    if (safeStr(r.newOrderNumber) && nv) {
-      const v = parseFloat(nv);
+    if (r.newOrderNumber && r.newOrderValue) {
+      const v = parseFloat(r.newOrderValue);
       if (!isNaN(v)) totalNew += v;
     }
   });
@@ -2470,8 +2209,8 @@ function renderKPIs() {
 function renderTopProducts() {
   const productMap = {};
   results.forEach(r => {
-    const key = r.sku && r.sku !== '—' ? r.sku : ('NAME:' + safeStr(r.name || '—'));
-    if (!productMap[key]) productMap[key] = { sku: safeStr(r.sku), name: safeStr(r.name) || '—', orders: 0, qty: 0 };
+    const key = r.sku && r.sku !== '—' ? r.sku : ('NAME:' + (r.name || '—'));
+    if (!productMap[key]) productMap[key] = { sku: r.sku, name: r.name || '—', orders: 0, qty: 0 };
     productMap[key].orders += 1;
     productMap[key].qty += (r.qty || 0);
   });
@@ -2621,10 +2360,10 @@ function onNewOrderNumberChange(order, value) {
   if (!order || order === '—') return;
   const cleaned = cleanNewOrderNumber(value);
   if (!orderActions[order]) orderActions[order] = {};
-  const oldNumber = safeStr(orderActions[order].newOrderNumber);
+  const oldNumber = orderActions[order].newOrderNumber || '';
   orderActions[order].newOrderNumber = cleaned;
   orderActions[order].lastModified = Date.now();
-  let dateValue = safeStr(orderActions[order].newOrderDate);
+  let dateValue = orderActions[order].newOrderDate || '';
   if (cleaned && cleaned !== oldNumber) {
     dateValue = formatDateTimeAr(Date.now());
     orderActions[order].newOrderDate = dateValue;
@@ -2722,18 +2461,18 @@ function renderTable() {
     const numFilters = ['qty','shopifyPrice','stockPrice','haram','bahary','suez','nasr','online','total','held','transfer'];
     for (const key of numFilters) {
       const f = (columnFilters[key] || '').toString().trim();
-      if (f !== '' && !safeStr(r[key]).includes(f)) return false;
+      if (f !== '' && !safeStr(r[key] ?? '').includes(f)) return false;
     }
     const sf = columnFilters.status || 'all';
     if (sf !== 'all' && r.status !== sf) return false;
     const psf = columnFilters.productStatus || 'all';
     if (psf !== 'all') {
-      if (psf === '__empty__') { if (safeStr(r.productStatus)) return false; }
+      if (psf === '__empty__') { if (r.productStatus && r.productStatus !== '') return false; }
       else if (r.productStatus !== psf) return false;
     }
     const osf = columnFilters.orderStatus || 'all';
     if (osf !== 'all') {
-      if (osf === '__empty__') { if (safeStr(r.orderStatus)) return false; }
+      if (osf === '__empty__') { if (r.orderStatus && r.orderStatus !== '') return false; }
       else if (r.orderStatus !== osf) return false;
     }
     return true;
@@ -2774,40 +2513,36 @@ function renderTable() {
       ? `<span class="price-cell ${r.priceMismatch ? 'price-mismatch' : ''}">${r.stockPrice}</span>`
       : '<span class="stock-zero">—</span>';
 
-    const emailStr = safeStr(r.email);
-    const phoneStr = safeStr(r.shippingPhone);
-    const emailCell = emailStr
-      ? `<span class="email-link" onclick="copyToClipboard('${escapeJs(emailStr)}','الإيميل')">📧 ${escapeHtml(emailStr)}</span>`
+    const emailCell = r.email
+      ? `<span class="email-link" onclick="copyToClipboard('${escapeJs(r.email)}','الإيميل')">📧 ${escapeHtml(r.email)}</span>`
       : '<span class="stock-zero">—</span>';
-    const phoneCell = phoneStr
-      ? `<span class="phone-link" onclick="copyToClipboard('${escapeJs(phoneStr)}','الموبايل')">📱 ${escapeHtml(phoneStr)}</span>`
+    const phoneCell = r.shippingPhone
+      ? `<span class="phone-link" onclick="copyToClipboard('${escapeJs(r.shippingPhone)}','الموبايل')">📱 ${escapeHtml(r.shippingPhone)}</span>`
       : '<span class="stock-zero">—</span>';
 
     const a = orderActions[r.order];
     const hasAction = a && (a.newOrderNumber || a.newOrderValue || a.productStatus || a.notes);
     const actionClass = hasAction ? ' has-action' : '';
 
-    const ps = safeStr(r.productStatus);
     const statusSelectClass =
-      ps === 'تم تنفيذ الطلب' ? 'status-done' :
-      ps === 'لم يتم تنفيذ الطلب' ? 'status-notdone' :
-      ps === 'متابعة' ? 'status-followup' :
-      ps === 'تم إرسال ايميل' ? 'status-email' :
-      ps === 'لم يتم الرد' ? 'status-noanswer' : '';
+      r.productStatus === 'تم تنفيذ الطلب' ? 'status-done' :
+      r.productStatus === 'لم يتم تنفيذ الطلب' ? 'status-notdone' :
+      r.productStatus === 'متابعة' ? 'status-followup' :
+      r.productStatus === 'تم إرسال ايميل' ? 'status-email' :
+      r.productStatus === 'لم يتم الرد' ? 'status-noanswer' : '';
 
-    const orderEsc = escapeJs(r.order);
     const statusSelect = `
       <select class="action-select ${statusSelectClass}"
-        onchange="onProductStatusChange('${orderEsc}', this.value)">
+        onchange="onProductStatusChange('${escapeJs(r.order)}', this.value)">
         ${PRODUCT_STATUS_OPTIONS.map(opt =>
-          `<option value="${opt.value}" ${ps === opt.value ? 'selected' : ''}>${opt.label}</option>`
+          `<option value="${escapeHtml(opt.value)}" ${r.productStatus === opt.value ? 'selected' : ''}>${opt.label}</option>`
         ).join('')}
       </select>`;
 
     const newOrderInput = `
       <input type="text" class="action-input" placeholder="HM26-999"
         value="${escapeHtml(r.newOrderNumber)}"
-        onchange="onNewOrderNumberChange('${orderEsc}', this.value)">`;
+        onchange="onNewOrderNumberChange('${escapeJs(r.order)}', this.value)">`;
 
     const newOrderDateInput = `
       <input type="text" class="action-input ${r.newOrderDate ? 'auto-filled-date' : ''}" placeholder="تلقائي"
@@ -2817,12 +2552,12 @@ function renderTable() {
     const newValueInput = `
       <input type="text" class="action-input" placeholder="5934.5"
         value="${escapeHtml(r.newOrderValue)}"
-        onchange="onNewOrderValueChange('${orderEsc}', this.value)">`;
+        onchange="onNewOrderValueChange('${escapeJs(r.order)}', this.value)">`;
 
     const notesInput = `
       <input type="text" class="action-input notes-input ${r.notes ? 'has-value' : ''}" placeholder="اكتب ملاحظة..."
         value="${escapeHtml(r.notes)}"
-        onchange="onNotesChange('${orderEsc}', this.value)">`;
+        onchange="onNotesChange('${escapeJs(r.order)}', this.value)">`;
 
     let orderStatusHtml = '<span class="os-empty">—</span>';
     if (r.orderStatus === 'Delivered') orderStatusHtml = '<span class="order-status-badge os-delivered">✅ Delivered</span>';
@@ -2885,12 +2620,12 @@ function exportCSV(type = 'all') {
   }
   if (!filtered.length) { showToast('مفيش بيانات للتحميل', '⚠️'); return; }
   const rows = filtered.map(r => [
-    safeStr(r.order), safeStr(r.email), formatDate(r.createdAt), r.qty, safeStr(r.name), safeStr(r.sku),
-    safeStr(r.shippingName), safeStr(r.shippingPhone), safeStr(r.shippingProvince),
-    r.shopifyPrice, r.stockPrice, safeStr(r.priceDiff),
+    r.order, r.email, formatDate(r.createdAt), r.qty, r.name, r.sku,
+    r.shippingName, r.shippingPhone, r.shippingProvince,
+    r.shopifyPrice, r.stockPrice, r.priceDiff,
     (r.priceDiff === '—' ? '—' : diffStatusAr[r.priceDiffStatus]),
-    (r.status === 'seller' ? safeStr(r.seller) : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
-    safeStr(r.productStatus), safeStr(r.newOrderNumber), safeStr(r.newOrderDate), safeStr(r.newOrderValue), safeStr(r.notes), safeStr(r.orderStatus),
+    (r.status === 'seller' ? r.seller : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
+    r.productStatus || '', r.newOrderNumber || '', r.newOrderDate || '', r.newOrderValue || '', r.notes || '', r.orderStatus || '',
     r.haram, r.bahary, r.suez, r.nasr, r.online, r.total, r.held, r.transfer
   ]);
   const csv = [headers, ...rows].map(row => row.map(c => `"${safeStr(c).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -2914,12 +2649,12 @@ function buildExcelSheet(filteredResults, fileName) {
   const aoa = [headers];
   filteredResults.forEach(r => {
     aoa.push([
-      safeStr(r.order), safeStr(r.email), formatDate(r.createdAt), r.qty, safeStr(r.name), safeStr(r.sku),
-      safeStr(r.shippingName), safeStr(r.shippingPhone), safeStr(r.shippingProvince),
-      r.shopifyPrice, r.stockPrice, safeStr(r.priceDiff),
+      r.order, r.email, formatDate(r.createdAt), r.qty, r.name, r.sku,
+      r.shippingName, r.shippingPhone, r.shippingProvince,
+      r.shopifyPrice, r.stockPrice, r.priceDiff,
       (r.priceDiff === '—' ? '—' : diffStatusAr[r.priceDiffStatus]),
-      (r.status === 'seller' ? safeStr(r.seller) : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
-      safeStr(r.productStatus), safeStr(r.newOrderNumber), safeStr(r.newOrderDate), safeStr(r.newOrderValue), safeStr(r.notes), safeStr(r.orderStatus),
+      (r.status === 'seller' ? r.seller : statusAr[r.status]) + (r.priceMismatch && r.status === 'available' ? ' (سعر مختلف)' : ''),
+      r.productStatus || '', r.newOrderNumber || '', r.newOrderDate || '', r.newOrderValue || '', r.notes || '', r.orderStatus || '',
       r.haram, r.bahary, r.suez, r.nasr, r.online, r.total, r.held, r.transfer
     ]);
   });
@@ -2950,7 +2685,7 @@ function exportAllExcel() {
 function exportWorkedExcel() {
   if (!results.length) { showToast('مفيش بيانات', '⚠️'); return; }
   const workedResults = results.filter(r => {
-    const status = safeStr(r.productStatus).trim();
+    const status = (r.productStatus || '').trim();
     return status === 'تم تنفيذ الطلب'
         || status === 'لم يتم تنفيذ الطلب'
         || status === 'متابعة'
@@ -2969,7 +2704,7 @@ function exportFollowupExcel() {
 // ================== Backup ==================
 async function exportBackup() {
   const backup = {
-    version: 3, exportedAt: Date.now(), metaInfo, orderActions,
+    version: 6, exportedAt: Date.now(), metaInfo, orderActions,
     processedOrders: Array.from(processedOrderNumbers),
     resultsSnapshot: results.length ? { data: results, stockChanged, savedAt: Date.now() } : null
   };
@@ -3046,6 +2781,7 @@ async function clearOrders() {
   await idbRemove('orderActions');
   await idbRemove('resultsSnapshot');
   await idbRemove('processedOrders');
+  await idbRemove('dirtyOrders');
   updateSavedBadge();
   showToast('تم مسح كل الأوردرات والأكشنز', '🗑️');
 }
@@ -3097,6 +2833,7 @@ async function clearAll() {
   await idbRemove('metaInfo');
   await idbRemove('resultsSnapshot');
   await idbRemove('processedOrders');
+  await idbRemove('dirtyOrders');
   updateInfoBar(); updateSavedBadge(); updateWarnBadge();
   showToast('تم مسح كل البيانات', '🗑️');
 }
@@ -3111,6 +2848,10 @@ async function loadSavedState() {
     const savedProcessed = await idbGet('processedOrders');
     if (savedProcessed && Array.isArray(savedProcessed)) {
       processedOrderNumbers = new Set(savedProcessed);
+    }
+    const savedDirty = await idbGet('dirtyOrders');
+    if (savedDirty && Array.isArray(savedDirty)) {
+      dirtyOrders = new Set(savedDirty);
     }
     if (!stockLoaded) metaInfo.stockDate = null;
     const savedSnapshot = await idbGet('resultsSnapshot');
