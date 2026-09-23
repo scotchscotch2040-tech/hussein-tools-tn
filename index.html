@@ -1040,6 +1040,7 @@
   }
 
   .cards-grid.row-2 { grid-template-columns: repeat(2, 1fr); max-width: 400px; }
+  .cards-grid.row-3 { grid-template-columns: repeat(3, 1fr); max-width: 600px; }
 
   /* ========== OPERATION FOLLOWUP (iframe) ========== */
   .op-iframe-wrapper {
@@ -1216,7 +1217,7 @@
   .social-menu {
     position: fixed;
     bottom: 80px;
-    left: 20px;                 /* ← اتغير من right لـ left */
+    left: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1279,7 +1280,7 @@
   .social-item::after {
     content: attr(title);
     position: absolute;
-    left: calc(100% + 12px);    /* ← اتغير من right لـ left */
+    left: calc(100% + 12px);
     top: 50%;
     transform: translateY(-50%);
     background: var(--clay-text);
@@ -1299,14 +1300,14 @@
   .social-item::before {
     content: '';
     position: absolute;
-    left: calc(100% + 6px);     /* ← اتغير من right لـ left */
+    left: calc(100% + 6px);
     top: 50%;
     transform: translateY(-50%);
     width: 0;
     height: 0;
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
-    border-right: 6px solid var(--clay-text);   /* ← اتغير من left لـ right */
+    border-right: 6px solid var(--clay-text);
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
@@ -1459,6 +1460,7 @@
   @media(max-width: 900px) {
     .cards-grid { grid-template-columns: repeat(3, 1fr); }
     .cards-grid.row-2 { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
+    .cards-grid.row-3 { grid-template-columns: repeat(3, 1fr); max-width: 100%; }
   }
 
   @media(max-width: 768px) {
@@ -1477,6 +1479,7 @@
 
   @media(max-width: 600px) {
     .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid.row-3 { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media(max-width: 480px) {
@@ -1485,6 +1488,7 @@
     .home-container { padding: 10px 8px 18px; gap: 10px; }
     .cards-grid { grid-template-columns: 1fr; }
     .cards-grid.row-2 { grid-template-columns: 1fr; }
+    .cards-grid.row-3 { grid-template-columns: 1fr; }
     .card { padding: 8px 6px; }
     .card .icon { font-size: 18px; }
     .card .title { font-size: 9px; }
@@ -1501,7 +1505,7 @@
     .clock-sep { height: 12px; }
     .clock-bar { width: 32px; height: 3px; }
 
-    .social-menu { bottom: 70px; left: 12px; }   /* ← left بدل right */
+    .social-menu { bottom: 70px; left: 12px; }
     .social-item { width: 42px; height: 42px; font-size: 18px; }
     .social-item svg { width: 20px; height: 20px; }
     .social-item img { width: 22px; height: 22px; }
@@ -1638,6 +1642,11 @@
       Abandoned Checkouts
       <span class="item-badge">تحليل</span>
     </div>
+    <div class="menu-item" data-tab="unfulfilled" onclick="switchTab('unfulfilled')">
+      <span class="item-icon">📊</span>
+      تقرير الأوردرات
+      <span class="item-badge">Unfulfilled</span>
+    </div>
 
     <div class="menu-divider"></div>
 
@@ -1740,8 +1749,8 @@
               </div>
             </div>
 
-            <!-- الصف الثاني: 2 كروت -->
-            <div class="cards-grid row-2">
+            <!-- الصف الثاني: 3 كروت -->
+            <div class="cards-grid row-3">
               <div class="card" data-tab-card="stock" onclick="switchTab('stock')">
                 <div class="icon">📦</div>
                 <div class="title">Stock-Edara</div>
@@ -1753,6 +1762,12 @@
                 <div class="title">Abandoned Checkouts</div>
                 <div class="desc">تحليل المتروكة</div>
                 <div class="badge">🛒 تحليل</div>
+              </div>
+              <div class="card" data-tab-card="unfulfilled" onclick="switchTab('unfulfilled')">
+                <div class="icon">📊</div>
+                <div class="title">تقرير الأوردرات</div>
+                <div class="desc">Unfulfilled Tracker</div>
+                <div class="badge">📊 متابعة</div>
               </div>
             </div>
 
@@ -1814,6 +1829,11 @@
         <div class="tab-pane" id="tab-abandoned">
           <div class="iframe-wrapper">
             <iframe id="iframe-abandoned" data-src="abandoned-checkouts.html"></iframe>
+          </div>
+        </div>
+        <div class="tab-pane" id="tab-unfulfilled">
+          <div class="iframe-wrapper">
+            <iframe id="iframe-unfulfilled" data-src="unfulfilled-report.html"></iframe>
           </div>
         </div>
 
@@ -1893,37 +1913,37 @@
       username: 'Hussein',
       password: '1129+',
       role: 'Admin',
-      allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
+      allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'unfulfilled', 'audit']
     },
     {
       username: 'Saher',
       password: '123456',
       role: 'Customer Service Manager',
-      allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit']
+      allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'unfulfilled', 'audit']
     },
     {
       username: 'Walaa',
       password: '11995',
       role: 'Team Leader CS',
-      allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'stock', 'abandoned', 'audit']
+      allowedTabs: ['home', 'dashboard', 'refund', 'orders', 'stock', 'abandoned', 'unfulfilled', 'audit']
     },
     {
       username: 'Maryaim',
       password: '271997',
       role: 'Customer Service',
-      allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
+      allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'unfulfilled', 'audit']
     },
     {
       username: 'Nehad',
       password: '1482000',
       role: 'Agent Confirmation',
-      allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
+      allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'unfulfilled', 'audit']
     },
     {
       username: 'Mai',
       password: 'mai2003',
       role: 'Customer Service',
-      allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'audit']
+      allowedTabs: ['home', 'dashboard', 'orders', 'stock', 'abandoned', 'unfulfilled', 'audit']
     }
   ];
 
@@ -1938,9 +1958,10 @@
     'discount': 'معالج الخصم',
     'stock': 'Stock-Edara',
     'abandoned': 'Abandoned Checkouts',
+    'unfulfilled': 'تقرير الأوردرات',
     'audit': 'سجل العمليات'
   };
-  const IFRAME_TABS = ['dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned'];
+  const IFRAME_TABS = ['dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'unfulfilled'];
 
   let currentUser = null;
   let inactivityTimer = null;
@@ -2170,7 +2191,7 @@
      ========================================== */
   function applyPermissions(user) {
     const allowed = (user && user.allowedTabs) ? user.allowedTabs :
-                    ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
+                    ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'unfulfilled', 'audit'];
 
     document.querySelectorAll('.side-menu .menu-item[data-tab]').forEach(item => {
       const tab = item.dataset.tab;
@@ -2194,7 +2215,7 @@
   function isTabAllowed(tabId) {
     if (!currentUser) return false;
     const allowed = currentUser.allowedTabs ||
-                    ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'audit'];
+                    ['home', 'dashboard', 'refund', 'orders', 'transfers', 'discount', 'stock', 'abandoned', 'unfulfilled', 'audit'];
     return allowed.includes(tabId);
   }
 
@@ -2429,7 +2450,7 @@
       socialMenu.classList.remove('hidden-social');
     } else {
       socialMenu.classList.add('hidden-social');
-      socialMenu.classList.remove('open'); // اقفلها لو مفتوحة
+      socialMenu.classList.remove('open');
     }
   }
 
@@ -2440,7 +2461,6 @@
     populateUsers();
     updateAuditBadge();
 
-    // ✅ تأكد إن السوشيال منيو ظاهرة في الرئيسية
     updateSocialMenuVisibility('home');
 
     const session = checkSession();
@@ -2561,10 +2581,8 @@
       item.classList.toggle('active', item.dataset.tab === tabId);
     });
 
-    // ✅ إظهار/إخفاء السوشيال منيو حسب التبويب
     updateSocialMenuVisibility(tabId);
 
-    // Lazy load iframe
     if (IFRAME_TABS.includes(tabId)) {
       const iframe = document.getElementById('iframe-' + tabId);
       if (iframe && !iframe.src && iframe.dataset.src) {
@@ -2662,7 +2680,8 @@
           '6': 'discount',
           '7': 'stock',
           '8': 'abandoned',
-          '9': 'audit'
+          '9': 'unfulfilled',
+          '0': 'audit'
         };
         const tabId = tabMap[e.key];
         if (tabId) {
@@ -2680,8 +2699,9 @@
 
   console.log('🏠 Hussein Gamal Suite - Final Version ✨');
   console.log('  ✅ Header: Menu (right) | Clock (center) | Theme+Logout (left)');
-  console.log('  ✅ 5 cards top + 2 cards bottom');
+  console.log('  ✅ 5 cards top + 3 cards bottom');
   console.log('  ✅ Operation Followup iframe');
+  console.log('  ✅ Unfulfilled Report added');
   console.log('  ✅ Social Menu (Hyperlinks) on LEFT — HOME ONLY');
   console.log('  ✅ No scrollbars anywhere');
   console.log('  ✅ Theme sync enabled with iframes');
