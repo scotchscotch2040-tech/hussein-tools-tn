@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقرير الأوردرات — التوحيد والنور</title>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Base — #1F2329 Family */
+    --bg-0: #1F2329;
+    --bg-1: #252A31;
+    --bg-2: #2C323A;
+    --bg-3: #353C45;
+    --bg-clay: #262B33;
+    --bg-clay-light: #2E343D;
+
+    --text: #EDEFF2;
+    --text-dim: #8A929E;
+    --text-soft: #B4BBC5;
+
+    /* Accent — #B6FF2E */
+    --accent: #B6FF2E;
+    --accent-dark: #8FD41E;
+    --accent-deep: #6BA814;
+    --accent-glow: rgba(182, 255, 46, 0.4);
+    --accent-glow-soft: rgba(182, 255, 46, 0.15);
+
+    /* Supporting Colors */
+    --amber: #FFB800;
+    --amber-dark: #CC9300;
+    --rose: #FF5C7C;
+    --rose-dark: #E63950;
+    --sky: #4DA6FF;
+    --sky-dark: #2D7DCC;
+    --teal: #2DD4BF;
+    --teal-dark: #14A89A;
+
+    /* Clay Shadow Recipe */
+    --clay-shadow:
+      8px 8px 20px rgba(0, 0, 0, 0.45),
+      -4px -4px 12px rgba(255, 255, 255, 0.02);
+    --clay-shadow-hover:
+      12px 12px 28px rgba(0, 0, 0, 0.55),
+      -6px -6px 16px rgba(255, 255, 255, 0.03);
+    --clay-inset:
+      inset 3px 3px 8px rgba(0, 0, 0, 0.4),
+      inset -3px -3px 8px rgba(255, 255, 255, 0.03);
+    --clay-inset-deep:
+      inset 4px 4px 10px rgba(0, 0, 0, 0.5),
+      inset -4px -4px 10px rgba(255, 255, 255, 0.04);
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: var(--bg-0);
+    background-image:
+      radial-gradient(circle at 15% 15%, rgba(182, 255, 46, 0.05), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(182, 255, 46, 0.03), transparent 45%);
+    color: var(--text);
+    direction: rtl;
+    padding: 28px;
+    min-height: 100vh;
+    line-height: 1.65;
+  }
+
+  /* ============ Header ============ */
+  .header {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border-radius: 28px;
+    padding: 26px 30px;
+    margin-bottom: 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: var(--clay-shadow);
+    position: relative;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 24px;
+    box-shadow: var(--clay-inset);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: 23px;
+    color: #fff;
+    margin-bottom: 4px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  .header h1 .accent { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+  .header .subtitle {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 500;
+  }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ============ Buttons ============ */
+  .btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+    position: relative;
+    box-shadow:
+      5px 5px 14px rgba(0, 0, 0, 0.4),
+      -2px -2px 8px rgba(255, 255, 255, 0.03),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      7px 7px 18px rgba(0, 0, 0, 0.5),
+      -3px -3px 10px rgba(255, 255, 255, 0.04),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  .btn:active {
+    transform: translateY(0);
+    box-shadow: var(--clay-inset-deep);
+  }
+  .btn-export {
+    background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+    color: #1F2329;
+    font-weight: 800;
+    box-shadow:
+      5px 5px 14px rgba(0, 0, 0, 0.4),
+      -2px -2px 8px rgba(255, 255, 255, 0.03),
+      0 0 20px rgba(182, 255, 46, 0.25);
+  }
+  .btn-export:hover {
+    box-shadow:
+      7px 7px 18px rgba(0, 0, 0, 0.5),
+      -3px -3px 10px rgba(255, 255, 255, 0.04),
+      0 0 28px rgba(182, 255, 46, 0.4);
+  }
+  .btn-email {
+    background: linear-gradient(145deg, var(--sky), var(--sky-dark));
+    color: #fff;
+  }
+  .btn-copy {
+    background: linear-gradient(145deg, #7C5CFF, #5D3FD3);
+    color: #fff;
+  }
+  .btn-ghost {
+    background: linear-gradient(145deg, var(--bg-2), var(--bg-3));
+    color: var(--text-soft);
+  }
+  .btn-sm {
+    padding: 7px 14px;
+    font-size: 11.5px;
+    border-radius: 12px;
+  }
+
+  /* ============ Input area ============ */
+  .input-area {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border-radius: 26px;
+    padding: 26px;
+    margin-bottom: 26px;
+    box-shadow: var(--clay-shadow);
+    position: relative;
+  }
+  .input-area::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 22px;
+    box-shadow: var(--clay-inset);
+    pointer-events: none;
+  }
+  .input-area h2 {
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 800;
+    position: relative;
+    text-shadow: 0 0 16px var(--accent-glow-soft);
+  }
+
+  .upload-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .upload-btn {
+    background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+    color: #1F2329;
+    padding: 12px 22px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    font-family: inherit;
+    box-shadow:
+      5px 5px 14px rgba(0, 0, 0, 0.4),
+      -2px -2px 8px rgba(255, 255, 255, 0.03),
+      0 0 20px rgba(182, 255, 46, 0.25);
+  }
+  .upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      7px 7px 18px rgba(0, 0, 0, 0.5),
+      -3px -3px 10px rgba(255, 255, 255, 0.04),
+      0 0 28px rgba(182, 255, 46, 0.4);
+  }
+  .upload-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  #pasteArea {
+    width: 100%;
+    min-height: 150px;
+    padding: 18px;
+    border: none;
+    border-radius: 20px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    direction: ltr;
+    resize: vertical;
+    background: linear-gradient(145deg, #171A1F, #1B1F25);
+    color: var(--text);
+    transition: all 0.25s;
+    box-shadow: var(--clay-inset-deep);
+    position: relative;
+  }
+  #pasteArea:focus {
+    outline: none;
+    box-shadow:
+      var(--clay-inset-deep),
+      0 0 0 3px rgba(182, 255, 46, 0.2);
+  }
+  #pasteArea::placeholder { color: #525862; }
+
+  .live-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    font-weight: 500;
+    position: relative;
+  }
+  .live-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow:
+      0 0 12px var(--accent-glow),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.3),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ============ Section ============ */
+  .section {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border-radius: 26px;
+    padding: 26px;
+    margin-bottom: 26px;
+    box-shadow: var(--clay-shadow);
+    position: relative;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 22px;
+    box-shadow: var(--clay-inset);
+    pointer-events: none;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    flex-wrap: wrap;
+    gap: 10px;
+    position: relative;
+  }
+  .section-header h2 {
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 800;
+    text-shadow: 0 0 16px var(--accent-glow-soft);
+  }
+  .section-header .count {
+    background: linear-gradient(145deg, rgba(182, 255, 46, 0.2), rgba(182, 255, 46, 0.08));
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 800;
+    box-shadow: var(--clay-inset);
+  }
+
+  /* ============ Stats B ============ */
+  .statsB {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .statB {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border-radius: 22px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      6px 6px 16px rgba(0, 0, 0, 0.4),
+      -3px -3px 10px rgba(255, 255, 255, 0.02),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    position: relative;
+  }
+  .statB:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      10px 10px 24px rgba(0, 0, 0, 0.5),
+      -5px -5px 14px rgba(255, 255, 255, 0.03),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  .statB.clickable { cursor: pointer; }
+  .statB.clickable:hover {
+    box-shadow:
+      10px 10px 24px rgba(0, 0, 0, 0.5),
+      -5px -5px 14px rgba(255, 255, 255, 0.03),
+      0 0 0 2px var(--accent-glow);
+  }
+  .statB .icon-circle {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1F2329, #2A2F37);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow:
+      inset 3px 3px 8px rgba(0, 0, 0, 0.55),
+      inset -3px -3px 8px rgba(255, 255, 255, 0.04),
+      4px 4px 10px rgba(0, 0, 0, 0.35);
+  }
+  .statB .body { flex: 1; min-width: 0; }
+  .statB .label {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+  .statB .value {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+    text-shadow: 0 0 12px var(--accent-glow-soft);
+  }
+  .statB .progress {
+    height: 6px;
+    background: #171A1F;
+    border-radius: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+    box-shadow: var(--clay-inset);
+  }
+  .statB .progress > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+    border-radius: 6px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  /* ============ Side-by-side ============ */
+  .side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+  @media (max-width: 900px) { .side-by-side { grid-template-columns: 1fr; } }
+  .side-by-side .section { margin-bottom: 0; }
+
+  /* ============ Priorities C ============ */
+  .prioC .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .prioC .row .lbl {
+    width: 160px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    color: var(--text-soft);
+    font-weight: 600;
+  }
+  .prioC .row .track {
+    flex: 1;
+    height: 26px;
+    background: #171A1F;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--clay-inset-deep);
+    position: relative;
+  }
+  .prioC .row .fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-left: 12px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #1F2329;
+    border-radius: 14px;
+    min-width: 44px;
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+      inset 2px 2px 6px rgba(255, 255, 255, 0.2),
+      inset -2px -2px 6px rgba(0, 0, 0, 0.15);
+  }
+  .prioC .row .fill.urgent { background: linear-gradient(90deg, #C9425C, var(--rose)); color: #fff; }
+  .prioC .row .fill.warn   { background: linear-gradient(90deg, #CC9300, var(--amber)); color: #1F2329; }
+  .prioC .row .fill.ok     { background: linear-gradient(90deg, var(--accent-dark), var(--accent)); color: #1F2329; }
+  .prioC .row .fill.money  { background: linear-gradient(90deg, #7C5CFF, #A78BFF); color: #fff; }
+
+  @media (max-width: 600px) {
+    .prioC .row { flex-direction: column; align-items: stretch; gap: 4px; }
+    .prioC .row .lbl { width: auto; }
+  }
+
+  /* ============ Products D ============ */
+  .prodD .item { margin-bottom: 16px; }
+  .prodD .item .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+    font-size: 12.5px;
+    gap: 10px;
+  }
+  .prodD .item .head .name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-soft);
+    font-weight: 500;
+  }
+  .prodD .item .head .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+    background: linear-gradient(145deg, var(--bg-2), var(--bg-3));
+    color: var(--text-soft);
+    flex-shrink: 0;
+    box-shadow:
+      inset 2px 2px 5px rgba(0, 0, 0, 0.4),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.04);
+  }
+  .prodD .item:nth-child(1) .head .rank-badge {
+    background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+    color: #1F2329;
+    box-shadow:
+      inset 2px 2px 5px rgba(255, 255, 255, 0.4),
+      inset -2px -2px 5px rgba(0, 0, 0, 0.15),
+      0 0 14px var(--accent-glow);
+  }
+  .prodD .item:nth-child(2) .head .rank-badge {
+    background: linear-gradient(145deg, #C6CDD6, #98A1AC);
+    color: #1F2329;
+  }
+  .prodD .item:nth-child(3) .head .rank-badge {
+    background: linear-gradient(145deg, var(--amber), var(--amber-dark));
+    color: #1F2329;
+  }
+  .prodD .item .head .qty {
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+    text-shadow: 0 0 10px var(--accent-glow-soft);
+  }
+  .prodD .item .track {
+    height: 12px;
+    background: #171A1F;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--clay-inset);
+  }
+  .prodD .item .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+    border-radius: 8px;
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+      0 0 12px var(--accent-glow);
+  }
+
+  /* ============ Teams C ============ */
+  .teamsC {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 700px) { .teamsC { grid-template-columns: 1fr; } }
+
+  .teamsC .card {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border-radius: 24px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      6px 6px 16px rgba(0, 0, 0, 0.4),
+      -3px -3px 10px rgba(255, 255, 255, 0.02),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
+  .teamsC .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    border-radius: 24px 24px 0 0;
+  }
+  .teamsC .card.cs::before { background: linear-gradient(90deg, var(--accent), var(--accent-dark)); box-shadow: 0 0 16px var(--accent-glow); }
+  .teamsC .card.wh::before { background: linear-gradient(90deg, var(--teal), var(--teal-dark)); box-shadow: 0 0 16px rgba(45, 212, 191, 0.5); }
+  .teamsC .card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      12px 12px 28px rgba(0, 0, 0, 0.55),
+      -6px -6px 16px rgba(255, 255, 255, 0.03);
+  }
+  .teamsC .card.cs:hover { box-shadow: 12px 12px 28px rgba(0, 0, 0, 0.55), -6px -6px 16px rgba(255, 255, 255, 0.03), 0 0 0 2px var(--accent-glow); }
+  .teamsC .card.wh:hover { box-shadow: 12px 12px 28px rgba(0, 0, 0, 0.55), -6px -6px 16px rgba(255, 255, 255, 0.03), 0 0 0 2px rgba(45, 212, 191, 0.4); }
+
+  .teamsC .head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .teamsC .head .emoji {
+    font-size: 30px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  }
+  .teamsC .head .name {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+  .teamsC .head .count {
+    margin-right: auto;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+  }
+  .teamsC .card.wh .head .count {
+    color: var(--teal);
+    text-shadow: 0 0 20px rgba(45, 212, 191, 0.6);
+  }
+
+  .teamsC .mini-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    position: relative;
+  }
+  .teamsC .mini-stat {
+    background: #171A1F;
+    border-radius: 14px;
+    padding: 11px 13px;
+    font-size: 11.5px;
+    box-shadow: var(--clay-inset);
+  }
+  .teamsC .mini-stat .lbl {
+    color: var(--text-dim);
+    margin-bottom: 3px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .teamsC .mini-stat .val {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  /* ============ Geo C ============ */
+  .geoC {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 700px) { .geoC { grid-template-columns: 1fr; } }
+
+  .geoC .card {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border-radius: 24px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow:
+      6px 6px 16px rgba(0, 0, 0, 0.4),
+      -3px -3px 10px rgba(255, 255, 255, 0.02),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
+  .geoC .card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      12px 12px 28px rgba(0, 0, 0, 0.55),
+      -6px -6px 16px rgba(255, 255, 255, 0.03);
+  }
+  .geoC .card.cairo:hover { box-shadow: 12px 12px 28px rgba(0, 0, 0, 0.55), -6px -6px 16px rgba(255, 255, 255, 0.03), 0 0 0 2px rgba(77, 166, 255, 0.4); }
+  .geoC .card.giza:hover { box-shadow: 12px 12px 28px rgba(0, 0, 0, 0.55), -6px -6px 16px rgba(255, 255, 255, 0.03), 0 0 0 2px rgba(45, 212, 191, 0.4); }
+
+  .geoC .card .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .geoC .card .head .left { display: flex; align-items: center; gap: 10px; }
+  .geoC .card .head .left .emoji {
+    font-size: 28px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  }
+  .geoC .card .head .left .name {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+  .geoC .card .head .count {
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--sky);
+    text-shadow: 0 0 20px rgba(77, 166, 255, 0.6);
+  }
+  .geoC .card.giza .head .count {
+    color: var(--teal);
+    text-shadow: 0 0 20px rgba(45, 212, 191, 0.6);
+  }
+
+  .geoC .area-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 9px;
+    font-size: 12px;
+  }
+  .geoC .area-row .name {
+    min-width: 90px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  .geoC .area-row .track {
+    flex: 1;
+    height: 8px;
+    background: #171A1F;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--clay-inset);
+  }
+  .geoC .card.cairo .area-row .track > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky-dark), var(--sky));
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(77, 166, 255, 0.5);
+  }
+  .geoC .card.giza .area-row .track > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal-dark), var(--teal));
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
+  }
+  .geoC .area-row .num {
+    color: var(--text-soft);
+    font-size: 11px;
+    min-width: 22px;
+    text-align: left;
+    font-weight: 800;
+  }
+
+  /* ============ Filter B ============ */
+  .filtB {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+    background: linear-gradient(145deg, #1B1F25, #21262D);
+    border-radius: 18px;
+    margin-bottom: 18px;
+    align-items: flex-start;
+    box-shadow: var(--clay-inset);
+    position: relative;
+  }
+  .filtB .dropdown-wrap { position: relative; }
+  .filtB .dropdown {
+    background: linear-gradient(145deg, var(--bg-2), var(--bg-3));
+    border: none;
+    border-radius: 14px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    color: var(--text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    transition: all 0.25s;
+    font-weight: 700;
+    box-shadow:
+      4px 4px 10px rgba(0, 0, 0, 0.4),
+      -2px -2px 6px rgba(255, 255, 255, 0.03),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+  .filtB .dropdown:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      6px 6px 14px rgba(0, 0, 0, 0.45),
+      -3px -3px 8px rgba(255, 255, 255, 0.04),
+      0 0 0 2px var(--accent-glow);
+  }
+  .filtB .dropdown-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border: none;
+    border-radius: 18px;
+    padding: 12px;
+    min-width: 260px;
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow:
+      10px 10px 28px rgba(0, 0, 0, 0.6),
+      -4px -4px 12px rgba(255, 255, 255, 0.03);
+  }
+  .filtB .dropdown-panel.open { display: block; }
+  .filtB .dropdown-panel .panel-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 11px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 12.5px;
+    transition: all 0.15s;
+    user-select: none;
+    font-weight: 500;
+  }
+  .filtB .dropdown-panel .panel-item:hover {
+    background: rgba(182, 255, 46, 0.08);
+  }
+  .filtB .dropdown-panel .panel-item input[type=checkbox] {
+    accent-color: var(--accent);
+    width: 16px; height: 16px;
+    cursor: pointer;
+  }
+  .filtB .dropdown-panel .panel-item .cnt {
+    margin-right: auto;
+    background: rgba(182, 255, 46, 0.15);
+    color: var(--accent);
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: var(--clay-inset);
+  }
+  .filtB .selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+    min-height: 38px;
+    align-items: center;
+  }
+  .filtB .selected-tags .empty-hint {
+    color: var(--text-dim);
+    font-size: 12px;
+    font-style: italic;
+  }
+  .filtB .sel-chip {
+    background: linear-gradient(145deg, rgba(182, 255, 46, 0.25), rgba(182, 255, 46, 0.12));
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 11.5px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow:
+      4px 4px 10px rgba(0, 0, 0, 0.3),
+      -2px -2px 6px rgba(255, 255, 255, 0.03),
+      inset 0 0 0 1px rgba(182, 255, 46, 0.3);
+  }
+  .filtB .sel-chip .x {
+    cursor: pointer;
+    color: var(--rose);
+    font-weight: 900;
+    padding: 0 3px;
+    transition: all 0.15s;
+  }
+  .filtB .sel-chip .x:hover { color: var(--rose-dark); transform: scale(1.2); }
+  .filtB .clear-all {
+    background: linear-gradient(145deg, rgba(255, 92, 124, 0.2), rgba(255, 92, 124, 0.1));
+    border: none;
+    color: var(--rose);
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 11.5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 800;
+    transition: all 0.25s;
+    box-shadow:
+      4px 4px 10px rgba(0, 0, 0, 0.3),
+      -2px -2px 6px rgba(255, 255, 255, 0.03),
+      inset 0 0 0 1px rgba(255, 92, 124, 0.3);
+  }
+  .filtB .clear-all:hover {
+    background: linear-gradient(145deg, rgba(255, 92, 124, 0.3), rgba(255, 92, 124, 0.15));
+    transform: translateY(-2px);
+    color: #FFE0E5;
+  }
+
+  /* ============ Table ============ */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 18px;
+    padding: 4px;
+    background: #171A1F;
+    box-shadow: var(--clay-inset);
+  }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+  th {
+    background: linear-gradient(145deg, var(--bg-2), var(--bg-3));
+    padding: 12px 10px;
+    text-align: right;
+    font-weight: 800;
+    color: var(--accent);
+    border-bottom: none;
+    font-size: 12px;
+    white-space: nowrap;
+    text-shadow: 0 0 10px var(--accent-glow-soft);
+  }
+  th:first-child { border-radius: 14px 0 0 0; }
+  th:last-child { border-radius: 0 14px 0 0; }
+  td {
+    padding: 11px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    vertical-align: top;
+    color: var(--text-soft);
+  }
+  tbody tr { transition: all 0.15s; }
+  tbody tr:hover td {
+    background: rgba(182, 255, 46, 0.05);
+    color: var(--text);
+  }
+  tbody tr:last-child td:first-child { border-radius: 0 0 0 14px; }
+  tbody tr:last-child td:last-child { border-radius: 0 0 14px 0; }
+
+  .badge-team {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: var(--clay-inset);
+  }
+  .badge-cs {
+    background: linear-gradient(145deg, rgba(182, 255, 46, 0.2), rgba(182, 255, 46, 0.08));
+    color: var(--accent);
+  }
+  .badge-wh {
+    background: linear-gradient(145deg, rgba(45, 212, 191, 0.2), rgba(45, 212, 191, 0.08));
+    color: var(--teal);
+  }
+
+  .empty-msg {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 40px;
+    font-size: 13px;
+    font-style: italic;
+  }
+  .hidden { display: none !important; }
+
+  /* ============ Modal ============ */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 12, 15, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal.open { display: flex; }
+  .modal-content {
+    background: linear-gradient(145deg, var(--bg-clay), var(--bg-clay-light));
+    border: none;
+    border-radius: 26px;
+    max-width: 92vw;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 26px;
+    width: 1100px;
+    box-shadow:
+      20px 20px 60px rgba(0, 0, 0, 0.75),
+      -8px -8px 24px rgba(255, 255, 255, 0.02),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px) scale(0.97); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .modal-header h3 {
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 800;
+    text-shadow: 0 0 16px var(--accent-glow-soft);
+  }
+  .modal-close {
+    background: linear-gradient(145deg, var(--bg-2), var(--bg-3));
+    border: none;
+    color: var(--text-soft);
+    width: 38px; height: 38px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.25s;
+    box-shadow:
+      4px 4px 10px rgba(0, 0, 0, 0.4),
+      -2px -2px 6px rgba(255, 255, 255, 0.03);
+  }
+  .modal-close:hover {
+    background: linear-gradient(145deg, var(--rose), var(--rose-dark));
+    color: white;
+    transform: rotate(90deg);
+    box-shadow:
+      6px 6px 14px rgba(0, 0, 0, 0.55),
+      0 0 20px rgba(255, 92, 124, 0.5);
+  }
+
+  /* ============ Toast ============ */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+    color: #1F2329;
+    padding: 14px 28px;
+    border-radius: 18px;
+    font-size: 13.5px;
+    font-weight: 800;
+    z-index: 2000;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      10px 10px 26px rgba(0, 0, 0, 0.55),
+      -4px -4px 12px rgba(255, 255, 255, 0.03),
+      0 0 28px var(--accent-glow);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ============ Email Preview ============ */
+  #emailPreview {
+    border: none;
+    border-radius: 16px;
+    padding: 18px;
+    max-height: 380px;
+    overflow: auto;
+    background: white;
+    color: #1a1a1a;
+    font-size: 13px;
+    line-height: 1.8;
+    box-shadow: var(--clay-inset-deep);
+  }
+
+  select, input[type=text] {
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    background: linear-gradient(145deg, #171A1F, #1B1F25);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: var(--clay-inset-deep);
+    transition: all 0.2s;
+  }
+  select:focus, input[type=text]:focus {
+    outline: none;
+    box-shadow:
+      var(--clay-inset-deep),
+      0 0 0 3px rgba(182, 255, 46, 0.2);
+  }
+  select option {
+    background: var(--bg-1);
+    color: var(--text);
+    padding: 10px;
+  }
+
+  /* ============ Scrollbar ============ */
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track {
+    background: #171A1F;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, var(--bg-3), var(--bg-2));
+    border-radius: 8px;
+    box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.06);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, var(--accent-dark), var(--accent));
+  }
+</style>
+</head><body>
+
+<!-- ============ Header ============ -->
+<div class="header">
+  <div>
+    <h1>📊 <span class="accent">Unfulfilled</span> تقرير الأوردرات</h1>
+    <div class="subtitle">التوحيد والنور — متابعة التأخير</div>
+  </div>
+  <div class="header-actions" id="headerActions" style="display:none;">
+    <button class="btn btn-export" onclick="exportAll()">📥 تصدير</button>
+    <button class="btn btn-email" onclick="openEmailModal()">✉️ إرسال إيميل</button>
+    <button class="btn btn-copy" onclick="copyAllEmails()">📋 نسخ الإيميلات</button>
+    <button class="btn btn-ghost" onclick="resetAll()">🔄 مسح</button>
+  </div>
+</div>
+
+<!-- ============ Input ============ -->
+<div class="input-area" id="inputArea">
+  <h2>📂 حمّل بيانات الأوردرات</h2>
+  <div class="upload-row">
+    <label class="upload-btn">
+      📁 رفع ملف CSV / TXT
+      <input type="file" id="fileInput" accept=".csv,.txt" style="display:none;" />
+    </label>
+    <span class="upload-hint">أو الصق البيانات تحت مباشرة</span>
+  </div>
+  <textarea id="pasteArea" placeholder="الصق هنا محتوى CSV أو TXT... التحليل يشتغل تلقائياً"></textarea>
+  <div class="live-status">
+    <span class="live-dot"></span>
+    <span id="liveStatusText">التحليل التلقائي جاهز — ابدأ بالرفع أو اللصق</span>
+  </div>
+</div>
+
+<!-- ============ Results ============ -->
+<div id="results" class="hidden">
+
+  <!-- 1) Stats (6 cards) -->
+  <div class="statsB" id="statsGrid"></div>
+
+  <!-- 2) Teams -->
+  <div class="section">
+    <div class="section-header">
+      <h2>👥 المتأخرات حسب التيم</h2>
+      <span class="count" id="teamsTotal">0</span>
+    </div>
+    <div class="teamsC" id="teamGrid"></div>
+  </div>
+
+  <!-- 3) Priorities + Products (side by side) -->
+  <div class="side-by-side">
+    <div class="section">
+      <div class="section-header">
+        <h2>⚡ نظرة سريعة على الأولويات</h2>
+      </div>
+      <div class="prioC" id="priorityRow"></div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <h2>🏆 أعلى 5 منتجات مطلوبة</h2>
+      </div>
+      <div class="prodD" id="topProducts"></div>
+    </div>
+  </div>
+
+  <!-- 4) Geo -->
+  <div class="section">
+    <div class="section-header">
+      <h2>🗺️ تحليل المناطق — القاهرة والجيزة</h2>
+      <span class="count" id="geoTotal">0</span>
+    </div>
+    <div class="geoC" id="geoGrid"></div>
+  </div>
+
+  <!-- 5) Breakdown -->
+  <div class="section">
+    <div class="section-header">
+      <h2>🔍 تفاصيل الأوردرات المتأخرة</h2>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="count" id="breakdownCount">0</span>
+        <button class="btn btn-export btn-sm" onclick="exportBreakdown()">📥 تصدير</button>
+      </div>
+    </div>
+    <div class="filtB" id="filterBar"></div>
+    <div class="table-wrap" id="breakdownTableWrap"></div>
+  </div>
+
+  <!-- 6) Unknown -->
+  <div class="section" id="unknownSection" style="display:none;">
+    <div class="section-header">
+      <h2>❓ تاجات غير معروفة</h2>
+      <span class="count" id="unknownTotal">0</span>
+    </div>
+    <div id="unknownTags"></div>
+  </div>
+
+</div>
+
+<!-- ============ Detail Modal ============ -->
+<div class="modal" id="detailModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">تفاصيل</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-export btn-sm" onclick="exportModal()">📥 تصدير</button>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ============ Email Modal ============ -->
+<div class="modal" id="emailModal">
+  <div class="modal-content" style="width:860px;">
+    <div class="modal-header">
+      <h3>✉️ إرسال إيميل</h3>
+      <button class="modal-close" onclick="closeEmailModal()">✕</button>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;color:#B6FF2E;">اختر التيم:</label>
+      <select id="emailTeamSelect" onchange="renderEmailPreview()"></select>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;color:#B6FF2E;">الموضوع:</label>
+      <input type="text" id="emailSubject" readonly>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;color:#B6FF2E;">معاينة الإيميل:</label>
+      <div id="emailPreview"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-copy" onclick="copyEmailBody()">📋 نسخ نص الإيميل</button>
+      <button class="btn btn-email" onclick="openZoho()">🚀 فتح Zoho وإرسال</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// Globals
+// ============================================================
+let allOrders = [];
+let allLineItems = [];
+let teamReport = { CS: [], Warehouse: [] };
+let geoReport = { cairo: {}, giza: {} };
+let topProducts = [];
+let unknownTags = [];
+let currentModalData = null;
+let currentModalTitle = '';
+let activeFilters = new Set();
+let breakdownItems = [];
+let notLateOrders = [];
+
+// ============================================================
+// Constants
+// ============================================================
+const CS_TAGS = ['attempt one', 'attempt two', 'attempt three', 'edara synced', 'e-com warehouse', 'out of stock'];
+const WAREHOUSE_TAGS = ['bulky-marketplace', 'confirmed', 'stock on the way'];
+const PRIORITY_TAGS = ['stock on the way', 'out of stock'];
+
+const TAG_DELAY_HOURS = {
+  'attempt one': 36,
+  'attempt two': 60,
+  'attempt three': 80,
+  'edara synced': 12,
+  'e-com warehouse': 12,
+  'out of stock': 48,
+  'bulky-marketplace': 48,
+  'confirmed': 24,
+  'stock on the way': 72
+};
+const TAG_DISPLAY = {
+  'attempt one': 'Attempt One',
+  'attempt two': 'Attempt Two',
+  'attempt three': 'Attempt Three',
+  'edara synced': 'Edara Synced',
+  'e-com warehouse': 'E-Com Warehouse',
+  'out of stock': 'out of stock',
+  'bulky-marketplace': 'Bulky-Marketplace',
+  'confirmed': 'confirmed',
+  'stock on the way': 'stock on the way',
+  '(بدون تاج)': '(بدون تاج)'
+};
+
+const TEAMS = {
+  'CS':        { name: 'CS Team',   emoji: '🎧' },
+  'Warehouse': { name: 'Warehouse', emoji: '📦' }
+};
+
+const KNOWN_TAGS = new Set([
+  'stock on the way','out of stock','attempt one','attempt two','attempt three',
+  'e-com warehouse','edara synced','confirmed','bulky-marketplace',
+  'bosta_synced','onda'
+]);
+
+// ============================================================
+// Live Analysis
+// ============================================================
+let liveTimer = null;
+document.getElementById('pasteArea').addEventListener('input', () => {
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(analyze, 300);
+});
+
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('pasteArea').value = ev.target.result;
+    analyze();
+  };
+  reader.readAsText(file, 'UTF-8');
+});
+
+// ============================================================
+// Analyze
+// ============================================================
+function analyze() {
+  const raw = document.getElementById('pasteArea').value.trim();
+  if (!raw) {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('headerActions').style.display = 'none';
+    document.getElementById('liveStatusText').textContent = 'التحليل التلقائي جاهز — ابدأ بالرفع أو اللصق';
+    return;
+  }
+
+  const parsed = Papa.parse(raw, {
+    header: true,
+    skipEmptyLines: 'greedy',
+    transformHeader: h => h.trim()
+  });
+
+  if (!parsed.data.length) return;
+
+  allOrders = [];
+  allLineItems = [];
+  let lastOrder = null;
+
+  parsed.data.forEach(row => {
+    const name = (row['Name'] || '').trim();
+    if (!name) return;
+
+    const isMain = (row['Financial Status'] || '').trim() || (row['Fulfillment Status'] || '').trim();
+
+    if (isMain) {
+      lastOrder = { ...row, _lineItems: [] };
+      allOrders.push(lastOrder);
+    } else if (lastOrder && (row['Lineitem name'] || '').trim()) {
+      lastOrder._lineItems.push(row);
+    }
+
+    if ((row['Lineitem name'] || '').trim()) {
+      allLineItems.push(row);
+    }
+  });
+
+  if (!allOrders.length) return;
+
+  classifyOrders();
+  buildGeoReport();
+  buildTopProducts();
+  buildUnknownTags();
+
+  renderStats();
+  renderTeams();
+  renderPriorities();
+  renderTopProducts();
+  renderGeo();
+  renderBreakdown();
+  renderUnknown();
+
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('headerActions').style.display = 'flex';
+  document.getElementById('liveStatusText').textContent = `✅ تم التحليل — ${allOrders.length} أوردر`;
+}
+
+// ============================================================
+// Classification
+// ============================================================
+function classifyOrders() {
+  teamReport = { CS: [], Warehouse: [] };
+  breakdownItems = [];
+  notLateOrders = [];
+
+  allOrders.forEach(o => {
+    const tagsRaw = (o['Tags'] || '').trim();
+    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : [];
+    const cleanTags = tags.filter(t => t !== 'bosta_synced' && t !== 'onda' && !t.includes('اقرأ') && !t.includes('اقرا'));
+
+    let priorityTag = null;
+    for (const p of PRIORITY_TAGS) {
+      if (cleanTags.includes(p)) { priorityTag = p; break; }
+    }
+
+    let effectiveTag = priorityTag;
+    if (!effectiveTag) {
+      for (const t of cleanTags) {
+        if (KNOWN_TAGS.has(t) || CS_TAGS.includes(t) || WAREHOUSE_TAGS.includes(t)) {
+          effectiveTag = t;
+          break;
+        }
+      }
+    }
+
+    let teamKey = 'CS';
+    if (effectiveTag) {
+      if (WAREHOUSE_TAGS.includes(effectiveTag)) teamKey = 'Warehouse';
+      else if (CS_TAGS.includes(effectiveTag)) teamKey = 'CS';
+    }
+
+    const delayHours = effectiveTag ? (TAG_DELAY_HOURS[effectiveTag] || 48) : 48;
+    const created = parseDate(o['Created at']);
+    const hours = created ? (Date.now() - created.getTime()) / 36e5 : 0;
+    const isLate = hours >= delayHours;
+
+    const item = {
+      order: o,
+      hoursLate: Math.round(hours - delayHours),
+      requiredHours: delayHours,
+      effectiveTag: effectiveTag || '(بدون تاج)',
+      tagDisplay: effectiveTag ? (TAG_DISPLAY[effectiveTag] || effectiveTag) : '(بدون تاج)',
+      team: teamKey,
+      isLate: isLate,
+      tags: tagsRaw
+    };
+
+    if (isLate) {
+      teamReport[teamKey].push(item);
+      breakdownItems.push(item);
+    } else {
+      notLateOrders.push(item);
+    }
+  });
+}
+
+// ============================================================
+// Geo
+// ============================================================
+function buildGeoReport() {
+  geoReport = { cairo: {}, giza: {} };
+
+  const cairoSet = ['cairo','القاهرة','القاهره','قاهرة','مدينه نصر','مدينة نصر','مصر الجديدة','المعادي','حلوان','شبرا','العباسية','الزيتون','عين شمس','المطرية','السيدة زينب','مصر القديمة','السلام','المرج','حدائق القبة','الوايلي','بولاق','الدرب الاحمر','الجمالية','الازبكية','موسكي','عابدين','التجمع','القاهرة الجديدة','الرحاب','مدينتي'];
+  const gizaSet = ['giza','الجيزة','الجيزه','جيزة','6 اكتوبر','6 أكتوبر','اكتوبر','أكتوبر','الشيخ زايد','زايد','الهرم','فيصل','الدقي','العجوزة','المهندسين','بولاق الدكرور','العمرانية','الطالبية','الوراق','امبابة','إمبابة','ابو رواش','أبو رواش','حدائق الاهرام','حدائق الأهرام','اوسيم','كرداسة','البدرشين','الصف','اطفيح','العياط'];
+
+  allOrders.forEach(o => {
+    const city = (o['Shipping City'] || '').trim();
+    const gov = (o['Shipping Province Name'] || o['Shipping Province'] || '').trim();
+    const key = city || gov;
+    if (!key) return;
+    const norm = key.toLowerCase();
+
+    if (cairoSet.some(c => norm.includes(c)) || gov === 'C' || gov.toLowerCase().includes('cairo')) {
+      geoReport.cairo[key] = (geoReport.cairo[key] || 0) + 1;
+    } else if (gizaSet.some(g => norm.includes(g)) || gov === 'GZ' || gov.toLowerCase().includes('giza')) {
+      geoReport.giza[key] = (geoReport.giza[key] || 0) + 1;
+    }
+  });
+}
+
+// ============================================================
+// Top Products
+// ============================================================
+function buildTopProducts() {
+  const map = {};
+  allLineItems.forEach(li => {
+    const name = (li['Lineitem name'] || '').trim();
+    const qty = parseFloat(li['Lineitem quantity']) || 0;
+    if (!name) return;
+    map[name] = (map[name] || 0) + qty;
+  });
+  topProducts = Object.entries(map)
+    .map(([name, qty]) => ({ name, qty }))
+    .sort((a, b) => b.qty - a.qty)
+    .slice(0, 5);
+}
+
+// ============================================================
+// Unknown tags
+// ============================================================
+function buildUnknownTags() {
+  const unknown = {};
+  allOrders.forEach(o => {
+    const tagsRaw = (o['Tags'] || '').trim();
+    if (!tagsRaw) return;
+    tagsRaw.split(',').forEach(t => {
+      const tag = t.trim().toLowerCase();
+      if (!tag) return;
+      if (KNOWN_TAGS.has(tag)) return;
+      if (tag.includes('اقرأ') || tag.includes('اقرا')) return;
+      if (!unknown[tag]) unknown[tag] = [];
+      unknown[tag].push(o);
+    });
+  });
+  unknownTags = Object.entries(unknown).map(([tag, orders]) => ({ tag, orders }));
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+function parseDate(s) {
+  if (!s) return null;
+  const cleaned = s.replace(/\s\+\d{4}$/, '');
+  const d = new Date(cleaned.replace(' ', 'T'));
+  return isNaN(d) ? null : d;
+}
+
+function fmtMoney(n) {
+  const v = parseFloat(n) || 0;
+  return v.toLocaleString('en-EG', { maximumFractionDigits: 2 }) + ' EGP';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ============================================================
+// Render: Stats (6 cards)
+// ============================================================
+function renderStats() {
+  const uniqueOrders = new Set(allOrders.map(o => (o['Name']||'').trim()).filter(Boolean));
+  const total = uniqueOrders.size;
+  const unfulfilled = allOrders.filter(o => (o['Fulfillment Status']||'').trim().toLowerCase() === 'unfulfilled').length;
+  const paid = allOrders.filter(o => (o['Financial Status']||'').trim().toLowerCase() === 'paid').length;
+  const pending = allOrders.filter(o => (o['Financial Status']||'').trim().toLowerCase() === 'pending').length;
+  const totalValue = allOrders.reduce((s,o) => s + (parseFloat(o['Total'])||0), 0);
+  const notLateCount = notLateOrders.length;
+
+  const maxV = Math.max(total, 1);
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="statB">
+      <div class="icon-circle">📦</div>
+      <div class="body">
+        <div class="label">إجمالي الأوردرات</div>
+        <div class="value">${total}</div>
+        <div class="progress"><div style="width:100%;"></div></div>
+      </div>
+    </div>
+    <div class="statB">
+      <div class="icon-circle" style="background:rgba(255,184,0,0.15);">⏳</div>
+      <div class="body">
+        <div class="label">Unfulfilled</div>
+        <div class="value" style="color:#FFB800;">${unfulfilled}</div>
+        <div class="progress"><div style="width:${(unfulfilled/maxV*100).toFixed(0)}%; background:linear-gradient(90deg,#CC9300,#FFB800); box-shadow:0 0 10px rgba(255,184,0,0.5);"></div></div>
+      </div>
+    </div>
+    <div class="statB">
+      <div class="icon-circle" style="background:rgba(182,255,46,0.15);">💰</div>
+      <div class="body">
+        <div class="label">Paid</div>
+        <div class="value">${paid}</div>
+        <div class="progress"><div style="width:${(paid/maxV*100).toFixed(0)}%;"></div></div>
+      </div>
+    </div>
+    <div class="statB">
+      <div class="icon-circle">🕐</div>
+      <div class="body">
+        <div class="label">Pending</div>
+        <div class="value">${pending}</div>
+        <div class="progress"><div style="width:${(pending/maxV*100).toFixed(0)}%;"></div></div>
+      </div>
+    </div>
+    <div class="statB">
+      <div class="icon-circle" style="background:rgba(255,92,124,0.15);">💵</div>
+      <div class="body">
+        <div class="label">إجمالي القيمة</div>
+        <div class="value" style="color:#FF5C7C; font-size:16px; text-shadow:0 0 12px rgba(255,92,124,0.4);">${fmtMoney(totalValue)}</div>
+        <div class="progress"><div style="width:100%; background:linear-gradient(90deg,#E63950,#FF5C7C); box-shadow:0 0 10px rgba(255,92,124,0.5);"></div></div>
+      </div>
+    </div>
+    <div class="statB clickable" onclick="showNotLate()">
+      <div class="icon-circle" style="background:rgba(182,255,46,0.15);">✅</div>
+      <div class="body">
+        <div class="label">غير المتأخرة — دوس للتفاصيل</div>
+        <div class="value">${notLateCount}</div>
+        <div class="progress"><div style="width:${(notLateCount/maxV*100).toFixed(0)}%;"></div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// Show Not Late (Preview Modal)
+// ============================================================
+function showNotLate() {
+  if (!notLateOrders.length) { showToast('لا توجد أوردرات غير متأخرة'); return; }
+
+  const sorted = [...notLateOrders].sort((a,b) => a.hoursLate - b.hoursLate);
+
+  currentModalData = sorted.map(i => ({
+    'Order': i.order['Name']||'',
+    'Team': TEAMS[i.team].name,
+    'Tag': i.tagDisplay,
+    'Email': i.order['Email']||'',
+    'Financial Status': i.order['Financial Status']||'',
+    'Total': i.order['Total']||'',
+    'Created at': i.order['Created at']||'',
+    'Hours Since Created': i.hoursLate,
+    'Required Hours': i.requiredHours,
+    'Tags': i.order['Tags']||'',
+    'Shipping City': i.order['Shipping City']||'',
+    'Shipping Street': i.order['Shipping Street']||'',
+    'Shipping Phone': i.order['Shipping Phone']||''
+  }));
+  currentModalTitle = 'الأوردرات غير المتأخرة';
+
+  document.getElementById('modalTitle').textContent = `${currentModalTitle} (${sorted.length})`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>الأوردر</th><th>التيم</th><th>التاج</th><th>الإيميل</th>
+        <th>الحالة</th><th>الإجمالي</th><th>التاريخ</th>
+        <th>الساعات الحالية</th><th>المطلوب</th><th>المدينة</th>
+      </tr></thead>
+      <tbody>${sorted.map(i => {
+        const o = i.order;
+        const teamBadge = i.team === 'CS'
+          ? '<span class="badge-team badge-cs">🎧 CS</span>'
+          : '<span class="badge-team badge-wh">📦 WH</span>';
+        return `<tr>
+          <td>${o['Name']||''}</td>
+          <td>${teamBadge}</td>
+          <td>${i.tagDisplay}</td>
+          <td>${o['Email']||''}</td>
+          <td>${o['Financial Status']||''}</td>
+          <td>${fmtMoney(o['Total'])}</td>
+          <td>${o['Created at']||''}</td>
+          <td style="color:#B6FF2E;font-weight:700;">${i.hoursLate} س</td>
+          <td style="color:var(--text-dim);">${i.requiredHours} س</td>
+          <td>${o['Shipping City']||''}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+// ============================================================
+// Render: Teams C
+// ============================================================
+function renderTeams() {
+  const grid = document.getElementById('teamGrid');
+  const csItems = teamReport.CS || [];
+  const whItems = teamReport.Warehouse || [];
+
+  document.getElementById('teamsTotal').textContent = (csItems.length + whItems.length) + ' متأخر';
+
+  grid.innerHTML = `
+    ${renderTeamCard('CS', csItems)}
+    ${renderTeamCard('Warehouse', whItems)}
+  `;
+}
+
+function renderTeamCard(key, items) {
+  const t = TEAMS[key];
+  const cls = key === 'CS' ? 'cs' : 'wh';
+  const count = items.length;
+
+  const paid = items.filter(i => (i.order['Financial Status']||'').trim().toLowerCase() === 'paid').length;
+  const totalValue = items.reduce((s,i) => s + (parseFloat(i.order['Total'])||0), 0);
+  const avgHours = count ? Math.round(items.reduce((s,i) => s + i.hoursLate, 0) / count) : 0;
+
+  return `
+    <div class="card ${cls}" onclick="showTeamBreakdown('${key}')">
+      <div class="head">
+        <span class="emoji">${t.emoji}</span>
+        <span class="name">${t.name}</span>
+        <span class="count">${count}</span>
+      </div>
+      <div class="mini-stats">
+        <div class="mini-stat">
+          <div class="lbl">💰 مدفوعة</div>
+          <div class="val">${paid}</div>
+        </div>
+        <div class="mini-stat">
+          <div class="lbl">💵 قيمة المتأخرات</div>
+          <div class="val">${fmtMoney(totalValue)}</div>
+        </div>
+        <div class="mini-stat">
+          <div class="lbl">🕐 متوسط التأخير</div>
+          <div class="val">${avgHours} س</div>
+        </div>
+        <div class="mini-stat">
+          <div class="lbl">📊 إجمالي الأوردر</div>
+          <div class="val">${count}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function showTeamBreakdown(key) {
+  const items = teamReport[key] || [];
+  if (!items.length) { showToast('لا توجد أوردرات متأخرة'); return; }
+
+  currentModalData = items.map(i => ({
+    'Order': i.order['Name']||'',
+    'Email': i.order['Email']||'',
+    'Financial Status': i.order['Financial Status']||'',
+    'Total': i.order['Total']||'',
+    'Created at': i.order['Created at']||'',
+    'Hours Late': i.hoursLate,
+    'Effective Tag': i.tagDisplay,
+    'Tags': i.order['Tags']||'',
+    'Shipping City': i.order['Shipping City']||'',
+    'Shipping Street': i.order['Shipping Street']||'',
+    'Shipping Phone': i.order['Shipping Phone']||''
+  }));
+  currentModalTitle = `تفاصيل ${TEAMS[key].name}`;
+
+  document.getElementById('modalTitle').textContent = `${currentModalTitle} (${items.length})`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>الأوردر</th><th>الإيميل</th><th>الحالة</th><th>الإجمالي</th>
+        <th>التاريخ</th><th>ساعات التأخير</th><th>التاج</th><th>المدينة</th>
+      </tr></thead>
+      <tbody>${items.map(i => {
+        const o = i.order;
+        return `<tr>
+          <td>${o['Name']||''}</td>
+          <td>${o['Email']||''}</td>
+          <td>${o['Financial Status']||''}</td>
+          <td>${fmtMoney(o['Total'])}</td>
+          <td>${o['Created at']||''}</td>
+          <td style="color:#FF5C7C;font-weight:700;">${i.hoursLate} س</td>
+          <td>${i.tagDisplay}</td>
+          <td>${o['Shipping City']||''}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+// ============================================================
+// Render: Priorities C
+// ============================================================
+function renderPriorities() {
+  const urgent = breakdownItems.filter(i => i.hoursLate >= 72).length;
+  const warn = breakdownItems.filter(i => i.hoursLate >= 48 && i.hoursLate < 72).length;
+  const ok = breakdownItems.filter(i => i.hoursLate >= 24 && i.hoursLate < 48).length;
+  const totalValue = breakdownItems.reduce((s,i) => s + (parseFloat(i.order['Total'])||0), 0);
+  const totalCount = breakdownItems.length || 1;
+
+  const pctU = (urgent/totalCount*100).toFixed(0);
+  const pctW = (warn/totalCount*100).toFixed(0);
+  const pctO = (ok/totalCount*100).toFixed(0);
+
+  document.getElementById('priorityRow').innerHTML = `
+    <div class="row">
+      <span class="lbl">🔥 متأخر جدًا (+72 س)</span>
+      <div class="track"><div class="fill urgent" style="width:${Math.max(pctU,8)}%;">${urgent}</div></div>
+    </div>
+    <div class="row">
+      <span class="lbl">⏰ متوسط (48-72 س)</span>
+      <div class="track"><div class="fill warn" style="width:${Math.max(pctW,8)}%;">${warn}</div></div>
+    </div>
+    <div class="row">
+      <span class="lbl">✅ بسيط (24-48 س)</span>
+      <div class="track"><div class="fill ok" style="width:${Math.max(pctO,8)}%;">${ok}</div></div>
+    </div>
+    <div class="row">
+      <span class="lbl">💰 قيمة المتأخرات</span>
+      <div class="track"><div class="fill money" style="width:100%;">${fmtMoney(totalValue)}</div></div>
+    </div>
+  `;
+}
+
+// ============================================================
+// Render: Top Products D
+// ============================================================
+function renderTopProducts() {
+  const el = document.getElementById('topProducts');
+  if (!topProducts.length) { el.innerHTML = '<div class="empty-msg">لا يوجد</div>'; return; }
+  const max = topProducts[0].qty || 1;
+  const icons = ['🥇','🥈','🥉','⭐','✨'];
+
+  el.innerHTML = topProducts.map((p, i) => `
+    <div class="item">
+      <div class="head">
+        <span class="name">
+          <span class="rank-badge">${i+1}</span>
+          <span>${icons[i]} ${p.name}</span>
+        </span>
+        <span class="qty">${p.qty}</span>
+      </div>
+      <div class="track"><div class="fill" style="width:${(p.qty/max*100).toFixed(0)}%;"></div></div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// Render: Geo C
+// ============================================================
+function renderGeo() {
+  const cairoCount = Object.values(geoReport.cairo).reduce((s,v)=>s+v,0);
+  const gizaCount = Object.values(geoReport.giza).reduce((s,v)=>s+v,0);
+  document.getElementById('geoTotal').textContent = (cairoCount + gizaCount) + ' أوردر';
+
+  document.getElementById('geoGrid').innerHTML = `
+    ${renderGeoCard('cairo', cairoCount)}
+    ${renderGeoCard('giza', gizaCount)}
+  `;
+}
+
+function renderGeoCard(region, totalCount) {
+  const data = geoReport[region] || {};
+  const entries = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0, 5);
+  const max = entries[0] ? entries[0][1] : 1;
+  const name = region === 'cairo' ? 'القاهرة' : 'الجيزة';
+  const emoji = region === 'cairo' ? '🏙️' : '🌆';
+
+  const rows = entries.length
+    ? entries.map(([k,v]) => `
+      <div class="area-row">
+        <span class="name">${k}</span>
+        <div class="track"><div style="width:${(v/max*100).toFixed(0)}%;"></div></div>
+        <span class="num">${v}</span>
+      </div>
+    `).join('')
+    : '<div style="color:var(--text-dim);font-size:12px;text-align:center;padding:10px;">لا يوجد</div>';
+
+  return `
+    <div class="card ${region}" onclick="showGeoBreakdown('${region}')">
+      <div class="head">
+        <div class="left">
+          <span class="emoji">${emoji}</span>
+          <span class="name">${name}</span>
+        </div>
+        <span class="count">${totalCount}</span>
+      </div>
+      ${rows}
+    </div>
+  `;
+}
+
+function showGeoBreakdown(region) {
+  const data = geoReport[region] || {};
+  const entries = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  if (!entries.length) { showToast('لا توجد بيانات'); return; }
+
+  const regionName = region === 'cairo' ? 'القاهرة' : 'الجيزة';
+  const orders = allOrders.filter(o => {
+    const city = (o['Shipping City']||'').trim();
+    const gov = (o['Shipping Province Name']||o['Shipping Province']||'').trim();
+    const key = city || gov;
+    return key && Object.keys(data).includes(key);
+  });
+
+  currentModalData = orders.map(o => ({
+    'Order': o['Name']||'',
+    'Email': o['Email']||'',
+    'Total': o['Total']||'',
+    'Created at': o['Created at']||'',
+    'Tags': o['Tags']||'',
+    'Shipping City': o['Shipping City']||'',
+    'Shipping Street': o['Shipping Street']||'',
+    'Shipping Phone': o['Shipping Phone']||''
+  }));
+  currentModalTitle = `تفاصيل ${regionName}`;
+
+  document.getElementById('modalTitle').textContent = `${regionName} — ${orders.length} أوردر`;
+  document.getElementById('modalBody').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <h4 style="color:#B6FF2E;margin-bottom:10px;font-size:14px;font-weight:800;">📊 توزيع المناطق</h4>
+      ${entries.map(([k,v]) => `
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#171A1F;border-radius:8px;margin-bottom:6px;box-shadow:var(--clay-inset);">
+          <span>${k}</span>
+          <span style="color:#B6FF2E;font-weight:700;">${v}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>الأوردر</th><th>الإيميل</th><th>الإجمالي</th><th>التاريخ</th><th>التاجات</th><th>المدينة</th><th>العنوان</th>
+      </tr></thead>
+      <tbody>${orders.map(o => `<tr>
+        <td>${o['Name']||''}</td>
+        <td>${o['Email']||''}</td>
+        <td>${fmtMoney(o['Total'])}</td>
+        <td>${o['Created at']||''}</td>
+        <td>${o['Tags']||''}</td>
+        <td>${o['Shipping City']||''}</td>
+        <td style="max-width:220px;font-size:11.5px;">${o['Shipping Street']||''}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+// ============================================================
+// Render: Breakdown
+// ============================================================
+function renderBreakdown() {
+  const tagCounts = {};
+  breakdownItems.forEach(i => {
+    tagCounts[i.tagDisplay] = (tagCounts[i.tagDisplay] || 0) + 1;
+  });
+  const tags = Object.entries(tagCounts).sort((a,b) => b[1]-a[1]);
+
+  const filterBar = document.getElementById('filterBar');
+  const selChips = activeFilters.size
+    ? Array.from(activeFilters).map(tag => `
+        <span class="sel-chip">
+          ${tag}
+          <span class="x" onclick="event.stopPropagation(); removeFilter('${tag.replace(/'/g,"\\'")}')">✕</span>
+        </span>
+      `).join('')
+    : '<span class="empty-hint">لم يتم اختيار أي تاج — يتم عرض الكل</span>';
+
+  filterBar.innerHTML = `
+    <div class="dropdown-wrap">
+      <button class="dropdown" onclick="toggleDropdown(event)">🎯 اختر التاجات ▾</button>
+      <div class="dropdown-panel" id="dropdownPanel">
+        ${tags.map(([tag, count]) => `
+          <label class="panel-item" onclick="event.stopPropagation();">
+            <input type="checkbox" ${activeFilters.has(tag) ? 'checked' : ''} onchange="toggleFilter('${tag.replace(/'/g,"\\'")}')">
+            <span>${tag}</span>
+            <span class="cnt">${count}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+    <div class="selected-tags">${selChips}</div>
+    ${activeFilters.size ? '<button class="clear-all" onclick="clearFilters()">✕ مسح الكل</button>' : ''}
+  `;
+
+  const filtered = activeFilters.size
+    ? breakdownItems.filter(i => activeFilters.has(i.tagDisplay))
+    : breakdownItems;
+
+  document.getElementById('breakdownCount').textContent = filtered.length + ' أوردر';
+
+  const wrap = document.getElementById('breakdownTableWrap');
+  if (!filtered.length) {
+    wrap.innerHTML = '<div class="empty-msg">لا توجد أوردرات مطابقة</div>';
+    return;
+  }
+
+  const sorted = [...filtered].sort((a,b) => b.hoursLate - a.hoursLate);
+
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>الأوردر</th><th>التيم</th><th>التاج</th><th>الإيميل</th>
+      <th>الحالة</th><th>الإجمالي</th><th>التاريخ</th><th>ساعات التأخير</th><th>المدينة</th><th>العنوان</th>
+    </tr></thead>
+    <tbody>${sorted.map(i => {
+      const o = i.order;
+      const teamBadge = i.team === 'CS'
+        ? '<span class="badge-team badge-cs">🎧 CS</span>'
+        : '<span class="badge-team badge-wh">📦 WH</span>';
+      const lateColor = i.hoursLate >= 72 ? '#FF5C7C' : (i.hoursLate >= 48 ? '#FFB800' : '#B6FF2E');
+      return `<tr>
+        <td>${o['Name']||''}</td>
+        <td>${teamBadge}</td>
+        <td>${i.tagDisplay}</td>
+        <td>${o['Email']||''}</td>
+        <td>${o['Financial Status']||''}</td>
+        <td>${fmtMoney(o['Total'])}</td>
+        <td>${o['Created at']||''}</td>
+        <td style="color:${lateColor};font-weight:700;">${i.hoursLate} س</td>
+        <td>${o['Shipping City']||''}</td>
+        <td style="max-width:200px;font-size:11.5px;">${o['Shipping Street']||''}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function toggleDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('dropdownPanel').classList.toggle('open');
+}
+
+document.addEventListener('click', () => {
+  const p = document.getElementById('dropdownPanel');
+  if (p) p.classList.remove('open');
+});
+
+function toggleFilter(tag) {
+  if (activeFilters.has(tag)) activeFilters.delete(tag);
+  else activeFilters.add(tag);
+  renderBreakdown();
+}
+
+function removeFilter(tag) {
+  activeFilters.delete(tag);
+  renderBreakdown();
+}
+
+function clearFilters() {
+  activeFilters.clear();
+  renderBreakdown();
+}
+
+function exportBreakdown() {
+  const filtered = activeFilters.size
+    ? breakdownItems.filter(i => activeFilters.has(i.tagDisplay))
+    : breakdownItems;
+  if (!filtered.length) { showToast('⚠️ لا يوجد بيانات'); return; }
+  const rows = filtered.map(i => ({
+    'Order': i.order['Name']||'',
+    'Team': TEAMS[i.team].name,
+    'Effective Tag': i.tagDisplay,
+    'Email': i.order['Email']||'',
+    'Financial Status': i.order['Financial Status']||'',
+    'Total': i.order['Total']||'',
+    'Created at': i.order['Created at']||'',
+    'Hours Late': i.hoursLate,
+    'Tags': i.order['Tags']||'',
+    'Shipping City': i.order['Shipping City']||'',
+    'Shipping Street': i.order['Shipping Street']||'',
+    'Shipping Phone': i.order['Shipping Phone']||''
+  }));
+  downloadData(rows, 'breakdown_filtered');
+}
+
+// ============================================================
+// Render: Unknown
+// ============================================================
+function renderUnknown() {
+  if (!unknownTags.length) { document.getElementById('unknownSection').style.display = 'none'; return; }
+  document.getElementById('unknownSection').style.display = 'block';
+  document.getElementById('unknownTotal').textContent = unknownTags.length;
+  document.getElementById('unknownTags').innerHTML = unknownTags.map(u =>
+    `<div style="display:flex;justify-content:space-between;padding:10px 14px;background:#171A1F;border-radius:10px;margin-bottom:8px;cursor:pointer;box-shadow:var(--clay-inset);" onclick="showUnknown('${u.tag.replace(/'/g,"\\'")}')">
+      <span>${u.tag}</span>
+      <span style="color:#B6FF2E;font-weight:700;">${u.orders.length}</span>
+    </div>`
+  ).join('');
+}
+
+function showUnknown(tag) {
+  const u = unknownTags.find(x => x.tag === tag);
+  if (!u) return;
+  currentModalData = u.orders.map(o => ({
+    'Order': o['Name']||'', 'Email': o['Email']||'', 'Tags': o['Tags']||'',
+    'Total': o['Total']||'', 'Created at': o['Created at']||'', 'Shipping City': o['Shipping City']||''
+  }));
+  currentModalTitle = `تاج غير معروف: ${tag}`;
+  document.getElementById('modalTitle').textContent = currentModalTitle;
+  document.getElementById('modalBody').innerHTML = `<div class="table-wrap"><table><thead><tr>
+    <th>الأوردر</th><th>الإيميل</th><th>التاجات</th><th>الإجمالي</th><th>التاريخ</th><th>المدينة</th>
+  </tr></thead><tbody>${u.orders.map(o => `<tr>
+    <td>${o['Name']||''}</td><td>${o['Email']||''}</td><td>${o['Tags']||''}</td>
+    <td>${fmtMoney(o['Total'])}</td><td>${o['Created at']||''}</td><td>${o['Shipping City']||''}</td>
+  </tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('open');
+  currentModalData = null;
+}
+
+// ============================================================
+// Export
+// ============================================================
+function exportAll() {
+  if (!allOrders.length) { showToast('⚠️ لا يوجد بيانات'); return; }
+  const rows = allOrders.map(o => ({
+    'Order': o['Name']||'', 'Email': o['Email']||'',
+    'Financial Status': o['Financial Status']||'',
+    'Fulfillment Status': o['Fulfillment Status']||'',
+    'Total': o['Total']||'', 'Currency': o['Currency']||'',
+    'Created at': o['Created at']||'', 'Tags': o['Tags']||'',
+    'Shipping Name': o['Shipping Name']||'',
+    'Shipping City': o['Shipping City']||'',
+    'Shipping Street': o['Shipping Street']||'',
+    'Shipping Phone': o['Shipping Phone']||''
+  }));
+  downloadData(rows, 'all_orders');
+}
+
+function exportModal() {
+  if (!currentModalData) { showToast('⚠️ لا يوجد بيانات'); return; }
+  downloadData(currentModalData, currentModalTitle.replace(/\s+/g,'_'));
+}
+
+function downloadData(rows, filename) {
+  if (!rows.length) { showToast('⚠️ لا يوجد بيانات'); return; }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Data');
+  XLSX.writeFile(wb, `${filename}_${Date.now()}.xlsx`);
+  showToast('✅ تم التصدير');
+}
+
+function resetAll() {
+  allOrders = []; allLineItems = []; teamReport = { CS: [], Warehouse: [] };
+  geoReport = { cairo: {}, giza: {} };
+  topProducts = []; unknownTags = []; breakdownItems = []; notLateOrders = [];
+  activeFilters.clear();
+  document.getElementById('pasteArea').value = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('headerActions').style.display = 'none';
+  document.getElementById('liveStatusText').textContent = 'التحليل التلقائي جاهز — ابدأ بالرفع أو اللصق';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// Email
+// ============================================================
+function openEmailModal() {
+  const sel = document.getElementById('emailTeamSelect');
+  sel.innerHTML = '';
+  Object.keys(TEAMS).forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = TEAMS[k].emoji + ' ' + TEAMS[k].name;
+    sel.appendChild(opt);
+  });
+  renderEmailPreview();
+  document.getElementById('emailModal').classList.add('open');
+}
+
+function closeEmailModal() {
+  document.getElementById('emailModal').classList.remove('open');
+}
+
+function buildEmailHTML(teamKey) {
+  const items = teamReport[teamKey] || [];
+  const t = TEAMS[teamKey];
+  if (!items.length) return null;
+
+  const today = new Date().toLocaleDateString('ar-EG', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const rows = items.map(i => {
+    const o = i.order;
+    return `<tr>
+      <td style="padding:9px;border:1px solid #ddd;">${o['Name']||''}</td>
+      <td style="padding:9px;border:1px solid #ddd;">${o['Email']||''}</td>
+      <td style="padding:9px;border:1px solid #ddd;">${o['Financial Status']||''}</td>
+      <td style="padding:9px;border:1px solid #ddd;">${o['Total']||''} ${o['Currency']||''}</td>
+      <td style="padding:9px;border:1px solid #ddd;">${i.hoursLate} ساعة</td>
+      <td style="padding:9px;border:1px solid #ddd;">${i.tagDisplay}</td>
+      <td style="padding:9px;border:1px solid #ddd;">${o['Shipping City']||''}</td>
+    </tr>`;
+  }).join('');
+
+  return {
+    subject: `تقرير متابعة — ${t.name} — ${items.length} أوردر متأخر`,
+    body: `
+<div style="font-family:Tahoma,Arial,sans-serif;direction:rtl;text-align:right;line-height:1.8;color:#222;">
+  <p>مرحباً فريق <strong>${t.name}</strong> ${t.emoji}</p>
+  <p>أتمنى تكونوا بخير. حبيت أشارككم ملخص سريع بأوردرات محتاجة متابعة من ناحيتكم، ودي الأوردرات اللي عدّى عليها الوقت المحدد من غير ما ياخد عليها أكشن.</p>
+  <p>عدد الأوردرات المتأخرة: <strong style="color:#dc2626;font-size:18px;">${items.length}</strong></p>
+
+  <table style="border-collapse:collapse;width:100%;font-size:13px;margin:16px 0;">
+    <thead>
+      <tr style="background:#1F2329;color:#B6FF2E;">
+        <th style="padding:10px;border:1px solid #ddd;">رقم الأوردر</th>
+        <th style="padding:10px;border:1px solid #ddd;">الإيميل</th>
+        <th style="padding:10px;border:1px solid #ddd;">الحالة المالية</th>
+        <th style="padding:10px;border:1px solid #ddd;">الإجمالي</th>
+        <th style="padding:10px;border:1px solid #ddd;">ساعات التأخير</th>
+        <th style="padding:10px;border:1px solid #ddd;">التاج</th>
+        <th style="padding:10px;border:1px solid #ddd;">المدينة</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+
+  <p>ياريت لو تقدروا تتابعوا الأوردرات دي في أقرب وقت وتاخدوا الإجراء المناسب. لو فيه أي استفسار أنا موجود.</p>
+  <p>شكراً ليكم على المجهود 🙏</p>
+  <p style="margin-top:24px;">
+    تحياتي،<br>
+</div>`
+  };
+}
+
+function renderEmailPreview() {
+  const key = document.getElementById('emailTeamSelect').value;
+  const data = buildEmailHTML(key);
+  const prev = document.getElementById('emailPreview');
+  const subj = document.getElementById('emailSubject');
+  if (!data) {
+    prev.innerHTML = '<div style="color:#9ca3af;text-align:center;padding:20px;">لا توجد أوردرات متأخرة لهذا التيم</div>';
+    subj.value = '';
+    return;
+  }
+  prev.innerHTML = data.body;
+  subj.value = data.subject;
+}
+
+function copyEmailBody() {
+  const key = document.getElementById('emailTeamSelect').value;
+  const data = buildEmailHTML(key);
+  if (!data) { showToast('⚠️ لا يوجد محتوى'); return; }
+  const blob = new Blob([data.body], { type: 'text/html' });
+  const textBlob = new Blob([stripHTML(data.body)], { type: 'text/plain' });
+  navigator.clipboard.write([
+    new ClipboardItem({
+      'text/html': blob,
+      'text/plain': textBlob
+    })
+  ]).then(() => showToast('✅ تم نسخ الإيميل (منسق)'))
+    .catch(() => {
+      navigator.clipboard.writeText(stripHTML(data.body)).then(() => showToast('✅ تم نسخ النص'));
+    });
+}
+
+function stripHTML(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.textContent || '';
+}
+
+function openZoho() {
+  const key = document.getElementById('emailTeamSelect').value;
+  const data = buildEmailHTML(key);
+  if (!data) { showToast('⚠️ لا يوجد محتوى'); return; }
+  copyEmailBody();
+  const url = `https://mail.zoho.com/zm/#compose?to=&subject=${encodeURIComponent(data.subject)}`;
+  window.open(url, '_blank');
+  showToast('✅ تم نسخ الإيميل — الصق في Zoho بـ Ctrl+V');
+}
+
+function copyAllEmails() {
+  let all = '';
+  Object.keys(TEAMS).forEach(k => {
+    const data = buildEmailHTML(k);
+    if (data) {
+      all += `\n\n========== ${TEAMS[k].name} ==========\n`;
+      all += `الموضوع: ${data.subject}\n\n`;
+      all += stripHTML(data.body) + '\n';
+    }
+  });
+  if (!all) { showToast('⚠️ لا توجد إيميلات'); return; }
+  navigator.clipboard.writeText(all).then(() => showToast('✅ تم نسخ كل الإيميلات'));
+}
+
+// ============================================================
+// Modal close on backdrop
+// ============================================================
+document.getElementById('detailModal').addEventListener('click', e => {
+  if (e.target.id === 'detailModal') closeModal();
+});
+document.getElementById('emailModal').addEventListener('click', e => {
+  if (e.target.id === 'emailModal') closeEmailModal();
+});
+</script>
+
+</body>
+</html>
